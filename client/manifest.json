@@ -1,0 +1,38 @@
+{
+  "manifest_version": 3,
+  "name": "WriteAI",
+  "version": "1.0",
+  "description": "Quickly summarize selected text on any webpage",
+  
+  "permissions": [
+    "scripting",
+    "storage",
+    "activeTab"
+  ],
+
+  "icons": {
+    "16": "assets/ai_logo.png",
+    "48": "assets/ai_logo.png",
+    "128": "assets/ai_logo.png"
+  },
+
+  "background": {
+    "service_worker": "background/worker.js",
+    "type": "module"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content/dist/main.js"],
+      "css": ["content/dist/style.css"]
+    }
+  ],
+
+  "web_accessible_resources": [
+    {
+      "resources": ["content/dist/*"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}

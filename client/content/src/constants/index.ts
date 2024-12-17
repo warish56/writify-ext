@@ -1,0 +1,2 @@
+
+export const BG_GET_AI_RESPONSE = 'BG_GET_AI_RESPONSE';
