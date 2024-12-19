@@ -11,9 +11,9 @@ const tempData = {
 router.post('/', async (req, res) => {
     try {
         const {text, prompt} = req.body;
-        //const aiResponse = await getAiResponse(text, prompt);
+        const aiResponse = await getAiResponse(text, prompt);
         res.json({
-            data: tempData , //JSON.parse(aiResponse)
+            data: JSON.parse(aiResponse)
         });
     } catch (error) {
         console.error('Error:', error);

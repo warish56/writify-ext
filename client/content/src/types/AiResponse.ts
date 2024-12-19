@@ -1,7 +1,7 @@
 
 export type SummaryResponse = {
-    summary: string;
-    responses: string[];
+    result: string;
+    suggestions: string[];
 }
 
 export type AiResponse = SummaryResponse

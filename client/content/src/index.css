@@ -1,8 +1,9 @@
 
 
 :root {
-    --modal-backdrop-z-index: 100;
-    --modal-content-z-index: 200;
+    --modal-backdrop-z-index: 10000;
+    --modal-content-z-index: calc(var(--modal-backdrop-z-index) + 100);
     --modal-width: 400px;
-    --modal-height: 200px;
+    --modal-height: 300px;
+    --header-height: 45px;
 }
