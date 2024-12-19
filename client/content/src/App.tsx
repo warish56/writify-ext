@@ -2,14 +2,43 @@ import { useSelection } from '@/hooks/useSelection';
 import { Modal } from '@/components/Modal';
 import { AiDescriptor } from '@/components/AiDescriptor';
 import { useGetAiResponse } from '@/hooks/useGetAiResponse';
+import { PromptActions } from './components/AiDescriptor/PromptActions';
+import { useRef, useState } from 'react';
+import { Prompts } from './types/prompt';
 
-const getPrompt = () => {
-  return `Summarize the text and provide a list of responses . Build response in such a way that it can be parsed using JSON.parse in node js. summary should be a string and responses should be an array of strings. Dont add json keyword in the starting of the response. Here is the text -`;
+
+type PromptState = {
+  text: string;
+  type: Prompts | null
+}
+
+const initialPromptData = {
+  text:'', 
+  type: null 
 }
 
 function App() {
-  const {selectedText, selectedNode, removeSelectedNode, offset} = useSelection();
-  const {data, error, loading} = useGetAiResponse(getPrompt(), selectedText); 
+  const [promptData, setPromptData] = useState<PromptState>(initialPromptData);
+  const {selectedText, selectedNode, resetSelectionData, offset} = useSelection();
+  const {data, error, loading, clearData:clearServerData} = useGetAiResponse(promptData.text, selectedText); 
+  const contentRef = useRef<HTMLDivElement | null>(null);
+
+  const handlePromptChange = (prompt:string, type:Prompts) => {
+    setPromptData({text: prompt, type})
+  }
+
+  const handleModalClose = () => {
+    setPromptData(initialPromptData);
+    resetSelectionData();
+    clearServerData();
+  }
+
+  const selectTextNode = (node:Node) => {
+    const range = document.createRange();
+    range.selectNode(node);
+    const windowSelection = window.getSelection();
+    windowSelection?.addRange(range);
+  }
 
   const handleInsert = (text: string) => {
     if(!selectedNode.anchorNode || !selectedNode.focusNode) return;
@@ -25,7 +54,7 @@ function App() {
     const textNode = selectedNode.anchorNode;
     const textNodeContent = textNode.textContent || '';
 
-
+    let replacedNode = null;
     if(isSameNode){
      /**
       *  if starting node and ending nodes are same, then we need to replace the text between the start and end offset
@@ -35,11 +64,13 @@ function App() {
         const end = anchorOffset;
         const textToReplace = textNodeContent.slice(start, end);
         selectedNode.anchorNode.textContent = selectedNode.anchorNode.textContent?.replace(textToReplace, text) ?? text;
+        replacedNode = selectedNode.anchorNode;
       }else{
         const start = anchorOffset;
         const end = focusOffset;
         const textToReplace = textNodeContent.slice(start, end);
         selectedNode.focusNode.textContent = selectedNode.focusNode.textContent?.replace(textToReplace, text) ?? text;
+        replacedNode = selectedNode.focusNode;
       }
     }else{
       /**
@@ -48,17 +79,34 @@ function App() {
        */
       selectedNode.anchorNode.textContent = selectedNode.anchorNode.textContent?.replace(textNodeContent, text) ?? text;
       selectedNode.focusNode.textContent = '';
+      replacedNode = selectedNode.anchorNode;
     }
 
-    removeSelectedNode();
+
+    // at the end select the modified node to keep the selection intact
+    selectTextNode(replacedNode);
+
   }
 
   const open = !!selectedNode.parentElement;
 
-
  return (
         <Modal anchor={selectedNode.parentElement} open={open}>
-            <AiDescriptor data={data} loading={loading} error={!!error} onClose={removeSelectedNode} onInsert={handleInsert} text={selectedText} />
+            <AiDescriptor 
+              ref={contentRef}
+              header={
+                <PromptActions 
+                  onChange={handlePromptChange}
+                  active={promptData.type}
+                />
+              }
+              data={data} 
+              loading={loading} 
+              error={!!error} 
+              onClose={handleModalClose} 
+              onInsert={handleInsert} 
+              text={selectedText} 
+            />
         </Modal>
     )
 }

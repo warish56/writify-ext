@@ -18,28 +18,32 @@ export const useSelection = () => {
     const [selectedText, setSelectedText] = useState<string>('');
     const [selectedNode, setSelectedNode] = useState(initialSelectedNode);
     const [offset, setOffset] = useState({anchorOffset: 0, focusOffset: 0});
+    
 
 
     const removeSelectedNode = () => {
-        console.log('removing selected node')
         setSelectedNode(initialSelectedNode)
+    }
+
+    const resetSelectionData = () => {
+        setSelectedText('');
+        removeSelectedNode();
     }
    
     useEffect(() => {
         const handleSelectionChange = () => {
             const selection = window.getSelection()
-            const value = selection?.toString() || ''
+            const value = selection?.toString()?.trim() || ''
+            const isTextNode = selection?.anchorNode?.nodeName === "#text"
             console.log('selectionchange', selection)
             setSelectedText(value)
-            if(value && selection?.anchorNode?.parentElement) {
+            if(value &&  isTextNode && selection?.anchorNode?.parentElement) {
                 setSelectedNode({
                     parentElement: selection?.anchorNode?.parentElement,
                     anchorNode: selection?.anchorNode,
                     focusNode: selection?.focusNode
                 })
                 setOffset({anchorOffset: selection?.anchorOffset, focusOffset: selection?.focusOffset})
-            }else{
-                removeSelectedNode()
             }
         }
 
@@ -51,5 +55,5 @@ export const useSelection = () => {
         }
     }, [])
 
-    return {selectedText, selectedNode, offset, removeSelectedNode};
+    return {selectedText, selectedNode, offset, resetSelectionData};
 }

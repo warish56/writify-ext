@@ -4,6 +4,7 @@
     inset:0;
     background-color: rgba(0, 0, 0, 0.2);
     z-index: var(--modal-backdrop-z-index);
+    user-select: none;
 }
 
 .content {
@@ -12,9 +13,6 @@
     height: var(--modal-height);
     background-color: white;
     z-index: var(--modal-content-z-index);
-    display: flex;
-    justify-content: center;
-    align-items: center;
     border-radius: 10px;
     color: black;
     overflow: auto;

@@ -14,8 +14,13 @@ export const useGetAiResponse = (prompt:string, text:string) => {
     const [response, setResponse] = useState<AiResponseState>([null, null]);
     const [loading, setLoading] = useState(false);
     const defferedText = useDeferredValue(text);
+    
+    const clearData = () => {
+        setResponse([null, null])
+    }
 
     useEffect(() => {
+        
         const fetchData = async () => {
             setLoading(true);
             const data = await fetchResponses(text, prompt);
@@ -23,13 +28,15 @@ export const useGetAiResponse = (prompt:string, text:string) => {
             setLoading(false);
         }
 
-        if(defferedText) {
+        if(defferedText && prompt) {
             fetchData();
         }
     }, [defferedText, prompt]);
+    
     return {
         data: response[0] as AiResponse | null, 
         error: response[1] as Error | null, 
-        loading
+        loading,
+        clearData
     };
 }

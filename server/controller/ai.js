@@ -1,7 +1,5 @@
 const OpenAI = require("openai");
 
-console.log("API KEY", process.env.GPT_API_KEY);
-
 const openai = new OpenAI({
   apiKey: process.env.GPT_API_KEY
 });
@@ -10,9 +8,6 @@ const openai = new OpenAI({
 
 const getAiResponse = async (text, prompt) => {
     const aiPrompt = `${prompt} - "${text}" `;
-
-    console.log("AI PROMPT", aiPrompt);
-
     const completion = await openai.chat.completions.create({
         model: "gpt-4o-mini",
         messages: [
