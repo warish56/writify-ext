@@ -24,7 +24,7 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": [ "content/dist/style.js", "content/dist/main.js", "content/scripts/style.js"]
+      "js": [ "content/dist/main.js"]
     }
   ],
 
