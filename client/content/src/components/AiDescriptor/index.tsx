@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Box, Paper, Typography } from '@mui/material';
 import { AiResponse } from '@/types/AiResponse';
-import { Loader } from './loader';
+import { Loader } from './Loader';
 import { ActionHeader } from './ActionHeader';
 import { HighlightedContent } from './HighlightedContent';
 import { SuggestionList } from './SuggestionList';
