@@ -3,34 +3,6 @@ import react from '@vitejs/plugin-react'
 import { resolve } from 'path'
 import svgr from 'vite-plugin-svgr'
 
-const cssToJS = () => {
-  let css = ''
-  return {
-    name: 'css-to-js',
-    apply: 'build',
-    enforce: 'post',
-    generateBundle(_, bundle) {
-      // Collect all CSS
-      Object.entries(bundle).forEach(([fileName, chunk]) => {
-        if (fileName.endsWith('.css')) {
-          if ('source' in chunk) {
-            css += chunk.source
-            // Remove the CSS chunk since we'll include it in JS
-            delete bundle[fileName]
-          }
-        }
-      })
-
-      // Create a new JS chunk with the CSS
-      bundle['style.js'] = {
-        fileName: 'style.js',
-        type: 'chunk',
-        code: `const AppStyles = ${JSON.stringify(css)};`,
-        moduleSideEffects: false,
-      }
-    }
-  }
-}
 
 export default defineConfig({
   plugins: [
@@ -41,7 +13,6 @@ export default defineConfig({
       },
       include: "**/*.svg?react",
     }),
-    cssToJS()
   ],
   css: {
     modules: {
@@ -50,9 +21,8 @@ export default defineConfig({
     }
   },
   define: {
-    'process.env': {
-      'NODE_ENV': 'production',
-    }
+    // Replace process.env with only the allowed environment variables
+    'process.env.NODE_ENV': `"${process.env.NODE_ENV}"`,
   },
   build: {
     lib: {

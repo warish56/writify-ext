@@ -1,60 +1,69 @@
+import { IconButton, Stack } from '@mui/material';
 
-import  FormalIcon  from '@/assets/brief.svg?react' 
-import  ConciseIcon  from '@/assets/compress.svg?react' 
-import  EllaborateIcon  from '@/assets/expand.svg?react' 
-import  SumaryIcon  from '@/assets/summary.svg?react' 
 import { ConcisePropmpt, EllaboratedPropmpt, FormalPropmpt, SummaryPropmpt } from '@/constants/prompts';
-
-
-import styles from './style.module.css';
 import { PromptAction, Prompts } from '@/types/prompt';
 
+import SummarizeIcon from '@mui/icons-material/Summarize';
+import WorkIcon from '@mui/icons-material/Work';
+import ConciseIcon from '@mui/icons-material/Compress';
+import EllaborateIcon from '@mui/icons-material/Expand';
 
-const actions:PromptAction[] = [
-    {   id: 'summarize', 
+const actions: PromptAction[] = [
+    {   
+        id: 'summarize', 
         label: 'Summarize', 
-        icon: <SumaryIcon />,
+        icon: <SummarizeIcon />,
         prompt: SummaryPropmpt.getPrompt()
     },
-    {   id: 'formal', 
+    {   
+        id: 'formal', 
         label: 'Formal', 
-        icon: <FormalIcon /> ,
+        icon: <WorkIcon />,
         prompt: FormalPropmpt.getPrompt()
     },
     { 
         id: 'concise', 
         label: 'Concise', 
-        icon: <ConciseIcon /> ,
+        icon: <ConciseIcon />,
         prompt: ConcisePropmpt.getPrompt()
     },
     { 
         id: 'ellaborate', 
         label: 'Ellaborate', 
-        icon: <EllaborateIcon /> ,
+        icon: <EllaborateIcon />,
         prompt: EllaboratedPropmpt.getPrompt()
     },
 ];
 
-
-type PromptActionsProps ={
-    onChange: (prompt:string, type:Prompts) => void;
+type PromptActionsProps = {
+    onChange: (prompt: string, type: Prompts) => void;
     active: Prompts | null
 }
 
-
-export const PromptActions = ({onChange, active}:PromptActionsProps) => {
+export const PromptActions = ({ onChange, active }: PromptActionsProps) => {
     return (
-        <div className={styles.actions}>
-        {actions.map(option => (
-            <button
-                key={option.id}
-                onClick={() => onChange(option.prompt, option.id)}
-                className={`${styles.action_button} ${active === option.id ? styles.btn_active : ''}`}
-                >
-                <span>{option.icon}</span>
-            </button>
-        ))}
-    </div>
-    )
-    
-}
+        <Stack 
+            direction="row" 
+            spacing={1}
+            sx={{
+                padding: 1,
+                display: 'flex',
+                alignItems: 'center'
+            }}
+        >
+            {actions.map(option => (
+                <IconButton
+                    key={option.id}
+                    color={'primary'}
+                    onClick={() => onChange(option.prompt, option.id)}
+                    size="small"
+                    sx={() =>({
+                        backgroundColor: active === option.id ? "secondary.light": "transparent" ,
+                    })}
+                >                   
+                        {option.icon}
+                </IconButton>
+            ))}
+        </Stack>
+    );
+};

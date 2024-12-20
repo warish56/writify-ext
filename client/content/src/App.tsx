@@ -1,10 +1,10 @@
 import { useSelection } from '@/hooks/useSelection';
-import { Modal } from '@/components/Modal';
 import { AiDescriptor } from '@/components/AiDescriptor';
 import { useGetAiResponse } from '@/hooks/useGetAiResponse';
 import { PromptActions } from './components/AiDescriptor/PromptActions';
 import { useRef, useState } from 'react';
 import { Prompts } from './types/prompt';
+import { Box, Popover } from '@mui/material';
 
 
 type PromptState = {
@@ -91,7 +91,25 @@ function App() {
   const open = !!selectedNode.parentElement;
 
  return (
-        <Modal anchor={selectedNode.parentElement} open={open}>
+        <Popover
+        open={open}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'left',
+        }}
+        anchorEl={selectedNode.parentElement}
+        >
+          <Box sx={{
+            width: '400px',
+            height: '300px',
+            '& *': {
+              userSelect: 'none'
+            }
+          }}>
             <AiDescriptor 
               ref={contentRef}
               header={
@@ -107,7 +125,8 @@ function App() {
               onInsert={handleInsert} 
               text={selectedText} 
             />
-        </Modal>
+          </Box>
+        </Popover>
     )
 }
 
