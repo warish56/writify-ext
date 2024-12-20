@@ -1,34 +1,52 @@
 import { useSelection } from '@/hooks/useSelection';
-import { AiDescriptor } from '@/components/AiDescriptor';
-import { useGetAiResponse } from '@/hooks/useGetAiResponse';
-import { PromptActions } from './components/AiDescriptor/PromptActions';
-import { useRef, useState } from 'react';
-import { Prompts } from './types/prompt';
-import { Box, Popover } from '@mui/material';
+import { Popover } from '@mui/material';
+import { PromptMenu } from './components/PromptsMenu';
+import { usePromptManager } from './hooks/usePromptManager';
+import { PromptResult } from './components/PromptsMenu/PromptResult';
+import { useGetPromptResponse } from './hooks/useGetPromptResponse';
 
 
-type PromptState = {
-  text: string;
-  type: Prompts | null
-}
+// const InputDescriptor = () => {
+//   return (
+//     <Box sx={{
+//       width: '400px',
+//       height: '300px',
+//       '& *': {
+//         userSelect: 'none'
+//       }
+//     }}>
+//       <AiDescriptor 
+//         ref={contentRef}
+//         header={
+//           <PromptActions 
+//             onChange={handlePromptChange}
+//             active={promptData.type}
+//           />
+//         }
+//         data={data} 
+//         loading={loading} 
+//         error={!!error} 
+//         onClose={handleModalClose} 
+//         onInsert={handleInsert} 
+//         text={selectedText} 
+//       />
+//     </Box>
+//   )
+// }
 
-const initialPromptData = {
-  text:'', 
-  type: null 
-}
+
+
+
+
 
 function App() {
-  const [promptData, setPromptData] = useState<PromptState>(initialPromptData);
+  const {prompt, handlePromptChange, clearPrompt} = usePromptManager();
   const {selectedText, selectedNode, resetSelectionData, offset} = useSelection();
-  const {data, error, loading, clearData:clearServerData} = useGetAiResponse(promptData.text, selectedText); 
-  const contentRef = useRef<HTMLDivElement | null>(null);
+  const {data, error, loading, clearData:clearServerData, refetchData} = useGetPromptResponse(prompt, selectedText); 
 
-  const handlePromptChange = (prompt:string, type:Prompts) => {
-    setPromptData({text: prompt, type})
-  }
 
-  const handleModalClose = () => {
-    setPromptData(initialPromptData);
+  const handlePromptClose = () => {
+    clearPrompt();
     resetSelectionData();
     clearServerData();
   }
@@ -103,29 +121,18 @@ function App() {
         }}
         anchorEl={selectedNode.parentElement}
         >
-          <Box sx={{
-            width: '400px',
-            height: '300px',
-            '& *': {
-              userSelect: 'none'
-            }
-          }}>
-            <AiDescriptor 
-              ref={contentRef}
-              header={
-                <PromptActions 
-                  onChange={handlePromptChange}
-                  active={promptData.type}
-                />
-              }
-              data={data} 
-              loading={loading} 
-              error={!!error} 
-              onClose={handleModalClose} 
-              onInsert={handleInsert} 
-              text={selectedText} 
-            />
-          </Box>
+          <PromptMenu 
+            onAction={handlePromptChange}
+            onClose={handlePromptClose}
+          >
+           <PromptResult 
+           loading={loading}
+           error={error}
+           onApply={handleInsert}
+           onRefresh={refetchData}
+           text={data?.result ?? ''}
+           /> 
+          </PromptMenu>
         </Popover>
     )
 }

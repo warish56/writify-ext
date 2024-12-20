@@ -1,6 +1,6 @@
 import { IconButton, Stack } from '@mui/material';
 
-import { ConcisePropmpt, EllaboratedPropmpt, FormalPropmpt, SummaryPropmpt } from '@/constants/prompts';
+import { ConcisePropmpt, EllaboratedPropmpt, FormalPropmpt, SummaryPropmpt } from '@/constants/actions';
 import { PromptAction, Prompts } from '@/types/prompt';
 
 import SummarizeIcon from '@mui/icons-material/Summarize';

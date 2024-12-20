@@ -1,88 +1,61 @@
 
 const jsonFormatPromt = `Output the result only as plain JSON, without any additional text, explanations, or formatting. Ensure the JSON is valid and properly escaped so it can be parsed using JSON.parse in Node.js. `
+const codeStructure = `Use this structure to output result, nothing more than this means no more extra keys: ~~~ { "result": "text goes here." } ~~~`
 
-export const SummaryPropmpt = {
-    text: `Summarize the following text and provide multiple suggestions based on the content. The output should be formatted as a JSON object that can be parsed using JSON.parse. ${jsonFormatPromt} Use this structure:`,
-    codeStructure: `
-    {
-        "result": "Summarized text goes here.",
-        "suggestions": [
-            "First suggestion goes here.",
-            "Second suggestion goes here.",
-            "Third suggestion goes here."
+
+
+export const Prompts = {
+    analysis: {
+        heading: 'Text Analysis',
+        list: [
+            {
+                title: 'Summarize Text',
+                prompt: `Generate a concise summary of the selected text. ${jsonFormatPromt} ${codeStructure}`
+            },
+            {
+                title: 'Explain Text',
+                prompt: `Provide a detailed explanation or breakdown of the text. ${jsonFormatPromt} ${codeStructure}`
+            },
+            {
+                title: 'Paraphrase',
+                prompt: `Reword the text while preserving its meaning. ${jsonFormatPromt} ${codeStructure}`
+            },
+            {
+                title: 'Define',
+                prompt: `Provide definitions for words or terms in the text. ${jsonFormatPromt} ${codeStructure}`
+            },
+            {
+                title: 'Sentiment Analysis',
+                prompt: `Determine the tone or sentiment of the text (e.g., positive, negative, neutral). ${jsonFormatPromt} ${codeStructure}`
+            },
+
         ]
-    }
-    `,
-    getPrompt: function(){
-        return `${this.text} 
-          ~~~
-          ${this.codeStructure}
-          ~~~
-        `
-    }
-}
+    },
 
+    productivity:{
+        heading: 'Productivity',
+        list: [
+            {
+                title: 'Expand Text',
+                prompt: `Add more detail to the text. ${jsonFormatPromt} ${codeStructure}`
+            },
+            {
+                title: 'Generate Questions',
+                prompt: `Create questions based on the selected text. ${jsonFormatPromt} ${codeStructure}`
+            },
+            {
+                title: 'Answer Questions',
+                prompt: `Provide answers related to the selected text. ${jsonFormatPromt} ${codeStructure}`
+            },
+            {
+                title: 'Shorten Text',
+                prompt: `Make the text concise for tweets, summaries, etc. ${jsonFormatPromt} ${codeStructure}`
+            },
+            {
+                title: 'Correct Grammar',
+                prompt: `Check and correct grammar in the text. ${jsonFormatPromt} ${codeStructure}`
+            },
 
-
-export const FormalPropmpt = {
-    text: `Rewrite the following text in a formal tone. Additionally, provide multiple suggestions based on the content or how it can be improved. Format the output as a JSON object that can be parsed using JSON.parse. ${jsonFormatPromt} Use the following structure:`,
-    codeStructure: `
-    {
-        "result": "Formal text goes here.",
-        "suggestions": [
-            "First suggestion goes here.",
-            "Second suggestion goes here.",
-            "Third suggestion goes here."
         ]
-    }
-    `,
-    getPrompt: function(){
-        return `${this.text} 
-          ~~~
-          ${this.codeStructure}
-          ~~~
-        `
-    }
-}
-
-export const ConcisePropmpt = {
-    text: `Rewrite the following text in a short and concise format. Additionally, provide multiple suggestions based on the content or its improvement. Format the output as a JSON object that can be parsed using JSON.parse. ${jsonFormatPromt} Use this structure:`,
-    codeStructure: `
-    {
-        "result": "Short text goes here.",
-        "suggestions": [
-            "First suggestion goes here.",
-            "Second suggestion goes here.",
-            "Third suggestion goes here."
-        ]
-    }
-    `,
-    getPrompt: function(){
-        return `${this.text} 
-          ~~~
-          ${this.codeStructure}
-          ~~~
-        `
-    }
-}
-
-export const EllaboratedPropmpt = {
-    text: `Rewrite the following text in a more elaborated and detailed format. Additionally, provide multiple suggestions based on the content or how it can be improved. Format the output as a JSON object that can be parsed using JSON.parse. ${jsonFormatPromt} Use this structure:`,
-    codeStructure: `
-    {
-        "result": "Elaborated text goes here.",
-        "suggestions": [
-            "First suggestion goes here.",
-            "Second suggestion goes here.",
-            "Third suggestion goes here."
-        ]
-    }
-    `,
-    getPrompt: function(){
-        return `${this.text} 
-          ~~~
-          ${this.codeStructure}
-          ~~~
-        `
     }
 }
