@@ -1,47 +1,17 @@
 import { useSelection } from '@/hooks/useSelection';
-import { Popover } from '@mui/material';
+import { Popover, Snackbar } from '@mui/material';
 import { PromptMenu } from './components/PromptsMenu';
 import { usePromptManager } from './hooks/usePromptManager';
 import { PromptResult } from './components/PromptsMenu/PromptResult';
 import { useGetPromptResponse } from './hooks/useGetPromptResponse';
-
-
-// const InputDescriptor = () => {
-//   return (
-//     <Box sx={{
-//       width: '400px',
-//       height: '300px',
-//       '& *': {
-//         userSelect: 'none'
-//       }
-//     }}>
-//       <AiDescriptor 
-//         ref={contentRef}
-//         header={
-//           <PromptActions 
-//             onChange={handlePromptChange}
-//             active={promptData.type}
-//           />
-//         }
-//         data={data} 
-//         loading={loading} 
-//         error={!!error} 
-//         onClose={handleModalClose} 
-//         onInsert={handleInsert} 
-//         text={selectedText} 
-//       />
-//     </Box>
-//   )
-// }
-
-
-
+import { useSnackbar } from './hooks/useSnackbar';
 
 
 
 function App() {
+  const {open:snackbarOpen, message:snackbarMessage} = useSnackbar()
   const {prompt, handlePromptChange, clearPrompt} = usePromptManager();
-  const {selectedText, selectedNode, resetSelectionData, offset} = useSelection();
+  const {selectedText, selectedNode, resetSelectionData, currentRange} = useSelection();
   const {data, error, loading, clearData:clearServerData, refetchData} = useGetPromptResponse(prompt, selectedText); 
 
 
@@ -51,89 +21,73 @@ function App() {
     clearServerData();
   }
 
-  const selectTextNode = (node:Node) => {
-    const range = document.createRange();
-    range.selectNode(node);
-    const windowSelection = window.getSelection();
-    windowSelection?.addRange(range);
-  }
-
   const handleInsert = (text: string) => {
     if(!selectedNode.anchorNode || !selectedNode.focusNode) return;
 
-    // const clonedNode = selectedNode.anchorNode.cloneNode(true);
-    // clonedNode.textContent = clonedNode.textContent?.replace(clonedNode.textContent, text) ?? text;
-    // selectedNode.anchorNode.parentNode?.replaceChild(clonedNode, selectedNode.anchorNode);
+    const selection = window.getSelection();
 
-    const {anchorOffset, focusOffset} = offset;
-    const direction = anchorOffset > focusOffset ? 'backward' : 'forward';
-    const isSameNode = selectedNode.anchorNode === selectedNode.focusNode;
+    /**
+     * 1. If the selection is lost then add the previous selected range
+     * 2. delete the contents of the curent range
+     * 3. add your textNode in that range
+     * 4. Select the textNode and put the cursor at its end
+     */
 
-    const textNode = selectedNode.anchorNode;
-    const textNodeContent = textNode.textContent || '';
+    if(currentRange && selection){
+      selection.removeAllRanges();
+      selection.addRange(currentRange);
 
-    let replacedNode = null;
-    if(isSameNode){
-     /**
-      *  if starting node and ending nodes are same, then we need to replace the text between the start and end offset
-      */
-      if(direction === 'backward'){
-        const start = focusOffset;
-        const end = anchorOffset;
-        const textToReplace = textNodeContent.slice(start, end);
-        selectedNode.anchorNode.textContent = selectedNode.anchorNode.textContent?.replace(textToReplace, text) ?? text;
-        replacedNode = selectedNode.anchorNode;
-      }else{
-        const start = anchorOffset;
-        const end = focusOffset;
-        const textToReplace = textNodeContent.slice(start, end);
-        selectedNode.focusNode.textContent = selectedNode.focusNode.textContent?.replace(textToReplace, text) ?? text;
-        replacedNode = selectedNode.focusNode;
-      }
-    }else{
-      /**
-       * if starting node and ending nodes are different, then we need to replace the text of the starting node with the text
-       * and remove the text of the ending node
-       */
-      selectedNode.anchorNode.textContent = selectedNode.anchorNode.textContent?.replace(textNodeContent, text) ?? text;
-      selectedNode.focusNode.textContent = '';
-      replacedNode = selectedNode.anchorNode;
+      const range = currentRange;
+      range.deleteContents();
+
+      const textNode = document.createTextNode(text);
+      range.insertNode(textNode);
+      selection.removeAllRanges();
+
+      const newRange = document.createRange();
+      newRange.selectNodeContents(textNode);
+      newRange.collapse(false); // Place the cursor at the end
+      selection.addRange(newRange);
     }
-
-
-    // at the end select the modified node to keep the selection intact
-    selectTextNode(replacedNode);
+  
 
   }
 
-  const open = !!selectedNode.parentElement;
+  const open = !!selectedText;
 
  return (
-        <Popover
-        open={open}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left',
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'left',
-        }}
-        anchorEl={selectedNode.parentElement}
-        >
-          <PromptMenu 
-            onAction={handlePromptChange}
-            onClose={handlePromptClose}
+      <>
+          <Popover
+          open={open}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left',
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'left',
+          }}
+          disableAutoFocus
+          anchorEl={selectedNode.element}
           >
-           <PromptResult 
-           loading={loading}
-           error={error}
-           onApply={handleInsert}
-           onRefresh={refetchData}
-           text={data?.result ?? ''}
-           /> 
-          </PromptMenu>
-        </Popover>
+            <PromptMenu 
+              onAction={handlePromptChange}
+              onClose={handlePromptClose}
+            >
+            <PromptResult 
+            loading={loading}
+            error={error}
+            onApply={handleInsert}
+            onRefresh={refetchData}
+            text={data?.result ?? ''}
+            /> 
+            </PromptMenu>
+          </Popover>
+          <Snackbar
+            open={snackbarOpen}
+            message={snackbarMessage}
+          />
+        </>
     )
 }
 

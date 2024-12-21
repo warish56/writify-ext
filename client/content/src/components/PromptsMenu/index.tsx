@@ -1,14 +1,16 @@
 import { useState } from "react"
-import { List, ListItemButton, ListItemText } from "@mui/material"
+import { List, ListItemButton, ListItemText, Tooltip } from "@mui/material"
 import { Prompts } from "@/constants/prompts"
 
 import { PromptActions } from "./PromptActions";
 import { MenuWrapper } from "./MenuWrapper";
 
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import { PromptInput } from "./PromptInput";
 
 type prompts = typeof Prompts
 type PromptCategory = keyof prompts
+
 
 
 const categories = Object.keys(Prompts) as PromptCategory[];
@@ -62,11 +64,18 @@ export const PromptMenu = ({onAction, children, onClose}:PromptMenuProps) => {
 
     if(currCategory){
         return (
-            <MenuWrapper onBack={handleCategoryBack} title={currCategory} onClose={onClose}>
-                <PromptActions
-                    list={Prompts[currCategory].list}
-                    onClick={handleSelectAction}
-                />
+            <MenuWrapper 
+            sx={{
+                minWidth: currCategory === 'custom' ? '400px' : '200px'
+            }}
+            onBack={handleCategoryBack} title={currCategory} onClose={onClose}>
+                { currCategory === 'custom' ?
+                    <PromptInput onSubmit={onAction}>
+                        {children}
+                    </PromptInput>
+                   :
+                    <PromptActions list={Prompts[currCategory].list} onClick={handleSelectAction}/>
+                }
             </MenuWrapper>
         )
     }
@@ -79,17 +88,19 @@ export const PromptMenu = ({onAction, children, onClose}:PromptMenuProps) => {
                 {
                     categories.map((category) => {
                         return (
-                            <ListItemButton key={category} onClick={() => handleClick(category)}>
-                            {/* <ListItemIcon>
-                              <InboxIcon />
-                            </ListItemIcon> */}
-                            <ListItemText  
-                            sx={{
-                                textTransform: 'capitalize'
-                            }}  
-                            primary={category} />
-                            <ChevronRightIcon />
-                          </ListItemButton>
+                            <Tooltip title={Prompts[category].description}  placement="right">
+                                <ListItemButton key={category} onClick={() => handleClick(category)}>
+                                {/* <ListItemIcon>
+                                <InboxIcon />
+                                </ListItemIcon> */}
+                                <ListItemText  
+                                sx={{
+                                    textTransform: 'capitalize'
+                                }}  
+                                primary={category} />
+                                <ChevronRightIcon />
+                            </ListItemButton>
+                          </Tooltip>
                         )
                     })
                 }

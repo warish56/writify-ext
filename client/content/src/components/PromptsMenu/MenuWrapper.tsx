@@ -17,8 +17,9 @@ export const MenuWrapper = ({children, title, onBack, onClose, showBackButton=tr
             minWidth: '200px',
             maxWidth: '400px',
             maxHeight: '300px',
-            padding: '10px',
+            padding: '0 0 10px 0',
             paddingBottom: '20px',
+            overflowY: 'auto',
             backgroundColor: 'background.paper',
             ...sx
         }}>
@@ -26,6 +27,7 @@ export const MenuWrapper = ({children, title, onBack, onClose, showBackButton=tr
                 alignItems: 'center',
                 justifyContent: 'space-between',
                 padding: '10px 4px',
+                backgroundColor: theme.palette.background.paper,
                 borderBottom: '1px white solid',
                 borderBottomColor: theme.palette.gray[400],
                 position: 'sticky',
@@ -44,7 +46,7 @@ export const MenuWrapper = ({children, title, onBack, onClose, showBackButton=tr
                     <Typography sx={{
                         marginLeft:'8px',
                         textTransform: 'capitalize'
-                    }} variant={showBackButton ? "caption" : 'h3'}>{title}</Typography>
+                    }} variant={'h3'}>{title}</Typography>
                 </Stack>
                 
 

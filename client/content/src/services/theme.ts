@@ -1,6 +1,16 @@
+import { tooltipClasses } from '@mui/material';
 import { createTheme } from '@mui/material/styles';
+import { grey } from '@mui/material/colors';
 
 declare module '@mui/material/styles' {
+
+    interface TypeBackground {
+        dark: string
+    }
+
+    interface TypeText{
+        dark:string;
+    }
     interface Palette {
       gray: {
         100: string;
@@ -10,9 +20,10 @@ declare module '@mui/material/styles' {
         500: string;
         600: string;
         700: string;
-      }
+      };
     }
-  
+
+
     interface PaletteOptions {
         gray: {
             100: string;
@@ -24,6 +35,7 @@ declare module '@mui/material/styles' {
             700: string;
           }
     }
+  
   }
 
 // Custom color palette based on #7E60BF
@@ -43,10 +55,12 @@ const palette = {
   background: {
     default: '#FFFFFF',
     paper: '#FBFAFF', // slight purple tint
+    dark: grey[900]
   },
   text: {
     primary: '#2D2440', // dark purple-gray
     secondary: '#6B6684', // medium purple-gray
+    dark: grey[50]
   },
   action: {
     hover: '#F4F1FA', // very light purple
@@ -97,4 +111,18 @@ export const AppTheme = createTheme({
       lineHeight: 1.7,
     },
   },
+  components: {
+    MuiTooltip:{
+        styleOverrides:{
+            tooltip:({theme}) => ({
+                '&':{
+                    backgroundColor: theme.palette.background.dark,
+                    color: theme.palette.text.dark,
+                    ...theme.typography.body2,
+                    padding: '8px',
+                }   
+            })
+        }
+    }
+  }
 });
