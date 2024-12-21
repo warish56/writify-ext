@@ -4,6 +4,7 @@ import { PromptLoader } from "./Loader";
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import { useClipboard } from "@/hooks/useClipboard";
 
 type props = {
     loading: boolean;
@@ -13,6 +14,7 @@ type props = {
     error?: Error | null;
 }
 export const PromptResult = ({loading, onApply, onRefresh, text, error}:props) => {
+    const {copyToBoard} = useClipboard();
     return (
         <Stack sx={{
             gap: '10px',
@@ -40,7 +42,9 @@ export const PromptResult = ({loading, onApply, onRefresh, text, error}:props) =
                     </IconButton>
                     </Tooltip>
                     <Tooltip title="Copy">
-                    <IconButton size="small" >
+                    <IconButton size="small" onClick={() => {
+                        copyToBoard(text)
+                    }}>
                         <ContentCopyIcon />
                     </IconButton>
                     </Tooltip>
@@ -49,7 +53,7 @@ export const PromptResult = ({loading, onApply, onRefresh, text, error}:props) =
 
             {loading && <PromptLoader  count={3}/>}
 
-            {error && (
+            {!loading && error && (
                 <Typography color="error" variant="body2">
                     Error fetching AI suggestion
                 </Typography>
@@ -64,7 +68,9 @@ export const PromptResult = ({loading, onApply, onRefresh, text, error}:props) =
                         opacity: loading ? 0.5 : 1
                     }}
                 >
-                    <Typography variant="body1">{text}</Typography>
+                    <Typography variant="body1" sx={{
+                        whiteSpace: 'pre-line'
+                    }}>{text}</Typography>
                 </Box>
             }
         </Stack>

@@ -1,4 +1,4 @@
-import { List, ListItemButton, ListItemText} from "@mui/material"
+import { List, ListItemButton, ListItemText, Tooltip} from "@mui/material"
 import { Prompts } from "@/constants/prompts"
 
 
@@ -21,19 +21,21 @@ export const PromptActions = ({list, onClick}:PromptActionProps) => {
         }}>
 
             {
-                list.map(({title, prompt}) => {
+                list.map(({title, prompt, description}) => {
                     return (
-                        <ListItemButton 
-                        key={title}
-                        onClick={() => onClick(prompt, title)}
-                        >
-                        {/* <ListItemIcon>
-                          <SendIcon />
-                        </ListItemIcon> */}
-                        <ListItemText sx={{
-                            textTransform: 'capitalize'
-                        }} primary={title} />
-                      </ListItemButton>
+                        <Tooltip title={description} placement="right">
+                            <ListItemButton 
+                            key={title}
+                            onClick={() => onClick(prompt, title)}
+                            >
+                            {/* <ListItemIcon>
+                            <SendIcon />
+                            </ListItemIcon> */}
+                            <ListItemText sx={{
+                                textTransform: 'capitalize'
+                            }} primary={title} />
+                        </ListItemButton>
+                      </Tooltip>
                     )
                 })
             }

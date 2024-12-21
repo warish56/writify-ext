@@ -1,15 +1,19 @@
 import { debounce } from "@/utils"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 
+type CustomElement = {
+    nodeType: 1;
+    getBoundingClientRect: () => DOMRect;
+}
 
 type SelectedNode = {
-    parentElement: HTMLElement | null;
+    element: CustomElement | null;
     focusNode: Node | null;
     anchorNode: Node | null;
 }
 
 const initialSelectedNode: SelectedNode = {
-    parentElement: null,
+    element: null,
     focusNode: null,
     anchorNode: null
 }
@@ -17,33 +21,43 @@ const initialSelectedNode: SelectedNode = {
 export const useSelection = () => {
     const [selectedText, setSelectedText] = useState<string>('');
     const [selectedNode, setSelectedNode] = useState(initialSelectedNode);
-    const [offset, setOffset] = useState({anchorOffset: 0, focusOffset: 0});
-    
-
+    const currentRange = useRef<Range | null>(null);
 
     const removeSelectedNode = () => {
         setSelectedNode(initialSelectedNode)
     }
 
     const resetSelectionData = () => {
+        currentRange.current = null;
         setSelectedText('');
         removeSelectedNode();
+        setTimeout(() => {
+            const selection = window.getSelection();
+            selection?.empty();
+        }, 0)
+
     }
    
     useEffect(() => {
         const handleSelectionChange = () => {
             const selection = window.getSelection()
             const value = selection?.toString()?.trim() || ''
-            const isTextNode = selection?.anchorNode?.nodeName === "#text"
-            console.log('selectionchange', selection)
-            setSelectedText(value)
-            if(value &&  isTextNode && selection?.anchorNode?.parentElement) {
+            const isTextNode = selection?.anchorNode?.nodeName === "#text";
+            if(value &&  isTextNode && selection.anchorOffset !== selection.focusOffset) {
+                const range = selection.getRangeAt(0);
+                // saving the range for future refrence while inserting text
+                currentRange.current = range;
+                const nodeCoordinates = range.getBoundingClientRect();
                 setSelectedNode({
-                    parentElement: selection?.anchorNode?.parentElement,
+                    element: {
+                        // mimicing it as an element since MUI Popover just requires this two properties to work properly
+                        getBoundingClientRect: () => nodeCoordinates,
+                        nodeType: 1 
+                    },
                     anchorNode: selection?.anchorNode,
                     focusNode: selection?.focusNode
                 })
-                setOffset({anchorOffset: selection?.anchorOffset, focusOffset: selection?.focusOffset})
+                setSelectedText(value)
             }
         }
 
@@ -55,5 +69,10 @@ export const useSelection = () => {
         }
     }, [])
 
-    return {selectedText, selectedNode, offset, resetSelectionData};
+    return {
+        selectedText,
+         selectedNode,
+         resetSelectionData,
+         currentRange: currentRange.current
+        };
 }
