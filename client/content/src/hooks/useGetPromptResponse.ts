@@ -25,9 +25,12 @@ export const useGetPromptResponse = (prompt:string, text:string) => {
     const fetchData = async () => {
         setLoading(true);
         const data = await fetchResponses(text, prompt);
+        const [_, error] = data
         setResponse(data);
         setLoading(false);
-        useAvailableCredits();        
+        if(!error){
+            useAvailableCredits();  
+        }     
     }
     
 
