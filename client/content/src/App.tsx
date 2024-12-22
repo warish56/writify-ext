@@ -1,24 +1,49 @@
 import { useSelection } from '@/hooks/useSelection';
-import { Popover, Snackbar } from '@mui/material';
+import { IconButton, Popover, Popper, Snackbar,Box } from '@mui/material';
 import { PromptMenu } from './components/PromptsMenu';
 import { usePromptManager } from './hooks/usePromptManager';
 import { PromptResult } from './components/PromptsMenu/PromptResult';
 import { useGetPromptResponse } from './hooks/useGetPromptResponse';
 import { useSnackbar } from './hooks/useSnackbar';
-
+import { useRef, useState } from 'react';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 
 
 function App() {
-  const {open:snackbarOpen, message:snackbarMessage} = useSnackbar()
+  const [isPromptOpen, setPromptOpen]= useState(false);
   const {prompt, handlePromptChange, clearPrompt} = usePromptManager();
-  const {selectedText, selectedNode, resetSelectionData, currentRange} = useSelection();
-  const {data, error, loading, clearData:clearServerData, refetchData} = useGetPromptResponse(prompt, selectedText); 
+  const currentSelectionData = useSelection();
+  const prevSelectionDataRef = useRef(currentSelectionData);
+  const {data, error, loading, clearData:clearServerData, refetchData} = useGetPromptResponse(prompt, prevSelectionDataRef.current.selectedText); 
+  const {open:snackbarOpen, message:snackbarMessage} = useSnackbar();
+
+
+  // setting prevSelection data only if we would have selected a text, current selected text can become null since focus can get lost while navigatingi n prompt menu
+  if(currentSelectionData.selectedText){
+    prevSelectionDataRef.current = currentSelectionData;
+  }
+
+  const { selectedNode, currentRange} = prevSelectionDataRef.current;
+  
+
+  const syncPrevSelectionData = () => {
+    prevSelectionDataRef.current = currentSelectionData;
+  }
+
+  const openPrompt = () => {
+    setPromptOpen(true)
+  }
+
+  const closePrompt = () => {
+    setPromptOpen(false)
+  }
 
 
   const handlePromptClose = () => {
     clearPrompt();
-    resetSelectionData();
+    syncPrevSelectionData();
     clearServerData();
+    closePrompt();
   }
 
   const handleInsert = (text: string) => {
@@ -53,12 +78,47 @@ function App() {
 
   }
 
-  const open = !!selectedText;
+  const isTextSelected = !!currentSelectionData.selectedText;
+
+
+  if(isTextSelected && !isPromptOpen){
+    return (
+      <Popper
+      open={true}
+      anchorEl={selectedNode.element}
+      placement="right"
+      sx={(theme) => ({
+        zIndex: theme.zIndex.popper
+      })}
+      >
+        <Box sx={(theme) => ({
+          backgroundColor: theme.palette.primary.dark,
+          borderRadius: '50%',
+          width: '30px',
+          height: '30px',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center'
+        })}>
+          <IconButton sx={{
+            border: `2px white solid`,
+            transform: 'scale(0.7)'
+          }} size="small" onClick={openPrompt}>
+            <AutoAwesomeIcon  sx={(theme) => ({
+              color: theme.palette.background.default
+            })}/>
+          </IconButton>
+        </Box>
+      </Popper>
+    )
+  }
+
+
 
  return (
       <>
           <Popover
-          open={open}
+          open={isPromptOpen}
           anchorOrigin={{
             vertical: 'bottom',
             horizontal: 'left',
