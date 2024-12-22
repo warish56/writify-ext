@@ -3,11 +3,6 @@ const { getAiResponse } = require('../controller/ai');
 
 const router = express.Router();
 
-const tempData = {
-    summary: "This is a summary",
-    responses: ["This is a response", "This is another response"]
-}
-
 router.post('/', async (req, res) => {
     try {
         const {text, prompt} = req.body;

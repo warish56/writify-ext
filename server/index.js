@@ -5,6 +5,30 @@ const bodyParser = require('body-parser');
 
 const aiRoutes = require('./routes/ai');
 const creditsRoutes = require('./routes/credits');
+const authRoutes = require('./routes/auth');
+const userRoutes = require('./routes/user');
+
+const {
+  initAppWriteSdk,
+  prepareDatabase
+} = require('./db/init')
+
+const {
+  preparePlanCollection,
+  seedPlansCollection
+} = require('./db/plan')
+
+const {
+  prepareUserCollection
+} = require('./db/user')
+
+const {
+  prepareAccountsCollection
+} = require('./db/accounts')
+
+const {
+  prepareOtpCollection
+} = require('./db/otp')
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -22,9 +46,31 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('/ai', aiRoutes);
 app.use('/credits', creditsRoutes);
+app.use('/auth', authRoutes);
+app.use('/user', userRoutes);
 
 
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+const initializeDbAndCollections = async () => {
+  try{
+    
+      await initAppWriteSdk();
+      await prepareDatabase();
+      await preparePlanCollection();
+      await seedPlansCollection();
+      await prepareUserCollection();
+      await prepareAccountsCollection();
+      await prepareOtpCollection();
+
+  }catch(err){
+    console.log(err);
+    throw new Error(`Failed to initialize DB - ${err}`)
+  }
+}
+
+initializeDbAndCollections().then(() => {
+  app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+  });
+})
+
 
