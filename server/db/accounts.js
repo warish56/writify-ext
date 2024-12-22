@@ -1,12 +1,12 @@
 const sdk = require("node-appwrite");
-const {db, client} = require('./init')
+const {dbValues} = require('./init')
 const { getExistingCollection } = require("./utils");
 const { Plans } = require("../constants/plans");
 
-const databases = new sdk.Databases(client);
-
 const COLLECTION_NAME = 'Accounts';
-let collection;
+const  collectionData = {
+    collection: undefined
+};
 
 /**
  * Schema
@@ -15,24 +15,25 @@ let collection;
  */
 
 const prepareAccountsCollection = async () => {
+    const databases = new sdk.Databases(dbValues.client);
 
-    const exisitingCollection = await getExistingCollection(db, databases, COLLECTION_NAME);
-
+    const exisitingCollection = await getExistingCollection(dbValues.db, databases, COLLECTION_NAME);
 
     if(exisitingCollection){
-        collection = exisitingCollection;
+        collectionData.collection = exisitingCollection;
         return;
     }
 
-    collection = await databases.createCollection(
-        db.$id,
+    collectionData.collection = await databases.createCollection(
+        dbValues.db.$id,
         sdk.ID.unique(),
         COLLECTION_NAME
     );
 
+    const collection = collectionData.collection;
 
     await databases.createStringAttribute(
-        db.$id,
+        dbValues.db.$id,
         collection.$id,
         'user_id',
         255,
@@ -40,7 +41,7 @@ const prepareAccountsCollection = async () => {
     );
 
     await databases.createDatetimeAttribute(
-        db.$id,
+        dbValues.db.$id,
         collection.$id,
         'payment_date',
         false, 
@@ -48,7 +49,7 @@ const prepareAccountsCollection = async () => {
     );
 
     await databases.createIntegerAttribute(
-        db.$id,
+        dbValues.db.$id,
         collection.$id,
         'plan_id',
         true, 
@@ -57,7 +58,8 @@ const prepareAccountsCollection = async () => {
 }
 
 const getAccountWithUserId = async (userId) => {
-    const result = await databases.listDocuments(db.$id, collection.$id, [
+    const databases = new sdk.Databases(dbValues.client);
+    const result = await databases.listDocuments(dbValues.db.$id, collectionData.collection.$id, [
         Query.equal("user_id", userId)
     ]);
     return result.documents[0];
@@ -71,9 +73,11 @@ const createAccount = async (userId) => {
         throw {message: "account already exists", message: 400};
     }
 
+
+    const databases = new sdk.Databases(dbValues.client);
     const document = await databases.createDocument(
-        db.$id,
-        collection.$id,
+        dbValues.db.$id,
+        collectionData.collection.$id,
         sdk.ID.unique(),
         {
             user_id: sdk.ID.unique(),
@@ -91,9 +95,10 @@ const updateAccountPayment = async (userId) => {
         throw new {message: "Invalid account", status: 404}
     }
 
+    const databases = new sdk.Databases(dbValues.client);
     const updatedDocument = await databases.updateDocument(
-        db.$id,
-        collection.$id,
+        dbValues.db.$id,
+        collectionData.collection.$id,
         account.$id,
         { 
             payment_date: Date.now()
@@ -108,10 +113,11 @@ const updateAccountPlan = async (userId, planId) => {
     if(!account){
         throw {message: "Invalid account", status: 404}
     }
-
+    
+    const databases = new sdk.Databases(dbValues.client);
     const updatedDocument = await databases.updateDocument(
-        db.$id,
-        collection.$id,
+        dbValues.db.$id,
+        collectionData.collection.$id,
         account.$id,
         { 
             payment_date: Date.now(),
@@ -124,7 +130,7 @@ const updateAccountPlan = async (userId, planId) => {
 
 
 module.exports = {
-    collection,
+    collectionData,
     prepareAccountsCollection,
     createAccount,
     updateAccountPlan,

@@ -1,12 +1,11 @@
 const sdk = require("node-appwrite");
-const {db, client} = require('./init')
+const {dbValues} = require('./init')
 const { getExistingCollection } = require("./utils");
 
-const databases = new sdk.Databases(client);
-
 const COLLECTION_NAME = 'Otp';
-let collection;
-
+const  collectionData = {
+    collection: undefined
+};
 /**
  * Schema
  *  email     otp  
@@ -15,32 +14,33 @@ let collection;
 
 const prepareOtpCollection = async () => {
 
-    const exisitingCollection = await getExistingCollection(db, databases, COLLECTION_NAME);
+    const databases = new sdk.Databases(dbValues.client);
+    const exisitingCollection = await getExistingCollection(dbValues.db, databases, COLLECTION_NAME);
 
 
     if(exisitingCollection){
-        collection = exisitingCollection;
+        collectionData.collection = exisitingCollection;
         return;
     }
 
-    collection = await databases.createCollection(
-        db.$id,
+    collectionData.collection = await databases.createCollection(
+        dbValues.db.$id,
         sdk.ID.unique(),
         COLLECTION_NAME
     );
 
 
     await databases.createStringAttribute(
-        db.$id,
-        collection.$id,
+        dbValues.db.$id,
+        collectionData.collection.$id,
         'email',
         255,
         true
     );
 
     await databases.createIntegerAttribute(
-        db.$id,
-        collection.$id,
+        dbValues.db.$id,
+        collectionData.collection.$id,
         'otp',
         true, 
     );
@@ -48,7 +48,8 @@ const prepareOtpCollection = async () => {
 }
 
 const getOtpWithEmail = async (email) => {
-    const result = await databases.listDocuments(db.$id, collection.$id, [
+    const databases = new sdk.Databases(dbValues.client);
+    const result = await databases.listDocuments(dbValues.db.$id, collectionData.collection.$id, [
         Query.equal("email", email)
     ]);
     return result.documents[0];
@@ -59,9 +60,10 @@ const getOtpWithEmail = async (email) => {
 
 const updateOtp = async (email, otp) => {
     const document = getOtpWithEmail(email);
+    const databases = new sdk.Databases(dbValues.client);
     const updatedDocument = await databases.updateDocument(
-        db.$id,
-        collection.$id,
+        dbValues.db.$id,
+        collectionData.collection.$id,
         document.$id,
         { 
             otp
@@ -79,9 +81,10 @@ const createOrUpdateOtp = async (email, otp) => {
         return;
     }
 
+    const databases = new sdk.Databases(dbValues.client);
     const document = await databases.createDocument(
-        db.$id,
-        collection.$id,
+        dbValues.db.$id,
+        collectionData.collection.$id,
         sdk.ID.unique(),
         {
             email,
@@ -94,7 +97,7 @@ const createOrUpdateOtp = async (email, otp) => {
 
 
 module.exports = {
-    collection,
+    collectionData,
     prepareOtpCollection,
     createOrUpdateOtp,
     getOtpWithEmail

@@ -1,15 +1,13 @@
 const sdk = require("node-appwrite");
-const {db, client} = require('./init');
+const {dbValues} = require('./init');
 const { getExistingCollection } = require("./utils");
-
-
-const databases = new sdk.Databases(client);
 
 const {Query} =sdk
 
 const COLLECTION_NAME = 'User';
-let collection;
-
+const  collectionData = {
+    collection: undefined
+};
 /**
  * Schema
  *  id        email 
@@ -18,26 +16,26 @@ let collection;
 
 const prepareUserCollection = async () => {
 
-
-    const exisitingCollection = await getExistingCollection(db, databases, COLLECTION_NAME);
+    const databases = new sdk.Databases(dbValues.client);
+    const exisitingCollection = await getExistingCollection(dbValues.db, databases, COLLECTION_NAME);
 
 
     if(exisitingCollection){
-        collection = exisitingCollection;
+        collectionData.collection = exisitingCollection;
         return;
     }
 
 
-    collection = await databases.createCollection(
-        db.$id,
+    collectionData.collection = await databases.createCollection(
+        dbValues.db.$id,
         sdk.ID.unique(),
         COLLECTION_NAME
     );
 
 
     await databases.createStringAttribute(
-        db.$id,
-        collection.$id,
+        dbValues.db.$id,
+        collectionData.collection.$id,
         'email',
         255,
         true
@@ -46,7 +44,8 @@ const prepareUserCollection = async () => {
 
 
 const getUserWithEmail = async (email) => {
-    const result = await databases.listDocuments(db.$id, collection.$id, [
+    const databases = new sdk.Databases(dbValues.client);
+    const result = await databases.listDocuments(dbValues.db.$id, collectionData.collection.$id, [
         Query.equal("email", email)
     ]);
     return result.documents[0];
@@ -58,9 +57,10 @@ const createUser = async (email) => {
         throw {message: "User already exists", status: 400};
     }
 
+    const databases = new sdk.Databases(dbValues.client);
     const document = await databases.createDocument(
-        db.$id,
-        collection.$id,
+        dbValues.db.$id,
+        collectionData.collection.$id,
         sdk.ID.unique(),
         {
             id: sdk.ID.unique(),
@@ -72,7 +72,7 @@ const createUser = async (email) => {
 
 
 module.exports = {
-    collection,
+    collectionData,
     prepareUserCollection,
     createUser,
     getUserWithEmail

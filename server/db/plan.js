@@ -1,14 +1,13 @@
 const sdk = require("node-appwrite");
 
-const {db, client} = require('./init');
+const {dbValues} = require('./init');
 const { Plans } = require("../constants/plans");
 const { getExistingCollection } = require("./utils");
 
-const databases = new sdk.Databases(client);
-
 const COLLECTION_NAME = 'Plan';
-let collection;
-
+const  collectionData = {
+    collection: undefined
+};
 
 /**
  * Schema
@@ -17,12 +16,12 @@ let collection;
  */
 const preparePlanCollection = async () => {
 
-   
-    const exisitingCollection = await getExistingCollection(db, databases, COLLECTION_NAME);
+    const databases = new sdk.Databases(dbValues.client);   
+    const exisitingCollection = await getExistingCollection(dbValues.db, databases, COLLECTION_NAME);
 
 
     if(exisitingCollection){
-        collection = exisitingCollection;
+        collectionData.collection = exisitingCollection;
         return;
     }
 
@@ -30,30 +29,30 @@ const preparePlanCollection = async () => {
      *  will only be executed if the collection was not created
      */
 
-    collection = await databases.createCollection(
-        db.$id,
+    collectionData.collection = await databases.createCollection(
+        dbValues.db.$id,
         sdk.ID.unique(),
         COLLECTION_NAME
     );
 
 
     await databases.createIntegerAttribute(
-        db.$id,
-        collection.$id,
+        dbValues.db.$id,
+        collectionData.collection.$id,
         'id',
         true, 
     );
 
     await databases.createIntegerAttribute(
-        db.$id,
-        collection.$id,
+        dbValues.db.$id,
+        collectionData.collection.$id,
         'credits',
         true,
     );
 
     await databases.createIntegerAttribute(
-        db.$id,
-        collection.$id,
+        dbValues.db.$id,
+        collectionData.collection.$id,
         'price',
         true,
     );
@@ -61,29 +60,30 @@ const preparePlanCollection = async () => {
 
 const seedPlansCollection = async () => {
 
-    const exisitingCollection = await getExistingCollection(db, databases, COLLECTION_NAME);
+    const databases = new sdk.Databases(dbValues.client);
+    const exisitingCollection = await getExistingCollection(dbValues.db, databases, COLLECTION_NAME);
     if(exisitingCollection){
         return;
     }
 
 
     await databases.createDocument(
-        db.$id,
-        collection.$id,
+        dbValues.db.$id,
+        collectionData.collection.$id,
         sdk.ID.unique(),
         Plans.FREE
     );
 
     await databases.createDocument(
-        db.$id,
-        collection.$id,
+        dbValues.db.$id,
+        collectionData.collection.$id,
         sdk.ID.unique(),
         Plans.PRO
     );
 
     await databases.createDocument(
-        db.$id,
-        collection.$id,
+        dbValues.db.$id,
+        collectionData.collection.$id,
         sdk.ID.unique(),
         Plans.ELITE
     );
@@ -92,13 +92,14 @@ const seedPlansCollection = async () => {
 
 
 const getAllPlans = async () => {
-    const results = await databases.listDocuments(db.$id, collection.$id);
+    const databases = new sdk.Databases(dbValues.client);
+    const results = await databases.listDocuments(dbValues.db.$id, collectionData.collection.$id);
     return results.documents;
 }
 
 
 module.exports = {
-    collection,
+    collectionData,
     preparePlanCollection,
     seedPlansCollection,
     getAllPlans
