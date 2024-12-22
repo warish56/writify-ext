@@ -1,4 +1,3 @@
-import { tooltipClasses } from '@mui/material';
 import { createTheme } from '@mui/material/styles';
 import { grey } from '@mui/material/colors';
 
@@ -11,6 +10,11 @@ declare module '@mui/material/styles' {
     interface TypeText{
         dark:string;
     }
+
+    interface ZIndex{
+        popper:number;
+    }
+
     interface Palette {
       gray: {
         100: string;
@@ -34,6 +38,10 @@ declare module '@mui/material/styles' {
             600: string;
             700: string;
           }
+    }
+
+    interface ZIndexOptions{
+        popper: number;
     }
   
   }
@@ -81,6 +89,9 @@ const palette = {
 
 export const AppTheme = createTheme({
   palette,
+  zIndex: {
+    popper: 100000,
+  },
   shape: {
     borderRadius: 8,
   },

@@ -1,5 +1,5 @@
 import { debounce } from "@/utils"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useState } from "react"
 
 type CustomElement = {
     nodeType: 1;
@@ -10,27 +10,27 @@ type SelectedNode = {
     element: CustomElement | null;
     focusNode: Node | null;
     anchorNode: Node | null;
+    range: Range | null;
+    text: string;
 }
 
-const initialSelectedNode: SelectedNode = {
+const initialSelectionData: SelectedNode = {
     element: null,
     focusNode: null,
-    anchorNode: null
+    anchorNode: null,
+    range: null,
+    text: ''
 }
 
 export const useSelection = () => {
-    const [selectedText, setSelectedText] = useState<string>('');
-    const [selectedNode, setSelectedNode] = useState(initialSelectedNode);
-    const currentRange = useRef<Range | null>(null);
+    const [selectionData, setSelectionData] = useState(initialSelectionData);
 
-    const removeSelectedNode = () => {
-        setSelectedNode(initialSelectedNode)
+    const clearSelectionData = () => {
+        setSelectionData(initialSelectionData)
     }
 
     const resetSelectionData = () => {
-        currentRange.current = null;
-        setSelectedText('');
-        removeSelectedNode();
+        clearSelectionData();
         setTimeout(() => {
             const selection = window.getSelection();
             selection?.empty();
@@ -41,23 +41,24 @@ export const useSelection = () => {
     useEffect(() => {
         const handleSelectionChange = () => {
             const selection = window.getSelection()
-            const value = selection?.toString()?.trim() || ''
+            const selectedText = selection?.toString()?.trim() || ''
             const isTextNode = selection?.anchorNode?.nodeName === "#text";
-            if(value &&  isTextNode && selection.anchorOffset !== selection.focusOffset) {
+            if(selectedText &&  isTextNode && selection.anchorOffset !== selection.focusOffset) {
                 const range = selection.getRangeAt(0);
-                // saving the range for future refrence while inserting text
-                currentRange.current = range;
-                const nodeCoordinates = range.getBoundingClientRect();
-                setSelectedNode({
-                    element: {
-                        // mimicing it as an element since MUI Popover just requires this two properties to work properly
-                        getBoundingClientRect: () => nodeCoordinates,
-                        nodeType: 1 
-                    },
-                    anchorNode: selection?.anchorNode,
-                    focusNode: selection?.focusNode
+                const nodeCoordinates = range.getBoundingClientRect(); 
+                setSelectionData({
+                        element: {
+                            // mimicing it as an element since MUI Popover just requires this two properties to work properly
+                            getBoundingClientRect: () => nodeCoordinates,
+                            nodeType: 1 
+                        },
+                        text: selectedText,
+                        anchorNode: selection?.anchorNode,
+                        focusNode: selection?.focusNode,
+                        range
                 })
-                setSelectedText(value)
+            }else{
+                clearSelectionData();
             }
         }
 
@@ -70,9 +71,13 @@ export const useSelection = () => {
     }, [])
 
     return {
-        selectedText,
-         selectedNode,
+         selectedText: selectionData.text,
+         selectedNode: {
+            element: selectionData.element,
+            focusNode: selectionData.focusNode,
+            anchorNode: selectionData.anchorNode,
+         },
          resetSelectionData,
-         currentRange: currentRange.current
+         currentRange: selectionData.range
         };
 }
