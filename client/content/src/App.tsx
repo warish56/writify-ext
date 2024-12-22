@@ -5,17 +5,25 @@ import { usePromptManager } from './hooks/usePromptManager';
 import { PromptResult } from './components/PromptsMenu/PromptResult';
 import { useGetPromptResponse } from './hooks/useGetPromptResponse';
 import { useSnackbar } from './hooks/useSnackbar';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
+import { useCredits } from './hooks/useCredits';
 
 
 function App() {
+  const {fetchAndInitializeCreditsDataFromServer} = useCredits();
   const [isPromptOpen, setPromptOpen]= useState(false);
   const {prompt, handlePromptChange, clearPrompt} = usePromptManager();
   const currentSelectionData = useSelection();
   const prevSelectionDataRef = useRef(currentSelectionData);
   const {data, error, loading, clearData:clearServerData, refetchData} = useGetPromptResponse(prompt, prevSelectionDataRef.current.selectedText); 
   const {open:snackbarOpen, message:snackbarMessage} = useSnackbar();
+
+
+  // whenever app loads first load the credits data from the server
+  useEffect(() => {
+    fetchAndInitializeCreditsDataFromServer();
+  }, [])
 
 
   // setting prevSelection data only if we would have selected a text, current selected text can become null since focus can get lost while navigatingi n prompt menu
