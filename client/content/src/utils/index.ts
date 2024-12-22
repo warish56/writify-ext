@@ -15,3 +15,8 @@ export const copyToClipBoard = (text:string) => {
     })
     return navigator.clipboard.write([clipboardItem]);
 }
+
+export const sendMessageToWorker = (message:string, data:Record<string, unknown> = {}) => {
+    const appId = chrome.runtime.id;
+    return chrome.runtime.sendMessage({appId, type: message, ...data});
+}

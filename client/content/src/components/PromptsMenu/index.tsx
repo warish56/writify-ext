@@ -66,7 +66,7 @@ export const PromptMenu = ({onAction, children, onClose}:PromptMenuProps) => {
         return (
             <MenuWrapper 
             sx={{
-                minWidth: currCategory === 'custom' ? '400px' : '200px'
+                minWidth: currCategory === 'custom' ? '400px' : '250px'
             }}
             onBack={handleCategoryBack} title={currCategory} onClose={onClose}>
                 { currCategory === 'custom' ?

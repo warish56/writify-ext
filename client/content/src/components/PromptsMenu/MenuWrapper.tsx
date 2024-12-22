@@ -1,6 +1,7 @@
 import { Stack, Typography, IconButton, SxProps, Tooltip } from "@mui/material"
 import CloseIcon from '@mui/icons-material/Close';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { CreditsChip } from "../CreditsChip";
 
 type props = {
     sx?:SxProps;
@@ -14,7 +15,7 @@ export const MenuWrapper = ({children, title, onBack, onClose, showBackButton=tr
     return (
         <Stack sx={{
             gap: '10px',
-            minWidth: '200px',
+            minWidth: '250px',
             maxWidth: '400px',
             maxHeight: '300px',
             padding: '0 0 10px 0',
@@ -50,13 +51,19 @@ export const MenuWrapper = ({children, title, onBack, onClose, showBackButton=tr
                 </Stack>
                 
 
-                <Tooltip title="Close menu">
-                    <IconButton sx={{
-                        marginLeft: 'auto'
-                    }} onClick={onClose}>
-                        <CloseIcon />
-                    </IconButton>
-                </Tooltip>
+                <Stack direction="row" sx={{
+                    alignItems: 'center',
+                    gap: '10px'
+                }}>
+                    <CreditsChip />
+                    <Tooltip title="Close menu">
+                        <IconButton sx={{
+                            marginLeft: 'auto'
+                        }} onClick={onClose}>
+                            <CloseIcon />
+                        </IconButton>
+                    </Tooltip>
+                </Stack>
             </Stack>
             {children}
         </Stack>

@@ -4,6 +4,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 
 const aiRoutes = require('./routes/ai');
+const creditsRoutes = require('./routes/credits');
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -20,6 +21,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('/ai', aiRoutes);
+app.use('/credits', creditsRoutes);
 
 
 app.listen(PORT, () => {

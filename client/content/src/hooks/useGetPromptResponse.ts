@@ -1,16 +1,19 @@
 import { useState, useEffect, useDeferredValue } from 'react';
 import { BG_GET_AI_RESPONSE } from '@/constants';
-import { PromptResponse } from '@/types/Prompt';
+import { PromptResponse } from '@/types/prompt';
+import { useCredits } from './useCredits';
+import { sendMessageToWorker } from '@/utils';
 
 type AiResponseState = (PromptResponse | null)[] | (Error | null)[]
 
 const fetchResponses = async (text: string, prompt:string) => {
-    const response = await chrome.runtime.sendMessage({type: BG_GET_AI_RESPONSE, text, prompt});
+    const response = await sendMessageToWorker(BG_GET_AI_RESPONSE, {text, prompt});
     return response;
 }
 
 
 export const useGetPromptResponse = (prompt:string, text:string) => {
+    const {useAvailableCredits, isCreditsAvailable} = useCredits();
     const [response, setResponse] = useState<AiResponseState>([null, null]);
     const [loading, setLoading] = useState(false);
     const defferedText = useDeferredValue(text);
@@ -24,14 +27,15 @@ export const useGetPromptResponse = (prompt:string, text:string) => {
         const data = await fetchResponses(text, prompt);
         setResponse(data);
         setLoading(false);
+        useAvailableCredits();        
     }
     
 
     useEffect(() => {
-        if(defferedText && prompt) {
+        if(defferedText && prompt && isCreditsAvailable) {
             fetchData();
         }
-    }, [defferedText, prompt]);
+    }, [defferedText, prompt, isCreditsAvailable]);
     
     return {
         data: response[0] as PromptResponse | null, 
