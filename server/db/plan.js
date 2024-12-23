@@ -4,6 +4,7 @@ const {dbValues} = require('./init');
 const { Plans } = require("../constants/plans");
 const { getExistingCollection } = require("./utils");
 
+const {Query} = sdk
 const COLLECTION_NAME = 'Plan';
 const  collectionData = {
     collection: undefined
@@ -22,19 +23,17 @@ const preparePlanCollection = async () => {
 
     if(exisitingCollection){
         collectionData.collection = exisitingCollection;
-        return;
+    }else{
+        collectionData.collection = await databases.createCollection(
+            dbValues.db.$id,
+            sdk.ID.unique(),
+            COLLECTION_NAME
+        );
     }
 
-    /**
-     *  will only be executed if the collection was not created
-     */
-
-    collectionData.collection = await databases.createCollection(
-        dbValues.db.$id,
-        sdk.ID.unique(),
-        COLLECTION_NAME
-    );
-
+    if(collectionData.collection.attributes.length === 3){
+        return;
+    }
 
     await databases.createIntegerAttribute(
         dbValues.db.$id,
@@ -60,11 +59,12 @@ const preparePlanCollection = async () => {
 
 const seedPlansCollection = async () => {
 
-    const databases = new sdk.Databases(dbValues.client);
-    const exisitingCollection = await getExistingCollection(dbValues.db, databases, COLLECTION_NAME);
-    if(exisitingCollection){
+    const allPlans = await getAllPlans();
+    if(allPlans.length === Object.keys(Plans).length){
         return;
     }
+
+    const databases = new sdk.Databases(dbValues.client);
 
 
     await databases.createDocument(
@@ -97,10 +97,19 @@ const getAllPlans = async () => {
     return results.documents;
 }
 
+const getPlanDetails = async (planId) => {
+    const databases = new sdk.Databases(dbValues.client);
+    const results = await databases.listDocuments(dbValues.db.$id, collectionData.collection.$id,[
+        Query.equal("id", planId)
+    ]);
+    return results.documents[0];
+}
+
 
 module.exports = {
     collectionData,
     preparePlanCollection,
     seedPlansCollection,
-    getAllPlans
+    getAllPlans,
+    getPlanDetails
 }

@@ -3,6 +3,8 @@ const {dbValues} = require('./init')
 const { getExistingCollection } = require("./utils");
 const { Plans } = require("../constants/plans");
 
+const {Query} =sdk
+
 const COLLECTION_NAME = 'Accounts';
 const  collectionData = {
     collection: undefined
@@ -21,16 +23,20 @@ const prepareAccountsCollection = async () => {
 
     if(exisitingCollection){
         collectionData.collection = exisitingCollection;
-        return;
+    }else{
+        collectionData.collection = await databases.createCollection(
+            dbValues.db.$id,
+            sdk.ID.unique(),
+            COLLECTION_NAME
+        );    
     }
 
-    collectionData.collection = await databases.createCollection(
-        dbValues.db.$id,
-        sdk.ID.unique(),
-        COLLECTION_NAME
-    );
 
     const collection = collectionData.collection;
+
+    if(collection.attributes.length === 3){
+        return;
+    }
 
     await databases.createStringAttribute(
         dbValues.db.$id,
@@ -45,7 +51,6 @@ const prepareAccountsCollection = async () => {
         collection.$id,
         'payment_date',
         false, 
-        '',
     );
 
     await databases.createIntegerAttribute(
@@ -65,11 +70,18 @@ const getAccountWithUserId = async (userId) => {
     return result.documents[0];
 }
 
+const getAllAccounts = async () => {
+    const databases = new sdk.Databases(dbValues.client);
+    const result = await databases.listDocuments(dbValues.db.$id, collectionData.collection.$id);
+    return result.documents;
+}
+
 
 
 
 const createAccount = async (userId) => {
-    if(getAccountWithUserId(userId)){
+    const account = await getAccountWithUserId(userId);
+    if(account){
         throw {message: "account already exists", message: 400};
     }
 
@@ -80,8 +92,8 @@ const createAccount = async (userId) => {
         collectionData.collection.$id,
         sdk.ID.unique(),
         {
-            user_id: sdk.ID.unique(),
-            payment_date: Date.now(),
+            user_id: userId,
+            payment_date: new Date().toISOString(),
             plan_id: Plans.FREE.id
         }
     );
@@ -135,6 +147,7 @@ module.exports = {
     createAccount,
     updateAccountPlan,
     updateAccountPayment,
+    getAllAccounts,
     getAccountWithUserId
 }
 

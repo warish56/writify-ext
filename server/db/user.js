@@ -22,17 +22,18 @@ const prepareUserCollection = async () => {
 
     if(exisitingCollection){
         collectionData.collection = exisitingCollection;
-        return;
+    }else{
+        collectionData.collection = await databases.createCollection(
+            dbValues.db.$id,
+            sdk.ID.unique(),
+            COLLECTION_NAME
+        );
     }
 
-
-    collectionData.collection = await databases.createCollection(
-        dbValues.db.$id,
-        sdk.ID.unique(),
-        COLLECTION_NAME
-    );
-
-
+    if(collectionData.collection.attributes.length == 1){
+        return;
+    }
+    
     await databases.createStringAttribute(
         dbValues.db.$id,
         collectionData.collection.$id,
@@ -53,7 +54,8 @@ const getUserWithEmail = async (email) => {
 
 
 const createUser = async (email) => {
-    if(getUserWithEmail(email)){
+    const userWithEmail = await getUserWithEmail(email);
+    if(userWithEmail){
         throw {message: "User already exists", status: 400};
     }
 
@@ -63,7 +65,6 @@ const createUser = async (email) => {
         collectionData.collection.$id,
         sdk.ID.unique(),
         {
-            id: sdk.ID.unique(),
             email: email,
         }
     );

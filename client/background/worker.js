@@ -1,6 +1,7 @@
 
 import { API_URL, Messages, Routes } from './constants.js';
 import {getAvailableCredits, updateAvailableCredits, getTotalCredits, getCreditsData, fetchAndStoreCreditsData} from './credits.js'
+import {fetchAndStoreUserData, getUserDetails} from './user.js'
 
 const fetchAiResponse = async (text, prompt, sendResponse) => {
     fetch(`${API_URL}${Routes.AI}`, {
@@ -50,6 +51,16 @@ const handleCreditsMessages = async (message, sendResponse) => {
             sendResponse({success: true})
         }
 
+        if(message.type === Messages.BG_FETCH_USER_DETAILS) {
+            const data = await fetchAndStoreUserData(message.email);
+            sendResponse({success: true, data})
+        }
+
+        if(message.type === Messages.BG_GET_USER_DETAILS) {
+            const data = await getUserDetails();
+            sendResponse({success: true, data})
+        }
+
     }catch(err){
         sendResponse({success: false, error:err});
     }
@@ -76,9 +87,18 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         Messages.BG_GET_TOTAL_CREDITS,
         Messages.BG_GET_CREDITS_DATA,
         Messages.BG_FETCH_CREDITS_DATA,
+        Messages.BG_FETCH_USER_DETAILS,
+        Messages.BG_GET_USER_DETAILS
         ].includes(message.type)){
         handleCreditsMessages(message, sendResponse);
         return true;
     }
 
+});
+
+
+chrome.action.onClicked.addListener((tab) => {
+    chrome.tabs.create({
+        url: chrome.runtime.getURL("content/dist/web/web/login/index.html")
+    });
 });

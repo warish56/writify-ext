@@ -1,30 +1,20 @@
 
-const mailgun = require("mailgun-js");
-const mg = mailgun({ 
-    apiKey: process.env.MAIL_GUN_API_KEY, 
-    domain: "appSphere.com" 
-});
+const sgMail = require('@sendgrid/mail')
+sgMail.setApiKey(process.env.SENDGRID_API_KEY)
 
 
-const sendMail = (email, subject, text) => {
-
-    const data = {
-        from: "appsphere.com",
-        to: email,
+const sendMail = async (email, subject, text, html) => {
+   
+    const msg = {
+        to: email, // Change to your recipient
+        from: 'mdwarish56@gmail.com', // Change to your verified sender
         subject: subject,
         text,
-    };
-
-    return new Promise((res, rej) => {
-        mg.messages().send(data, (error, body) => {
-            if (error) {
-                rej(error)
-            } else {
-                res(body)
-            }
-        });
-    })
+        html,
+      }
+      return sgMail .send(msg)
 }
+       
 
 module.exports ={
     sendMail
