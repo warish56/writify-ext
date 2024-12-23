@@ -1,13 +1,13 @@
 
 
 const generateOtp = (length=6) => {
-    let opt = '';
+    let otp = '';
 
     for(let i=0; i<length; i++){
-        otp +=  Math.round(Math.random() % 9);
+        otp +=  Math.floor(Math.random() * 10);
     }
 
-    return otp;
+    return Number(otp);
 }
 
 module.exports = {

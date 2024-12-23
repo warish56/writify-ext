@@ -2,6 +2,9 @@ const sdk = require("node-appwrite");
 const {dbValues} = require('./init')
 const { getExistingCollection } = require("./utils");
 
+const {Query} =sdk
+
+
 const COLLECTION_NAME = 'Otp';
 const  collectionData = {
     collection: undefined
@@ -20,14 +23,18 @@ const prepareOtpCollection = async () => {
 
     if(exisitingCollection){
         collectionData.collection = exisitingCollection;
-        return;
+    }else{
+        collectionData.collection = await databases.createCollection(
+            dbValues.db.$id,
+            sdk.ID.unique(),
+            COLLECTION_NAME
+        );
     }
 
-    collectionData.collection = await databases.createCollection(
-        dbValues.db.$id,
-        sdk.ID.unique(),
-        COLLECTION_NAME
-    );
+ 
+    if(collectionData.collection.attributes.length === 2 ){
+        return;
+    }
 
 
     await databases.createStringAttribute(
@@ -59,7 +66,7 @@ const getOtpWithEmail = async (email) => {
 
 
 const updateOtp = async (email, otp) => {
-    const document = getOtpWithEmail(email);
+    const document = await getOtpWithEmail(email);
     const databases = new sdk.Databases(dbValues.client);
     const updatedDocument = await databases.updateDocument(
         dbValues.db.$id,
@@ -75,8 +82,8 @@ const updateOtp = async (email, otp) => {
 
 
 const createOrUpdateOtp = async (email, otp) => {
-
-    if(getOtpWithEmail(email)){
+    const otpWithEmail = await getOtpWithEmail(email);
+    if(otpWithEmail){
         updateOtp(email, otp);
         return;
     }

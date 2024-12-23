@@ -6,6 +6,8 @@ export const Messages = {
     BG_GET_TOTAL_CREDITS: 'BG_GET_TOTAL_CREDITS',
     BG_GET_CREDITS_DATA: 'BG_GET_CREDITS_DATA',
     BG_FETCH_CREDITS_DATA: 'BG_FETCH_CREDITS_DATA',
+    BG_FETCH_USER_DETAILS: 'BG_FETCH_USER_DETAILS',
+    BG_GET_USER_DETAILS: 'BG_GET_USER_DETAILS',
 
 }
 
@@ -15,5 +17,6 @@ export const API_URL = 'http://localhost:8000';
 
 export const Routes = {
     AI: '/ai',
-    credits: '/credits'
+    credits: '/credits',
+    userDetails: '/user/details'
 }

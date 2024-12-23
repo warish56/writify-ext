@@ -3,8 +3,8 @@ import react from '@vitejs/plugin-react'
 import { resolve } from 'path'
 import svgr from 'vite-plugin-svgr'
 
-
 export default defineConfig({
+  base: '/content/dist/web',
   plugins: [
     react(),
     svgr({
@@ -21,25 +21,21 @@ export default defineConfig({
     }
   },
   define: {
-    // Replace process.env with only the allowed environment variables
     'process.env.NODE_ENV': `"${process.env.NODE_ENV}"`,
   },
   build: {
-    lib: {
-      entry: resolve(__dirname, 'src/main.tsx'),
-      name: 'WriteAI',
-      fileName: 'content',
-      formats: ['es'],
-    },
     rollupOptions: {
+      input: resolve(__dirname, 'web/login/index.html'),
       output: {
-        entryFileNames: `[name].js`,
-        chunkFileNames: `[name].js`,
-        assetFileNames: `[name].[ext]`
+        entryFileNames: '[name].js',
+        chunkFileNames: 'chunks/[name].[hash].js',
+        assetFileNames: 'assets/[name].[hash][extname]'
       }
     },
-    outDir: 'dist',
+    outDir: 'dist/web',
     emptyOutDir: true,
+    sourcemap: false,
+    target: 'es2015', 
   },
   resolve: {
     alias: {
