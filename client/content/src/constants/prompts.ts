@@ -88,7 +88,7 @@ export const Prompts = {
 
     custom:{
         heading: 'Custom Input',
-        description: 'Enetr the prompt of your choice',
+        description: 'Enter the prompt of your choice',
         list: []
     }
 }
