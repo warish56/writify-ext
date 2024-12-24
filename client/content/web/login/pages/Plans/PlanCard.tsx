@@ -1,25 +1,5 @@
-import { Box, Card, CardContent, Typography, Stack, Button, Chip } from '@mui/material';
+import { Card, CardContent, Typography, Stack, Button, Chip } from '@mui/material';
 import StarIcon from '@mui/icons-material/Star';
-
-const Plans = {
-    FREE: {
-        id: 0,
-        price: 0,
-        credits: 25
-    },
-
-    PRO: {
-        id: 1,
-        price: 5,
-        credits: 200
-    },
-
-    ELITE: {
-        id: 2,
-        price: 10,
-        credits: 500
-    },
-};
 
 type planCardProps = {
     plan: {
@@ -30,7 +10,7 @@ type planCardProps = {
     currentPlan: boolean
 }
 
-const PlanCard = ({ plan, name, currentPlan }: planCardProps) => {
+export const PlanCard = ({ plan, name, currentPlan }: planCardProps) => {
     return (
         <Card
             sx={{
@@ -51,13 +31,15 @@ const PlanCard = ({ plan, name, currentPlan }: planCardProps) => {
         >
             {currentPlan && (
                 <Chip
-                    label="Your Current Plan"
+                    label="Current Plan"
                     color="secondary"
+                    size="small"
                     sx={{
                         position: 'absolute',
                         top: 16,
                         right: 16,
                         fontWeight: 'bold',
+                        border: `1px white solid`
                     }}
                 />
             )}
@@ -98,7 +80,7 @@ const PlanCard = ({ plan, name, currentPlan }: planCardProps) => {
                         variant="caption"
                         color={currentPlan ? 'primary.contrastText' : 'text.secondary'}
                     >
-                        / per month
+                        / per day
                     </Typography>
                 </Stack>
 
@@ -118,74 +100,3 @@ const PlanCard = ({ plan, name, currentPlan }: planCardProps) => {
         </Card>
     );
 };
-
-const PlansPage = () => {
-    const currentPlanId = 1; // Example: PRO plan is the current plan
-
-    return (
-        <Box
-            sx={{
-                minHeight: '100vh',
-                backgroundColor: 'background.default',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'flex-start',
-                py: 4,
-            }}
-        >
-            <Typography variant="h1" color="text.primary" gutterBottom sx={{ textAlign: 'center', mb: 3 }}>
-                Choose Your Plan
-            </Typography>
-            <Typography
-                variant="h3"
-                color="text.secondary"
-                sx={{ textAlign: 'center', maxWidth: '600px', mb: 5 }}
-            >
-                Pick the best plan that suits your needs and enjoy the benefits of our service! Upgrade anytime as you grow.
-            </Typography>
-            <Stack
-                direction="row"
-                spacing={4}
-                sx={{
-                    width: '100%',
-                    maxWidth: '800px',
-                    mt: 2,
-                    justifyContent: 'center',
-                    alignItems: 'stretch',
-                    flexBasis: '400px',
-                }}
-            >
-                {Object.entries(Plans).map(([name, plan]) => (
-                    <PlanCard
-                        plan={plan}
-                        name={name}
-                        key={plan.id}
-                        currentPlan={plan.id === currentPlanId}
-                    />
-                ))}
-            </Stack>
-
-            <Box
-                component="footer"
-                sx={{
-                    width: '100%',
-                    mt: 'auto',
-                    py: 3,
-                    backgroundColor: 'primary.main',
-                    textAlign: 'center',
-                    color: 'primary.contrastText',
-                }}
-            >
-                <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
-                    Ready to take your experience to the next level?
-                </Typography>
-                <Typography variant="body2" sx={{ mt: 1 }}>
-                    Upgrade to a premium plan and enjoy exclusive benefits and more credits!
-                </Typography>
-            </Box>
-        </Box>
-    );
-};
-
-export default PlansPage;

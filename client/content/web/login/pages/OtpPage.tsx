@@ -7,6 +7,8 @@ import { useOtp } from '../hooks/useOtp';
 import { useSnackbar } from '../hooks/useSnackbar';
 import { sendMessageToWorker } from '../utils';
 import { BG_FETCH_USER_DETAILS } from '../constants/worker';
+import { WorkerResponse } from '../types/worker';
+import { ServerError } from '../types/api';
 
 export const OtpPage = () => {
     const [otp, setOtp] = useState('');
@@ -22,24 +24,29 @@ export const OtpPage = () => {
         e.preventDefault();
         const response = await verifyOtp(email || '', otp)
         const [result, error] = response
+
         if(error || result?.error){
             showSnackbar({
                 message: result?.error?.message || error?.message || '',
                 autoHide: 3000,
                 type: 'error'
             })
+            return;
         }
 
-       const [_, userError] =  await sendMessageToWorker<[unknown, unknown]>(BG_FETCH_USER_DETAILS,{email});
-
-        if(userError){
+       const workerResponse =  await sendMessageToWorker<WorkerResponse<[unknown, ServerError]>>(BG_FETCH_USER_DETAILS,{email});
+        const {success, data: serverResponse} = workerResponse;
+        const [_, serverError] = serverResponse ?? [];
+        if(!success || serverError){
                 showSnackbar({
-                    message: userError?.message || 'Something went wrong in user',
+                    message: serverError.message ??  'Something went wrong in user',
                     autoHide: 3000,
                     type: 'error'
                 })
         }else{
-            navigate('/success');
+            navigate('/plans',{
+                replace: true
+            });
         }
         
     }
