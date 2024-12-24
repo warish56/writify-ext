@@ -1,6 +1,6 @@
 
 const express = require('express');
-const { loginUser , verifyOtp, createUserInDb } = require('../controller/auth');
+const { loginUser , verifyOtp, createUserInDbIfNotExists } = require('../controller/auth');
 const router = express.Router();
 
 router.post('/login', async (req, res) => {
@@ -27,7 +27,7 @@ router.post('/verify-otp', async (req, res) => {
     try {
         const {email, otp} = req.body;
         await verifyOtp(email, otp);
-        await createUserInDb(email);
+        await createUserInDbIfNotExists(email);
         res.json({
             data: {
                 message: 'User authenticated'

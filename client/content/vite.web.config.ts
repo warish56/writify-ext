@@ -34,7 +34,7 @@ export default defineConfig({
     },
     outDir: 'dist/web',
     emptyOutDir: true,
-    sourcemap: false,
+    sourcemap: true,
     target: 'es2015', 
   },
   resolve: {

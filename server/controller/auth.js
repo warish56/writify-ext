@@ -1,6 +1,6 @@
 const { createAccount } = require("../db/accounts");
 const { createOrUpdateOtp, getOtpWithEmail } = require("../db/otp");
-const { createUser } = require("../db/user");
+const { createUser, getUserWithEmail } = require("../db/user");
 const { sendMail } = require("../services/mailer");
 const { generateOtp } = require("../utils/otp")
 
@@ -26,7 +26,11 @@ const verifyOtp = async (email, otp) => {
     return true;
 }
 
-const createUserInDb = async (email) => {
+const createUserInDbIfNotExists = async (email) => {
+    const userWithEmail = await getUserWithEmail(email);
+    if(userWithEmail){
+        return;
+    }
     const userDocument = await createUser(email);
     await createAccount(String(userDocument.$id));
 }
@@ -34,5 +38,5 @@ const createUserInDb = async (email) => {
 module.exports = {
     loginUser,
     verifyOtp,
-    createUserInDb
+    createUserInDbIfNotExists
 }

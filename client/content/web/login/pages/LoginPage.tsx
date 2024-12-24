@@ -23,7 +23,7 @@ export const LoginPage = () => {
                     type: 'error'
                 })
             }else{
-                navigate(`/otp?email=${email}`)
+                navigate(`/auth/otp?email=${email}`)
                 showSnackbar({
                     message: 'OTP sent to your email',
                     autoHide: 3000,
