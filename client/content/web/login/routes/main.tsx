@@ -7,6 +7,7 @@ import { useSnackbar } from "../hooks/useSnackbar"
 
 import { LoginPage } from '../pages/LoginPage'
 import { OtpPage } from "../pages/OtpPage"
+import PlansPage from "../pages/PlansPage"
 
 
 export const MainRoute = () => {
@@ -17,6 +18,7 @@ export const MainRoute = () => {
             <Routes>
                 <Route path="login" element={<LoginPage />} />
                 <Route path="otp" element={<OtpPage />} />
+                <Route path="plans" element={<PlansPage />} />
             </Routes>
             <Snackbar
                 open={snackbarOpen}

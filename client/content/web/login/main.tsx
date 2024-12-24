@@ -14,7 +14,7 @@ import '@fontsource/roboto/700.css';
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <ThemeProvider theme={AppTheme}>
-        <MemoryRouter initialEntries={["/login"]}>
+        <MemoryRouter initialEntries={["/plans"]}>
             <MainRoute />
         </MemoryRouter>
     </ThemeProvider>
