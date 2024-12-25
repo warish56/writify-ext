@@ -27,7 +27,7 @@ export default defineConfig({
   build: {
     lib: {
       entry: resolve(__dirname, 'src/main.tsx'),
-      name: 'WriteAI',
+      name: 'AIMagicText',
       fileName: 'content',
       formats: ['es'],
     },

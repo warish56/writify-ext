@@ -1,4 +1,3 @@
-import React from "react"
 import { Box, Stack, Typography } from "@mui/material"
 
 export const FormHeading = () => {
@@ -7,11 +6,11 @@ export const FormHeading = () => {
          <Box
              component="img"
              src="../assets/logo.png"
-             alt="WriteAI Logo"
+             alt="AIMagicText Logo"
              sx={{ width: 64, height: 64 }}
          />
          <Typography variant="h4" color="text.primary">
-             WriteAI
+            AIMagicText
          </Typography>
             <Typography variant="body2" color="text.secondary">
                 Your AI Writing Assistant

@@ -1,6 +1,7 @@
 const { createAccount } = require("../db/accounts");
 const { createOrUpdateOtp, getOtpWithEmail } = require("../db/otp");
 const { createUser, getUserWithEmail } = require("../db/user");
+const { getOtpMarkup } = require("../markup/otpMail");
 const { sendMail } = require("../services/mailer");
 const { generateOtp } = require("../utils/otp")
 
@@ -8,9 +9,7 @@ const { generateOtp } = require("../utils/otp")
 const loginUser = async (email) => {
     const otp = generateOtp();
     await createOrUpdateOtp(email, otp);
-    await sendMail(email, 'WriteAi Login OTP',  'otp', `
-        <h1>OTP : ${otp}</h1>
-    `);    
+    await sendMail(email, 'AIMagicText Login OTP',  'OTP', getOtpMarkup({otp}));    
 }
 
 const verifyOtp = async (email, otp) => {

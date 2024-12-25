@@ -14,7 +14,7 @@ router.post('/login', async (req, res) => {
             error: null
         });
     } catch (error) {
-        console.error('Error:', error);
+        console.error('Error:', error, error?.response?.body);
         res.status(error.status ?? 500).json({ 
             error: {
                 message: error.message || 'Somthing went wrong in login'

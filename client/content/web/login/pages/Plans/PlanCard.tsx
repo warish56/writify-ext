@@ -94,7 +94,7 @@ export const PlanCard = ({ plan, name, currentPlan }: planCardProps) => {
                         color: currentPlan ? 'primary.contrastText' : undefined,
                     }}
                 >
-                    {currentPlan ? 'Current Plan' : 'Choose Plan'}
+                    Choose Plan
                 </Button>
             </CardContent>
         </Card>
