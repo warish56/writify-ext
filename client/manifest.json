@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "WriteAI",
+  "name": "AIMagicText",
   "version": "1.0",
-  "description": "Quickly summarize selected text on any webpage",
+  "description": "Enhance your productivity with our AI-powered browser extension! Instantly perform a variety of smart actions on selected text, from summarizing and translating to generating insights and more. Simplify your workflow and unlock new possibilities with just a click.",
   
   "permissions": [
     "scripting",

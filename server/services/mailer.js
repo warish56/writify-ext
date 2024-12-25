@@ -7,12 +7,12 @@ const sendMail = async (email, subject, text, html) => {
    
     const msg = {
         to: email, // Change to your recipient
-        from: 'mdwarish56@gmail.com', // Change to your verified sender
+        from: process.env.APP_EMAIL, // Change to your verified sender
         subject: subject,
         text,
         html,
       }
-      return sgMail .send(msg)
+      return sgMail.send(msg)
 }
        
 
