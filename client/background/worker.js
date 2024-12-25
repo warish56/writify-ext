@@ -2,6 +2,7 @@
 import { API_URL, Messages, Routes } from './constants.js';
 import {getAvailableCredits, updateAvailableCredits, getTotalCredits, getCreditsData, fetchAndStoreCreditsData} from './credits.js'
 import {fetchAndStoreUserData, getUserDetails} from './user.js'
+import { openLoginPage } from './utils.js';
 
 const fetchAiResponse = async (text, prompt, sendResponse) => {
     fetch(`${API_URL}${Routes.AI}`, {
@@ -80,6 +81,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         return true;
     }
 
+    if(message.type === Messages.BG_OPEN_LOGIN_PAGE){
+        openLoginPage();
+        return;
+    }
+
 
     if([
         Messages.BG_GET_AVAILABLE_CREDITS,
@@ -98,7 +104,5 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
 
 chrome.action.onClicked.addListener((tab) => {
-    chrome.tabs.create({
-        url: chrome.runtime.getURL("content/dist/web/web/login/index.html")
-    });
+   openLoginPage();
 });

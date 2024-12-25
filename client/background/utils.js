@@ -10,3 +10,10 @@ export const isNextDay = (timestamp1, timestamp2) => {
     return endDate > startDate;
 
 }
+
+
+export const openLoginPage = () => {
+    chrome.tabs.create({
+        url: chrome.runtime.getURL("content/dist/web/web/login/index.html")
+    });
+}

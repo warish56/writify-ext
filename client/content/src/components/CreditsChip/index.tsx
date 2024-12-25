@@ -1,10 +1,23 @@
-import { Stack, Tooltip, Typography } from "@mui/material"
+import { Chip, Stack, Tooltip, Typography } from "@mui/material"
 
 import StarIcon from '@mui/icons-material/Star';
 import { useCredits } from "@/hooks/useCredits";
+import { sendMessageToWorker } from "@/utils";
+import { BG_OPEN_LOGIN_PAGE } from "@/constants";
 
 export const CreditsChip = () => {
-    const {availableCredits} = useCredits()
+    const {availableCredits, isCreditsAvailable} = useCredits();
+
+    const openLoginPage = () => {
+        sendMessageToWorker(BG_OPEN_LOGIN_PAGE)
+    }
+
+    if(!isCreditsAvailable){
+        return (
+            <Chip size="small" variant="filled" color="primary" onClick={openLoginPage} label="Upgrade" />
+        )
+    }
+
     return (
         <Tooltip title={`Only ${availableCredits} credits left for today`} placement="top">
         <Stack component="button" direction="row" sx={{
