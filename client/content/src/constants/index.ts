@@ -1,2 +1,3 @@
 
 export const BG_GET_AI_RESPONSE = 'BG_GET_AI_RESPONSE';
+export const BG_OPEN_LOGIN_PAGE= 'BG_OPEN_LOGIN_PAGE'

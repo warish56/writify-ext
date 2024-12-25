@@ -8,10 +8,14 @@ import { useSnackbar } from './hooks/useSnackbar';
 import { useEffect, useRef, useState } from 'react';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import { useCredits } from './hooks/useCredits';
+import UpgradePrompt from './components/PromptsMenu/UpgradePrompt';
+
+import { sendMessageToWorker } from './utils';
+import { BG_OPEN_LOGIN_PAGE } from './constants';
 
 
 function App() {
-  const {fetchAndInitializeCreditsDataFromServer} = useCredits();
+  const {fetchAndInitializeCreditsDataFromServer, isCreditsAvailable} = useCredits();
   const [isPromptOpen, setPromptOpen]= useState(false);
   const {prompt, handlePromptChange, clearPrompt} = usePromptManager();
   const currentSelectionData = useSelection();
@@ -142,13 +146,18 @@ function App() {
               onAction={handlePromptChange}
               onClose={handlePromptClose}
             >
-            <PromptResult 
-            loading={loading}
-            error={error}
-            onApply={handleInsert}
-            onRefresh={refetchData}
-            text={data?.result ?? ''}
-            /> 
+              { isCreditsAvailable ? 
+                  <PromptResult 
+                  loading={loading}
+                  error={error}
+                  onApply={handleInsert}
+                  onRefresh={refetchData}
+                  text={data?.result ?? ''}
+                  />
+
+                :
+                  <UpgradePrompt  onUpgradeClick={()=> sendMessageToWorker(BG_OPEN_LOGIN_PAGE)}/>
+              }
             </PromptMenu>
           </Popover>
           <Snackbar
