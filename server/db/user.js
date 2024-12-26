@@ -52,6 +52,13 @@ const getUserWithEmail = async (email) => {
     return result.documents[0];
 }
 
+const getUserWithId = async (userId) => {
+    const databases = new sdk.Databases(dbValues.client);
+    const result = await databases.getDocument(dbValues.db.$id, collectionData.collection.$id, userId);
+    return result;
+}
+
+
 
 const createUser = async (email) => {
     const userWithEmail = await getUserWithEmail(email);
@@ -76,5 +83,6 @@ module.exports = {
     collectionData,
     prepareUserCollection,
     createUser,
-    getUserWithEmail
+    getUserWithEmail,
+    getUserWithId
 }
