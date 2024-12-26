@@ -7,6 +7,8 @@ const aiRoutes = require('./routes/ai');
 const creditsRoutes = require('./routes/credits');
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/user');
+const ordersRoutes = require('./routes/orders');
+
 
 const {
   initAppWriteSdk,
@@ -30,6 +32,10 @@ const {
   prepareOtpCollection
 } = require('./db/otp')
 
+const {
+  prepareOrdersCollection
+} = require('./db/orders')
+
 const app = express();
 const PORT = process.env.PORT || 8000;
 
@@ -48,6 +54,8 @@ app.use('/ai', aiRoutes);
 app.use('/credits', creditsRoutes);
 app.use('/auth', authRoutes);
 app.use('/user', userRoutes);
+app.use('/user', ordersRoutes);
+
 
 
 const initializeDbAndCollections = async () => {
@@ -60,6 +68,7 @@ const initializeDbAndCollections = async () => {
       await prepareUserCollection();
       await prepareAccountsCollection();
       await prepareOtpCollection();
+      await prepareOrdersCollection();
 
   }catch(err){
     console.log(err);

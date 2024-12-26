@@ -1,20 +1,19 @@
 const sdk = require("node-appwrite");
 const {dbValues} = require('./init');
 const { getExistingCollection } = require("./utils");
+const { PAYMENT_STATUS } = require("../constants/orders");
 
-const {Query} =sdk
-
-const COLLECTION_NAME = 'User';
+const COLLECTION_NAME = 'Orders';
 const  collectionData = {
     collection: undefined
 };
 /**
  * Schema
- *  id        email 
- *  string    string 
+ *  id        user_id   payment_status
+ *  string    string    pending | completed | failed
  */
 
-const prepareUserCollection = async () => {
+const prepareOrdersCollection = async () => {
 
     const databases = new sdk.Databases(dbValues.client);
     const exisitingCollection = await getExistingCollection(dbValues.db, databases, COLLECTION_NAME);
@@ -37,42 +36,50 @@ const prepareUserCollection = async () => {
     await databases.createStringAttribute(
         dbValues.db.$id,
         collectionData.collection.$id,
-        'email',
+        'user_id',
         255,
+        true
+    );
+
+    await databases.createEnumAttribute(
+        dbValues.db.$id,
+        collectionData.collection.$id,
+        'payment_status',
+        [PAYMENT_STATUS.pending, PAYMENT_STATUS.completed, PAYMENT_STATUS.failed],
         true
     );
 }
 
 
-const getUserWithEmail = async (email) => {
+const getOrderWithId = async (orderId) => {
     const databases = new sdk.Databases(dbValues.client);
-    const result = await databases.listDocuments(dbValues.db.$id, collectionData.collection.$id, [
-        Query.equal("email", email)
-    ]);
-    return result.documents[0];
-}
-
-const getUserWithId = async (userId) => {
-    const databases = new sdk.Databases(dbValues.client);
-    const result = await databases.getDocument(dbValues.db.$id, collectionData.collection.$id, userId);
+    const result = await databases.getDocument(dbValues.db.$id, collectionData.collection.$id, orderId);
     return result;
 }
 
 
-
-const createUser = async (email) => {
-    const userWithEmail = await getUserWithEmail(email);
-    if(userWithEmail){
-        throw {message: "User already exists", status: 400};
-    }
-
+const createOrder = async (userId) => {
     const databases = new sdk.Databases(dbValues.client);
     const document = await databases.createDocument(
         dbValues.db.$id,
         collectionData.collection.$id,
         sdk.ID.unique(),
         {
-            email: email,
+            user_id: userId,
+            payment_status: PAYMENT_STATUS.pending
+        }
+    );
+    return document;
+}
+
+const updateOrderStatus = async (orderId, status) => {  
+    const databases = new sdk.Databases(dbValues.client);
+    const document = await databases.updateDocument(
+        dbValues.db.$id,
+        collectionData.collection.$id,
+        orderId,
+        {
+            payment_status: status
         }
     );
     return document;
@@ -81,8 +88,8 @@ const createUser = async (email) => {
 
 module.exports = {
     collectionData,
-    prepareUserCollection,
-    createUser,
-    getUserWithEmail,
-    getUserWithId
+    prepareOrdersCollection,
+    createOrder,
+    updateOrderStatus,
+    getOrderWithId
 }
