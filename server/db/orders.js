@@ -9,8 +9,8 @@ const  collectionData = {
 };
 /**
  * Schema
- *  id        user_id   payment_status
- *  string    string    pending | completed | failed
+ *  id        user_id  for_plan_id  payment_status
+ *  string    string   string       pending | completed | failed
  */
 
 const prepareOrdersCollection = async () => {
@@ -41,6 +41,15 @@ const prepareOrdersCollection = async () => {
         true
     );
 
+    await databases.createStringAttribute(
+        dbValues.db.$id,
+        collectionData.collection.$id,
+        'for_plan_id',
+        255,
+        true
+    );
+
+
     await databases.createEnumAttribute(
         dbValues.db.$id,
         collectionData.collection.$id,
@@ -58,7 +67,7 @@ const getOrderWithId = async (orderId) => {
 }
 
 
-const createOrder = async (userId) => {
+const createOrder = async (userId, planId) => {
     const databases = new sdk.Databases(dbValues.client);
     const document = await databases.createDocument(
         dbValues.db.$id,
@@ -66,7 +75,8 @@ const createOrder = async (userId) => {
         sdk.ID.unique(),
         {
             user_id: userId,
-            payment_status: PAYMENT_STATUS.pending
+            payment_status: PAYMENT_STATUS.pending,
+            for_plan_id: planId
         }
     );
     return document;

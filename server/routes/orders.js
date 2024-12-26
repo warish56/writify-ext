@@ -1,16 +1,32 @@
 const express = require('express');
-const { createNewOrder, getOrderDetails } = require('../controller/orders');
+const { createNewOrder, getOrderDetails, markOrderCompleted, markOrderFailed } = require('../controller/orders');
+const { getPaymentDetails } = require('../services/razorpay');
 
 const router = express.Router();
 
 
+
+router.get('/verify-payment', async (req, res) => {
+    const { razorpay_payment_id, razorpay_order_id, razorpay_signature, orderId } = req.query;
+     // Fetch payment details from Razorpay API if needed
+    // Validate payment status using Razorpay's Orders API
+    const paymentData = await getPaymentDetails(razorpay_payment_id);
+    console.log("== payment data redirect==",{paymentData, razorpay_order_id, razorpay_payment_id, orderId, razorpay_signature})
+    if(paymentData.status === 'captured'){
+        await markOrderCompleted(orderId);
+    }else{
+        await markOrderFailed(orderId);
+    }
+})
+
+
 router.post('/create-order', async (req, res) => {
     try {
-        const { userId } = req.body; 
-       const order =  await createNewOrder(userId);
+        const { userId, planId } = req.body; 
+        const orderDetails =  await createNewOrder(userId, planId);
         res.json({
             data: {
-                order_id: order.$id
+                ...orderDetails
             }
         });
     } catch (error) {

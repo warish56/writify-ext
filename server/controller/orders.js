@@ -1,16 +1,43 @@
 const { PAYMENT_STATUS } = require("../constants/orders");
 const { createOrder, getOrderWithId, updateOrderStatus } =  require("../db/orders");
+const { getPlanDetails } = require("../db/plan");
 const { getUserWithId } = require("../db/user");
+const { createRazorPayPaymentLink } = require("../services/razorpay");
 
 
 
-const createNewOrder = async(userId) => {
+const createNewOrder = async(userId, planId) => {
     const userDocument = await getUserWithId(userId);
     if(!userDocument){
         throw {message: "User does not exists", status: 404};
     }
-    const order = await createOrder(userId);
-    return order;
+
+    const planDocument = getPlanDetails(planId);
+
+    if(!planDocument){
+        throw {message: "Plan does not exists", status: 404};
+    }
+
+    const order = await createOrder(userId, planId);
+    const paymentDetails = await createRazorPayPaymentLink({
+        orderId: order.$id, 
+        price: planDocument.price, 
+        currency: Currencies.dollar,
+        description: `Purchasing plan - ${planDocument.id}`,
+        userEmail: userDocument.email,
+        callbackUrl,
+    })
+
+    return {
+        orderId: order.$id,
+        razorpayId: paymentDetails.id,
+        payment_link: paymentDetails.short_url
+    }
+}
+
+
+const verifyPayment = () => {
+
 }
 
 
