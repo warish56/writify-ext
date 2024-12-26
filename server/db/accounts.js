@@ -113,7 +113,7 @@ const updateAccountPayment = async (userId) => {
         collectionData.collection.$id,
         account.$id,
         { 
-            payment_date: Date.now()
+            payment_date: new Date().toISOString(),
         }
     )
     return updatedDocument;
@@ -132,7 +132,7 @@ const updateAccountPlan = async (userId, planId) => {
         collectionData.collection.$id,
         account.$id,
         { 
-            payment_date: Date.now(),
+            payment_date: new Date().toISOString(),
             plan_id: planId
         }
     )

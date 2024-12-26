@@ -29,7 +29,6 @@ const instance = new Razorpay({
         },
         callback_url: callbackUrl,
         callback_method: "get",
-        receipt:orderId
       };
 
 

@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { fetchData } from "../service/api";
-import { ApiResponse } from "../types/api";
+import { ApiResponse, ServerError } from "../types/api";
 
 type successResponse = {
     message: string;
 }
 
-type state = [ApiResponse<successResponse>|null, Error | null];
+type state = [ApiResponse<successResponse>|null, ServerError | Error | null | undefined];
 
 
 export const useOtp = () => {
@@ -21,7 +21,7 @@ export const useOtp = () => {
                 method: 'POST',
                 body: JSON.stringify({ email, otp })
             });
-            currResponse =[response, null]; 
+            currResponse =[response, response?.error]; 
             setIsLoading(false);
         } catch (error) {
             console.error(error);

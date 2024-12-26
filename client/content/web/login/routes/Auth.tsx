@@ -5,10 +5,11 @@ import { useUserDetails } from "../hooks/useUserDetails"
 
 export const AuthRoute = () => {    
     const {userData} = useUserDetails();
+
     if(!userData){
         return <Outlet/>
     }
 
-    return <Navigate to="/plans" replace/>
+    return <Navigate to={'/plans'} replace/>
     
 }
