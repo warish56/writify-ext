@@ -3,6 +3,8 @@ const {dbValues} = require('./init');
 const { getExistingCollection } = require("./utils");
 const { PAYMENT_STATUS } = require("../constants/orders");
 
+const {Query} = sdk;
+
 const COLLECTION_NAME = 'Orders';
 const  collectionData = {
     collection: undefined
@@ -104,6 +106,14 @@ const getOrderWithId = async (orderId) => {
     return result;
 }
 
+const getOrdersList = async (userId) => {
+    const databases = new sdk.Databases(dbValues.client);
+    const result = await databases.listDocuments(dbValues.db.$id, collectionData.collection.$id, [
+        Query.equal("user_id", userId)
+    ]);
+    return result;
+}
+
 
 const createOrder = async (userId, planId) => {
     const databases = new sdk.Databases(dbValues.client);
@@ -152,5 +162,6 @@ module.exports = {
     prepareOrdersCollection,
     createOrder,
     updateOrderData,
-    getOrderWithId
+    getOrderWithId,
+    getOrdersList
 }

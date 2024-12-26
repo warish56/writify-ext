@@ -6,28 +6,7 @@ import { usePurchasePlan } from '../../hooks/usePurchasePlan';
 import { useEffect, useState } from 'react';
 import { useSnackbar } from '../../hooks/useSnackbar';
 import { PaymentWaitingModal } from '../../components/PaymentWaitingModal';
-
-const Plans = {
-    FREE: {
-        id: 0,
-        price: 0,
-        credits: 25
-    },
-
-    PRO: {
-        id: 1,
-        price: 250,
-        credits: 300
-    },
-
-    ELITE: {
-        id: 2,
-        price: 350,
-        credits: 500
-    },
-};
-
-
+import { Plans } from '../../constants/Plans';
 
 
 
@@ -57,7 +36,6 @@ export const PlansPage = () => {
 
 
     if(data && !pollingModalVisible){
-        console.log(data)
         setPollingModalVisible(true);
     }
 

@@ -1,14 +1,8 @@
 const express = require('express');
-const { createNewOrder, getOrderDetails, markOrderCompleted, markOrderFailed, verifyPayment } = require('../controller/orders');
-const { getPaymentDetails } = require('../services/razorpay');
-const { updateAccountPlan } = require('../db/accounts');
+const { createNewOrder, getOrderDetails, verifyPayment, getUserOrdersList } = require('../controller/orders');
 
 const router = express.Router();
 
-
-router.get('/redirect', async (req,res) => {
-    res.redirect("chrome-extension://lohnjdkkkndpicpbfcgmdcmhcmdmckeg/content/dist/web/web/login/index.html");
-})
 
 
 router.get('/verify-payment', async (req, res) => {
@@ -96,6 +90,27 @@ router.post('/order-status', async (req, res) => {
         });
     }
 });
+
+router.post('/list', async (req, res) => {
+    try {
+        const { userId } = req.body;
+        const result = await getUserOrdersList(userId);
+        res.json({
+            data: {
+                list:result
+            }
+        });
+
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(error.status ?? 500).json({ 
+            error: {
+                message: error.message || 'Somthing went wrong in orders list'
+            }
+        });
+    }
+});
+
 
 
 module.exports = router;
