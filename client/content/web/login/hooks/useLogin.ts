@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { fetchData } from "../service/api";
-import { ApiResponse } from "../types/api";
+import { ApiResponse, ServerError } from "../types/api";
 
 type successResponse = {
     message: string;
 }
-type state = [ApiResponse<successResponse>|null, Error | null];
+type state = [ApiResponse<successResponse>|null, ServerError|  Error | null | undefined];
 
 export const useLogin = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -19,7 +19,7 @@ export const useLogin = () => {
                 method: 'POST',
                 body: JSON.stringify({ email })
             });
-            currResponse = [response, null];
+            currResponse = [response, response.error];
             setIsLoading(false);
         } catch (error) {
             console.error(error);

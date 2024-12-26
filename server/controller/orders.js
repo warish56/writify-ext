@@ -1,8 +1,11 @@
-const { PAYMENT_STATUS } = require("../constants/orders");
-const { createOrder, getOrderWithId, updateOrderStatus } =  require("../db/orders");
+const { createOrder, getOrderWithId, updateOrderData } =  require("../db/orders");
 const { getPlanDetails } = require("../db/plan");
 const { getUserWithId } = require("../db/user");
-const { createRazorPayPaymentLink } = require("../services/razorpay");
+const { createRazorPayPaymentLink, getPaymentDetails } = require("../services/razorpay");
+const { updateAccountPlan } = require("../db/accounts");
+const {Currencies} = require('../constants/currency');
+const { Plans } = require("../constants/plans");
+const { PAYMENT_STATUS } = require("../constants/orders");
 
 
 
@@ -12,20 +15,21 @@ const createNewOrder = async(userId, planId) => {
         throw {message: "User does not exists", status: 404};
     }
 
-    const planDocument = getPlanDetails(planId);
+    const planDocument = await getPlanDetails(planId);
 
     if(!planDocument){
         throw {message: "Plan does not exists", status: 404};
     }
 
     const order = await createOrder(userId, planId);
+    const planName = Object.keys(Plans).find(planName => Plans[planName].id === planDocument.id)
     const paymentDetails = await createRazorPayPaymentLink({
         orderId: order.$id, 
-        price: planDocument.price, 
-        currency: Currencies.dollar,
-        description: `Purchasing plan - ${planDocument.id}`,
+        price: planDocument.price * 100, // as per razorpay docs we have at multiply with 100 
+        currency: Currencies.inr,
+        description: `You are Purchasing ${planName} plan of AIMagicText`,
         userEmail: userDocument.email,
-        callbackUrl,
+        callbackUrl: `${process.env.BASE_URL}:${process.env.PORT}/orders/verify-payment?orderId=${order.$id}&planId=${planDocument.id}&userId=${userId}`,
     })
 
     return {
@@ -35,29 +39,84 @@ const createNewOrder = async(userId, planId) => {
     }
 }
 
+const verifyPayment = async ({
+    razorPayPaymentId, 
+    orderId,
+    planId,
+    userId 
+}) => {
+     // Fetch payment details from Razorpay API if needed
+       // Validate payment status using Razorpay's Orders API
+       const paymentData = await getPaymentDetails(razorPayPaymentId);      
+       // TODO verify payment signature
 
-const verifyPayment = () => {
+       const result = {
+        orderId: orderId, 
+        razorPayPaymentId:paymentData.id,
+        razorPayPaymentType:paymentData.method,
+        razorPayContact:paymentData.contact,
+        razorPayErrorCode: paymentData.error_code,
+        razorPayErrorReason: `${paymentData.error_reason}, upi-Id -${paymentData.acquirer_data?.bank_transaction_id || paymentData.acquirer_data?.upi_transaction_id}`
+       }
+       
+       if(paymentData.status === 'captured'){
+           await markOrderCompleted(result);
+       }else{
+           await markOrderFailed(result);
+       }
 
+       await updateAccountPlan(userId, Number(planId))
+       return paymentData.status === 'captured' ? 'success' : 'failed';
 }
 
 
-const markOrderCompleted = async (orderId) => {
+const markOrderCompleted = async ({
+    orderId, 
+    razorPayPaymentId,
+    razorPayPaymentType,
+    razorPayContact,
+    razorPayErrorCode,
+    razorPayErrorReason
+}) => {
     const orderDocument = await getOrderWithId(orderId);
     if(!orderDocument){
         throw {message: "Order does not exists", status: 404};
     }
 
-    const order = await updateOrderStatus(orderId, PAYMENT_STATUS.completed);
+    const order = await updateOrderData({
+        orderId, 
+        status: PAYMENT_STATUS.completed,
+        razorPayPaymentId,
+        razorPayPaymentType,
+        razorPayContact,
+        razorPayErrorCode,
+        razorPayErrorReason
+    });
     return order;
 
 }
 
-const markOrderFailed = async (orderId) => {
+const markOrderFailed = async ({
+    orderId, 
+    razorPayPaymentId,
+    razorPayPaymentType,
+    razorPayContact,
+    razorPayErrorCode,
+    razorPayErrorReason
+}) => {
     const orderDocument = await getOrderWithId(orderId);
     if(!orderDocument){
         throw {message: "Order does not exists", status: 404};
     }
-    const order = await updateOrderStatus(orderId, PAYMENT_STATUS.failed);
+    const order = await updateOrderData({
+        orderId, 
+        status: PAYMENT_STATUS.failed,
+        razorPayPaymentId,
+        razorPayPaymentType,
+        razorPayContact,
+        razorPayErrorCode,
+        razorPayErrorReason
+    });
     return order;
 }
 
@@ -73,5 +132,6 @@ module.exports = {
     createNewOrder,
     markOrderCompleted,
     markOrderFailed,
-    getOrderDetails
+    getOrderDetails,
+    verifyPayment
 }

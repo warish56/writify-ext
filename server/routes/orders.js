@@ -1,21 +1,42 @@
 const express = require('express');
-const { createNewOrder, getOrderDetails, markOrderCompleted, markOrderFailed } = require('../controller/orders');
+const { createNewOrder, getOrderDetails, markOrderCompleted, markOrderFailed, verifyPayment } = require('../controller/orders');
 const { getPaymentDetails } = require('../services/razorpay');
+const { updateAccountPlan } = require('../db/accounts');
 
 const router = express.Router();
 
 
+router.get('/redirect', async (req,res) => {
+    res.redirect("chrome-extension://lohnjdkkkndpicpbfcgmdcmhcmdmckeg/content/dist/web/web/login/index.html");
+})
+
 
 router.get('/verify-payment', async (req, res) => {
-    const { razorpay_payment_id, razorpay_order_id, razorpay_signature, orderId } = req.query;
-     // Fetch payment details from Razorpay API if needed
-    // Validate payment status using Razorpay's Orders API
-    const paymentData = await getPaymentDetails(razorpay_payment_id);
-    console.log("== payment data redirect==",{paymentData, razorpay_order_id, razorpay_payment_id, orderId, razorpay_signature})
-    if(paymentData.status === 'captured'){
-        await markOrderCompleted(orderId);
-    }else{
-        await markOrderFailed(orderId);
+    try{
+        const { 
+            razorpay_payment_id, 
+            razorpay_order_id, 
+            razorpay_signature, 
+            orderId,
+            planId,
+            userId 
+        } = req.query;
+
+        const status = await verifyPayment({
+            orderId,
+            planId,
+            userId,
+            razorPayPaymentId: razorpay_payment_id
+        })
+       res.redirect(`chrome-extension://${process.env.EXTENSION_ID}${process.env.PLANS_PAGE_PATH}?payment=${status}`);
+       
+    }catch (error) {
+        console.error('Error:', error);
+        res.status(error.status ?? 500).json({ 
+            error: {
+                message: error.message || 'Somthing went wrong in orders'
+            }
+        });
     }
 })
 

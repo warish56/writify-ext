@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom"
+import { Route, Routes} from "react-router-dom"
 import { CircularProgress, Snackbar, Stack } from "@mui/material"
 
 import { useSnackbar } from "../hooks/useSnackbar"
@@ -7,10 +7,12 @@ import { useUserDetails } from "../hooks/useUserDetails"
 
 import { LoginPage } from '../pages/LoginPage'
 import { OtpPage } from "../pages/OtpPage"
-import PlansPage from "../pages/Plans/PlansPage"
+import {PaymentSuccessPage} from "../pages/PaymentSuccessPage";
+import {PlansPage} from "../pages/Plans/PlansPage"
 
 import { AuthRoute } from "./Auth"
 import { RootRoute } from "./Root"
+import { PaymentFailedPage } from "../pages/PaymentFailedPage"
 
 
 
@@ -40,8 +42,9 @@ export const MainRoute = () => {
 
                     <Route path="/" element={<RootRoute />} >
                         <Route path="plans" element={<PlansPage />} />
+                        <Route path="payment_success" element={<PaymentSuccessPage />} />
+                        <Route path="payment_failed" element={<PaymentFailedPage />} />
                     </Route>
-                    
                     
             </Routes>
             <Snackbar

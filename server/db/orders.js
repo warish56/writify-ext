@@ -9,8 +9,8 @@ const  collectionData = {
 };
 /**
  * Schema
- *  id        user_id  for_plan_id  payment_status
- *  string    string   string       pending | completed | failed
+ *  id        user_id  for_plan_id  razorpay_payment_id  razorpay_payment_type    razorpay_contact  razorpay_error_code razorpay_error_reason   payment_status
+ *  string    string   string       string               string                   string            string              string                  pending | completed | failed
  */
 
 const prepareOrdersCollection = async () => {
@@ -29,7 +29,7 @@ const prepareOrdersCollection = async () => {
         );
     }
 
-    if(collectionData.collection.attributes.length == 1){
+    if(collectionData.collection.attributes.length == 8){
         return;
     }
     
@@ -41,14 +41,52 @@ const prepareOrdersCollection = async () => {
         true
     );
 
-    await databases.createStringAttribute(
+    await databases.createIntegerAttribute(
         dbValues.db.$id,
         collectionData.collection.$id,
         'for_plan_id',
-        255,
-        true
+        true, 
     );
 
+    await databases.createStringAttribute(
+        dbValues.db.$id,
+        collectionData.collection.$id,
+        'razorpay_payment_id',
+        255,
+        false
+    );
+
+    await databases.createStringAttribute(
+        dbValues.db.$id,
+        collectionData.collection.$id,
+        'razorpay_payment_type',
+        255,
+        false
+    );
+
+    await databases.createStringAttribute(
+        dbValues.db.$id,
+        collectionData.collection.$id,
+        'razorpay_contact',
+        255,
+        false
+    );
+
+    await databases.createStringAttribute(
+        dbValues.db.$id,
+        collectionData.collection.$id,
+        'razorpay_error_code',
+        255,
+        false
+    );
+
+    await databases.createStringAttribute(
+        dbValues.db.$id,
+        collectionData.collection.$id,
+        'razorpay_error_reason',
+        255,
+        false
+    );
 
     await databases.createEnumAttribute(
         dbValues.db.$id,
@@ -82,14 +120,27 @@ const createOrder = async (userId, planId) => {
     return document;
 }
 
-const updateOrderStatus = async (orderId, status) => {  
+const updateOrderData = async ({
+    orderId, 
+    status,
+    razorPayPaymentId,
+    razorPayPaymentType,
+    razorPayContact,
+    razorPayErrorCode,
+    razorPayErrorReason
+}) => {  
     const databases = new sdk.Databases(dbValues.client);
     const document = await databases.updateDocument(
         dbValues.db.$id,
         collectionData.collection.$id,
         orderId,
         {
-            payment_status: status
+            payment_status: status,
+            razorpay_payment_id: razorPayPaymentId,
+            razorpay_payment_type: razorPayPaymentType,
+            razorpay_contact: razorPayContact,
+            razorpay_error_code: razorPayErrorCode,
+            razorpay_error_reason: razorPayErrorReason
         }
     );
     return document;
@@ -100,6 +151,6 @@ module.exports = {
     collectionData,
     prepareOrdersCollection,
     createOrder,
-    updateOrderStatus,
+    updateOrderData,
     getOrderWithId
 }

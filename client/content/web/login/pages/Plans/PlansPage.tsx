@@ -2,6 +2,10 @@ import { Box, Typography, Stack} from '@mui/material';
 import { useUserDetails } from '../../hooks/useUserDetails';
 import { PlanCardsSkeleton } from './PlanCardSkeleton';
 import { PlanCard } from './PlanCard';
+import { usePurchasePlan } from '../../hooks/usePurchasePlan';
+import { useEffect, useState } from 'react';
+import { useSnackbar } from '../../hooks/useSnackbar';
+import { PaymentWaitingModal } from '../../components/PaymentWaitingModal';
 
 const Plans = {
     FREE: {
@@ -12,13 +16,13 @@ const Plans = {
 
     PRO: {
         id: 1,
-        price: 5,
-        credits: 200
+        price: 250,
+        credits: 300
     },
 
     ELITE: {
         id: 2,
-        price: 10,
+        price: 350,
         credits: 500
     },
 };
@@ -27,8 +31,36 @@ const Plans = {
 
 
 
-const PlansPage = () => {
+export const PlansPage = () => {
     const {userData, isLoading} = useUserDetails();
+    const [pollingModalVisible, setPollingModalVisible] = useState(false);
+    const {isLoading: isMakingAPurchase , makePurchase, selectedPlan, error, data} = usePurchasePlan();
+    const {showSnackbar} = useSnackbar();
+
+    const handleCloseOfPollingModal = () => {
+        setPollingModalVisible(val => !val)
+    }
+
+    useEffect(() => {
+        if(error){
+            showSnackbar({
+                message: error.message ?? 'Something went wrong',
+                type: 'error'
+            })
+        }else{
+            const link = data?.data.payment_link;
+            if(link){
+                window.open(link, '_self')
+            }
+        }
+    }, [error, data])
+
+
+    if(data && !pollingModalVisible){
+        console.log(data)
+        setPollingModalVisible(true);
+    }
+
     return (
         <Box
             sx={{
@@ -70,7 +102,11 @@ const PlansPage = () => {
                  Object.entries(Plans).map(([name, plan]) => (
                     <PlanCard
                         plan={plan}
+                        id={plan.id}
                         name={name}
+                        loading={isMakingAPurchase && selectedPlan === plan.id}
+                        disabled={isMakingAPurchase}
+                        onClick={() => makePurchase(userData.id, plan.id)}
                         key={plan.id}
                         currentPlan={plan.id === userData.account.plan_details.plan_id}
                     />
@@ -95,8 +131,11 @@ const PlansPage = () => {
                     Upgrade to a premium plan and enjoy exclusive benefits and more credits!
                 </Typography>
             </Box>
+            <PaymentWaitingModal onClose={(_, reason) => {
+                if(reason !== 'backdropClick'){
+                    handleCloseOfPollingModal();
+                }
+            }} open={pollingModalVisible} />  
         </Box>
     );
 };
-
-export default PlansPage;

@@ -54,7 +54,7 @@ app.use('/ai', aiRoutes);
 app.use('/credits', creditsRoutes);
 app.use('/auth', authRoutes);
 app.use('/user', userRoutes);
-app.use('/user', ordersRoutes);
+app.use('/orders', ordersRoutes);
 
 
 

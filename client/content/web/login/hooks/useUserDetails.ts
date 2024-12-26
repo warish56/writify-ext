@@ -1,22 +1,31 @@
 import { useEffect, useState } from "react"
 import { User } from "../types/user";
 import { sendMessageToWorker } from "../utils";
-import { BG_GET_USER_DETAILS } from "../constants/worker";
+import { BG_FETCH_USER_DETAILS, BG_GET_USER_DETAILS } from "../constants/worker";
 import { useAtom } from "jotai";
 import { userAtom } from "../atoms/user";
+import { WorkerResponse } from "../types/worker";
+import { ServerError } from "../types/api";
 
-type response = {
-    success: boolean;
-    data: User
-}
 
 export const useUserDetails = () => {
     const [isLoading ,setLoading] = useState(false);
     const [userData, setUserData] = useAtom(userAtom);
 
-    const fetchUserDetails = async () => {
+    const fetchUserDetailsFromServer = async () => {
         setLoading(true);
-        const result = await sendMessageToWorker<response>(BG_GET_USER_DETAILS);
+        const result = await sendMessageToWorker<WorkerResponse<[User, ServerError]>>(BG_FETCH_USER_DETAILS, {email:userData?.email});
+        const {success, data} = result;
+        if(success){
+            const [actualData] = data
+            setUserData(actualData);
+        }
+        setLoading(false);
+    }
+
+    const getUserDetailsFromStore = async () => {
+        setLoading(true);
+        const result = await sendMessageToWorker<WorkerResponse<User>>(BG_GET_USER_DETAILS);
         const {success, data} = result;
         if(success){
             setUserData(data);
@@ -26,13 +35,14 @@ export const useUserDetails = () => {
 
     useEffect(() => {
         if(!userData){
-            fetchUserDetails();
+            getUserDetailsFromStore();
         }
     }, [])
 
     return {
         userData,
         isLoading,
-        fetchUserDetails
+        getUserDetailsFromStore,
+        fetchUserDetailsFromServer
     }
 }

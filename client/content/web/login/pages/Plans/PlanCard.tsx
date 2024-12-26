@@ -7,10 +7,16 @@ type planCardProps = {
         credits: number;
     };
     name: string;
-    currentPlan: boolean
+    currentPlan: boolean;
+    id: number;
+    onClick : () => void;
+    loading: boolean;
+    disabled: boolean;
 }
 
-export const PlanCard = ({ plan, name, currentPlan }: planCardProps) => {
+const FREE_PLAN_ID = 0;
+
+export const PlanCard = ({ id, plan, name, currentPlan, onClick, loading, disabled }: planCardProps) => {
     return (
         <Card
             sx={{
@@ -56,7 +62,7 @@ export const PlanCard = ({ plan, name, currentPlan }: planCardProps) => {
                     {name}
                 </Typography>
                 <Typography variant="h3" color="inherit">
-                    ${plan.price} / month
+                ₹{plan.price} / month
                 </Typography>
 
                 <Stack
@@ -85,17 +91,21 @@ export const PlanCard = ({ plan, name, currentPlan }: planCardProps) => {
                 </Stack>
 
                 <Button
-                    variant={currentPlan ? 'outlined' : 'contained'}
-                    color={currentPlan ? 'secondary' : 'primary'}
-                    sx={{
-                        mt: 4,
-                        textTransform: 'capitalize',
-                        borderColor: currentPlan ? 'primary.contrastText' : undefined,
-                        color: currentPlan ? 'primary.contrastText' : undefined,
-                    }}
+                variant={currentPlan ? 'outlined' : 'contained'}
+                color={currentPlan ? 'secondary' : 'primary'}
+                onClick={onClick}
+                disabled={disabled || id === FREE_PLAN_ID }
+                sx={{
+                    opacity: id !== FREE_PLAN_ID ? 1 : 0,
+                    mt: 4,
+                    textTransform: 'capitalize',
+                    borderColor: currentPlan ? 'primary.contrastText' : undefined,
+                    color: currentPlan ? 'primary.contrastText' : undefined,
+                }}
                 >
-                    Choose Plan
+                    {loading ? 'Please wait...'  : 'Choose Plan'}
                 </Button>
+                
             </CardContent>
         </Card>
     );
