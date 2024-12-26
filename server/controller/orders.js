@@ -1,4 +1,4 @@
-const { createOrder, getOrderWithId, updateOrderData } =  require("../db/orders");
+const { createOrder, getOrderWithId, updateOrderData, getOrdersList } =  require("../db/orders");
 const { getPlanDetails } = require("../db/plan");
 const { getUserWithId } = require("../db/user");
 const { createRazorPayPaymentLink, getPaymentDetails } = require("../services/razorpay");
@@ -128,10 +128,36 @@ const getOrderDetails = async (orderId) => {
    return orderDocument;
 }
 
+const getUserOrdersList = async (userId) => {
+    const userDocument = await getUserWithId(userId);
+    if(!userDocument){
+        throw {message: "User does not exists", status: 404};
+    }
+
+    const result = await getOrdersList(userId);
+    return result.documents.map(document => {
+        const planDetails = Object.values(Plans).find(plan => plan.id === document.for_plan_id);
+        const planName = Object.keys(Plans).find(planName => Plans[planName].id === document.for_plan_id)
+        return {
+            id: document.$id,
+            status: document.payment_status,
+            purchased_plan: {
+                planName,
+                ...planDetails
+            },
+            payment_type: document.razorpay_payment_type,
+            error_reason: document.razorpay_error_reason,
+            created_at: document.$createdAt,
+            updated_at: document.$updatedAt
+        }
+    })
+}
+
 module.exports = {
     createNewOrder,
     markOrderCompleted,
     markOrderFailed,
     getOrderDetails,
-    verifyPayment
+    verifyPayment,
+    getUserOrdersList
 }

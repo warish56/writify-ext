@@ -13,6 +13,7 @@ import {PlansPage} from "../pages/Plans/PlansPage"
 import { AuthRoute } from "./Auth"
 import { RootRoute } from "./Root"
 import { PaymentFailedPage } from "../pages/PaymentFailedPage"
+import OrdersList from "../pages/Orders/list"
 
 
 
@@ -42,6 +43,7 @@ export const MainRoute = () => {
 
                     <Route path="/" element={<RootRoute />} >
                         <Route path="plans" element={<PlansPage />} />
+                        <Route path="orders" element={<OrdersList />} />
                         <Route path="payment_success" element={<PaymentSuccessPage />} />
                         <Route path="payment_failed" element={<PaymentFailedPage />} />
                     </Route>

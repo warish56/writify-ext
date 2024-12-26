@@ -1,6 +1,7 @@
 
 import { API_URL, Messages, Routes } from './constants.js';
 import {getAvailableCredits, updateAvailableCredits, getTotalCredits, getCreditsData, fetchAndStoreCreditsData} from './credits.js'
+import { fetchUserOrders } from './orders.js';
 import {fetchAndStoreUserData, getUserDetails} from './user.js'
 import { openLoginPage } from './utils.js';
 
@@ -68,6 +69,19 @@ const handleCreditsMessages = async (message, sendResponse) => {
 
 }
 
+
+const handleOrdersMessages = async (message, sendResponse) => {
+    try{
+        if(message.type = Messages.BG_FETCH_USER_ORDERS){
+            const data  = await fetchUserOrders(message.userId);
+            sendResponse({success: true, data})
+            return true;
+        }
+    }catch(err){
+        sendResponse({success: false, error:err});
+    }
+}
+
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     const appId = chrome.runtime.id;
 
@@ -96,8 +110,15 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         Messages.BG_FETCH_USER_DETAILS,
         Messages.BG_GET_USER_DETAILS
         ].includes(message.type)){
-        handleCreditsMessages(message, sendResponse);
-        return true;
+            handleCreditsMessages(message, sendResponse);
+            return true;
+    }
+
+    if([
+        Messages.BG_FETCH_USER_ORDERS
+        ].includes(message.type)){
+            handleOrdersMessages(message, sendResponse);
+            return true;
     }
 
 });

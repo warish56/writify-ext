@@ -1,4 +1,4 @@
-import { API_URL, Routes, DEFAULT_CREDITS_PER_DAY } from './constants.js';
+import { DEFAULT_CREDITS_PER_DAY } from './constants.js';
 import {  fetchAndStoreUserData, getUserDetails } from './user.js';
 import {isNextDay} from './utils.js'
 
