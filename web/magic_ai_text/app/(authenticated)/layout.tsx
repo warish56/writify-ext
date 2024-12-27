@@ -1,5 +1,6 @@
 
 
+import Footer from "@/components/Footer"
 import Navbar from "@/components/Navbar"
 import { Stack } from "@mui/material"
 
@@ -14,6 +15,7 @@ export default function Layout({children}:props){
         <Stack>
             <Navbar/>
             {children}
+            <Footer/>
         </Stack>
     )
 }

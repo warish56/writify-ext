@@ -4,11 +4,12 @@ import { grey } from '@mui/material/colors';
 declare module '@mui/material/styles' {
 
     interface TypeBackground {
-        dark: string
+        dark: string;
     }
 
     interface TypeText{
         dark:string;
+        link: string;
     }
 
     interface ZIndex{
@@ -68,7 +69,8 @@ const palette = {
   text: {
     primary: '#2D2440', // dark purple-gray
     secondary: '#6B6684', // medium purple-gray
-    dark: grey[50]
+    dark: grey[50],
+    link: "#2196f3",
   },
   action: {
     hover: '#F4F1FA', // very light purple
