@@ -90,6 +90,7 @@ const palette = {
 };
 
 export const AppTheme = createTheme({
+  cssVariables: true,
   palette,
   zIndex: {
     popper: 100000,
