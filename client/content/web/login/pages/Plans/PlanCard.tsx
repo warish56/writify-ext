@@ -12,11 +12,25 @@ type planCardProps = {
     onClick : () => void;
     loading: boolean;
     disabled: boolean;
+    currentPlanExpired: boolean;
 }
 
 const FREE_PLAN_ID = 0;
 
-export const PlanCard = ({ id, plan, name, currentPlan, onClick, loading, disabled }: planCardProps) => {
+export const PlanCard = ({ id, plan, name, currentPlan, onClick, loading, disabled, currentPlanExpired }: planCardProps) => {
+
+    const getBtnText = () => {
+        if(loading){
+            return 'Please wait...'
+        }
+
+        if(currentPlan && currentPlanExpired){
+            return 'Pay Again'
+        }
+
+        return 'Buy Plan'
+    }
+
     return (
         <Card
             sx={{
@@ -103,7 +117,7 @@ export const PlanCard = ({ id, plan, name, currentPlan, onClick, loading, disabl
                     color: currentPlan ? 'primary.contrastText' : undefined,
                 }}
                 >
-                    {loading ? 'Please wait...'  : 'Choose Plan'}
+                    {getBtnText()}  
                 </Button>
                 
             </CardContent>

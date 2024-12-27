@@ -7,6 +7,9 @@ import { useEffect, useState } from 'react';
 import { useSnackbar } from '../../hooks/useSnackbar';
 import { PaymentWaitingModal } from '../../components/PaymentWaitingModal';
 import { Plans } from '../../constants/Plans';
+import { daysDifference } from '../../utils';
+import { PlanExpiredBanner } from './PlanExpiredBanner';
+import { PlanTypes } from 'web/login/types/plans';
 
 
 
@@ -15,6 +18,9 @@ export const PlansPage = () => {
     const [pollingModalVisible, setPollingModalVisible] = useState(false);
     const {isLoading: isMakingAPurchase , makePurchase, selectedPlan, error, data} = usePurchasePlan();
     const {showSnackbar} = useSnackbar();
+
+    const hasCurrentPlanExpired = userData?.account.payment_date ? daysDifference(userData?.account.payment_date) > 28 : false
+    const currentPlanName = Object.keys(Plans).find((planName) => Plans[planName as PlanTypes].id === userData?.account.plan_details.plan_id)
 
     const handleCloseOfPollingModal = () => {
         setPollingModalVisible(val => !val)
@@ -49,6 +55,7 @@ export const PlansPage = () => {
                 alignItems: 'center',
                 justifyContent: 'flex-start',
                 py: 4,
+                gap: '15px'
             }}
         >
             <Typography variant="h1" color="text.primary" gutterBottom sx={{ textAlign: 'center', mb: 3 }}>
@@ -57,10 +64,13 @@ export const PlansPage = () => {
             <Typography
                 variant="h3"
                 color="text.secondary"
-                sx={{ textAlign: 'center', maxWidth: '600px', mb: 5 }}
+                sx={{ textAlign: 'center', maxWidth: '600px', mb: 1 }}
             >
                 Pick the best plan that suits your needs and enjoy the benefits of our service! Upgrade anytime as you grow.
             </Typography>
+            
+            {hasCurrentPlanExpired && <PlanExpiredBanner expiredPlan={currentPlanName || ''} />}
+            
             <Stack
                 direction="row"
                 spacing={4}
@@ -87,6 +97,7 @@ export const PlansPage = () => {
                         onClick={() => makePurchase(userData.id, plan.id)}
                         key={plan.id}
                         currentPlan={plan.id === userData.account.plan_details.plan_id}
+                        currentPlanExpired={hasCurrentPlanExpired}
                     />
                 ))}
             </Stack>
@@ -95,7 +106,7 @@ export const PlansPage = () => {
                 component="footer"
                 sx={{
                     width: '100%',
-                    mt: 'auto',
+                    mt: 5,
                     py: 3,
                     backgroundColor: 'primary.main',
                     textAlign: 'center',

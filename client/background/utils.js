@@ -11,6 +11,12 @@ export const isNextDay = (timestamp1, timestamp2) => {
 
 }
 
+export const daysDifference = (givenDate) => {
+    const d1 = new Date(givenDate);
+    const d2 = new Date();
+    return ((d2-d1)/1000)/60/60/24;
+}
+
 
 export const openLoginPage = () => {
     chrome.tabs.create({
