@@ -33,7 +33,6 @@ const Navbar = () => {
   });
 
   const navItems = [
-    { label: 'Orders', icon: <OrdersIcon />, path: '/orders' },
     { label: 'Plans', icon: <PlansIcon />, path: '/plans' },
   ];
 

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 
-import { ThemeProvider } from '@mui/material'
+import { Box, ThemeProvider } from '@mui/material'
 
 import { AppTheme } from "@/services/theme";
 import "./globals.css";
@@ -31,7 +31,11 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <ThemeProvider theme={AppTheme}>
+          <Box sx={{
+            bgcolor: 'white'
+          }}>
           {children}
+          </Box>
         </ThemeProvider>
       </body>
     </html>
