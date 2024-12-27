@@ -35,18 +35,19 @@ export const LoginPage = () => {
 
     return (
         <Box sx={{
-            minHeight: '100vh',
+            minHeight: '90vh',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             bgcolor: 'background.default'
         }}>
             <Container maxWidth="sm">
-                <Paper elevation={0} sx={{
+                <Paper elevation={0} sx={() => ({
                     p: 4,
+                    py: 8,
                     borderRadius: 2,
-                    boxShadow: '0 4px 24px rgba(0, 0, 0, 0.05)'
-                }}>
+                    boxShadow: 4,
+                })}>
                     <Stack spacing={4}>
                        <FormHeading/>
                         <form onSubmit={handleSubmit}>

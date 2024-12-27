@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Box, Typography, Tabs, Tab, } from '@mui/material';
+import { Box, Typography, Tabs, Tab, Container, } from '@mui/material';
 import { OrderSkeleton } from './skeleton';
 import { OrderCard } from './card';
 import { useUserOrders } from '../../hooks/useUserOrders';
@@ -26,7 +26,11 @@ const OrdersList = () => {
 
   
     return (
-      <Box sx={{ maxWidth: 800, mx: 'auto', p: 2 }}>
+      <Container maxWidth="sm" sx={{
+        p:2,
+        paddingTop: '30px',
+        mx:'auto'
+      }}>
         <Typography variant="h1" sx={{ mb: 3 }}>My Orders</Typography>
         
         <Tabs 
@@ -66,7 +70,7 @@ const OrdersList = () => {
                 <EmptyOrders/>
             }
         </Box>
-      </Box>
+      </Container>
     );
   };
 

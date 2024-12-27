@@ -1,6 +1,8 @@
 import { Navigate, Outlet, useNavigate } from "react-router-dom"
 import { useUserDetails } from "../hooks/useUserDetails"
 import { useEffect } from "react";
+import { Box } from "@mui/material";
+import Navbar from "../components/Navbar";
 
 
 
@@ -23,7 +25,12 @@ export const RootRoute = () => {
 
 
     if(userData){
-        return <Outlet/>
+        return (
+            <Box>
+                <Navbar/>
+                <Outlet/>
+            </Box>
+        )
     }
     return <Navigate to="/auth/login" replace/>
     
