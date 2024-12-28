@@ -3,7 +3,7 @@ import { Container } from "@mui/material"
 import { Box } from "@mui/material"
 import Image from "next/image"
 
-import OptionsImage from '@/assets/options.png'
+import OptionsImage from '@/asset/options.png'
 
 
 export const HowItWorksSection = () => {

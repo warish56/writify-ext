@@ -6,7 +6,7 @@ import { Box } from "@mui/material"
 import Image from "next/image"
 
 import Extension from '@mui/icons-material/Extension';
-import HeroImage from '@/assets/hero.png'
+import HeroImage from '@/asset/hero.png'
 
 export const HeroSection = () => {
   const theme = useTheme();
