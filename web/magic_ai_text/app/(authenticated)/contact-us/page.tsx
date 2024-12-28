@@ -1,11 +1,15 @@
 import React from 'react';
-import { Box, Container, Typography, Paper, TextField, Button, Snackbar, Alert } from '@mui/material';
-import { Email, ContentCopy } from '@mui/icons-material';
+import { Box, Container, Typography, Paper} from '@mui/material';
+import { Email } from '@mui/icons-material';
 import { CopyBtn } from './_components/CopyBtn';
+import { contactUsMetaData } from '@/constants/MetaData/contactUs';
+import { Metadata } from 'next';
+
+
+export const metadata: Metadata = contactUsMetaData;
+
 
 const ContactUs = () => {
-
-
   return (
     <Box sx={{ bgcolor: 'background.default', py: 8 }}>
       <Container maxWidth="md">

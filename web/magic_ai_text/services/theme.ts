@@ -45,6 +45,23 @@ declare module '@mui/material/styles' {
     interface ZIndexOptions{
         popper: number;
     }
+
+
+    interface TypographyVariants {
+      link: React.CSSProperties;
+    }
+  
+    // allow configuration using `createTheme()`
+    interface TypographyVariantsOptions {
+      link?: React.CSSProperties;
+    }
+  }
+  
+  // Update the Typography's variant prop options
+  declare module '@mui/material/Typography' {
+    interface TypographyPropsVariantOverrides {
+      link: true;
+    }
   
   }
 
@@ -99,7 +116,7 @@ export const AppTheme = createTheme({
     borderRadius: 8,
   },
   typography: {
-    fontFamily: '"Roboto", system-ui, -apple-system, sans-serif',
+    fontFamily: 'var(--font-roboto)',
     h1: {
       fontSize: '1.5rem',
       fontWeight: 600,
@@ -124,6 +141,11 @@ export const AppTheme = createTheme({
       fontSize: '0.875rem',
       lineHeight: 1.7,
     },
+    link:{
+      fontSize: '1rem',
+      lineHeight: 1.7,
+      fontFamily: 'var(--font-roboto)',
+    }
   },
   components: {
     MuiTooltip:{

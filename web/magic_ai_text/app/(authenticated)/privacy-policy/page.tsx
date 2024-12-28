@@ -6,6 +6,11 @@ import {
   Paper,
   Divider,
 } from '@mui/material';
+import { privacyPolicyMetaData } from '@/constants/MetaData/privacyPolicy';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = privacyPolicyMetaData;
+
 
 const PrivacyPolicy = () => {
   const sections = [

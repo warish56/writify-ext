@@ -1,6 +1,12 @@
 import React from 'react';
 import { Box, Container, Typography, Paper, Grid, Card, CardContent } from '@mui/material';
 import { Psychology, Lightbulb, Speed, Group } from '@mui/icons-material';
+import { Metadata } from 'next';
+import { aboutUsMetaData } from '@/constants/MetaData/aboutUs';
+
+
+export const metadata: Metadata = aboutUsMetaData;
+
 
 const AboutUs = () => {
   const values = [

@@ -47,10 +47,10 @@ export const HeroSection = () => {
             <Typography
               variant="h2"
               sx={{
-                fontSize: { xs: '1.25rem', md: '1.5rem' },
                 color: 'text.secondary',
                 mb: 4,
                 fontWeight: 'normal',
+                lineHeight:'1.6'
               }}
             >
               Select text, get AI insights, and enhance your work instantly with our smart browser extension.

@@ -14,7 +14,7 @@ import { HeroSection } from './HeroSection';
 export const MarketingPage = () => {
 
   return (
-    <Box>      
+    <Box>
       <HeroSection/>
       <FeaturesSection/>
       <HowItWorksSection/>

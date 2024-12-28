@@ -33,12 +33,22 @@ export default function PlansPage(){
                 direction="row"
                 spacing={4}
                 sx={{
-                    width: '100%',
-                    maxWidth: '800px',
-                    mt: 2,
-                    justifyContent: 'center',
+                    scrollSnapType: 'x mandatory',
+                    width: 'min(800px, 100vw)',
+                    mt: 2,  
+                    padding: {
+                        xs: '20px'
+                    },
+                    justifyContent: {
+                        sm: 'flex-start',
+                        md:'center'
+                    },
                     alignItems: 'stretch',
                     flexBasis: '400px',
+                    overflow:{
+                        xs:'auto',
+                        md: 'visible'
+                    }
                 }}
             >
                
