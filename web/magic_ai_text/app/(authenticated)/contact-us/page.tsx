@@ -26,7 +26,7 @@ const ContactUs = () => {
           textAlign: 'center',
           mb: 6
         }}>
-          We'd love to hear from you
+          {`We'd love to hear from you`}
         </Typography>
 
         <Paper sx={{ 

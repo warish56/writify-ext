@@ -1,5 +1,5 @@
 
-import { Card, CardContent, Typography, Stack, Button } from '@mui/material';
+import { Card, CardContent, Typography, Stack } from '@mui/material';
 import StarIcon from '@mui/icons-material/Star';
 import { BuyBtn } from './BuyBtn';
 

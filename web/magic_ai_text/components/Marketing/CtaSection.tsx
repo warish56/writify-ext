@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Theme, useTheme } from "@mui/material"
+import { Button, useTheme } from "@mui/material"
 import { Typography } from "@mui/material"
 import { Container, Stack } from "@mui/material"
 import { Box } from "@mui/material"
@@ -44,7 +44,7 @@ export const CtaSection = () => {
               },
             }}
           >
-            Add to Browser - It's Free
+            {`Add to Browser - It's Free`}
           </Button>
         </Stack>
       </Container>

@@ -10,10 +10,7 @@ import {
   Stack,
 } from '@mui/material';
 
-
-import OrdersIcon from '@mui/icons-material/ShoppingCart'
 import PlansIcon from '@mui/icons-material/ViewModule'
-
 
 import { BrandLogo } from './BrandLogo';
 import { usePathname, useRouter } from 'next/navigation';

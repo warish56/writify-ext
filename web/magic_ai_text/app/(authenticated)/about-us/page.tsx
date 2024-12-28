@@ -50,7 +50,7 @@ const AboutUs = () => {
             mx: 'auto',
             mb: 6
           }}>
-            We're a team of AI enthusiasts and developers dedicated to making AI assistance more accessible through browser-based tools.
+            {`We're a team of AI enthusiasts and developers dedicated to making AI assistance more accessible through browser-based tools.`}
           </Typography>
         </Box>
 
@@ -71,7 +71,7 @@ const AboutUs = () => {
             mx: 'auto',
             fontSize: '1.2rem'
           }}>
-            To empower users with intelligent AI assistance that seamlessly integrates into their browsing experience, enhancing productivity and creativity through contextual AI prompts.
+            {`To empower users with intelligent AI assistance that seamlessly integrates into their browsing experience, enhancing productivity and creativity through contextual AI prompts.`}
           </Typography>
         </Paper>
 
@@ -133,7 +133,7 @@ const AboutUs = () => {
             textAlign: 'center',
             lineHeight: 1.8
           }}>
-            Born from the need to make AI assistance more accessible, our browser extension started as a simple tool to enhance web browsing with AI prompts. Today, we're proud to offer a sophisticated yet simple solution that helps users leverage AI technology effectively in their daily online activities.
+            {`Born from the need to make AI assistance more accessible, our browser extension started as a simple tool to enhance web browsing with AI prompts. Today, we're proud to offer a sophisticated yet simple solution that helps users leverage AI technology effectively in their daily online activities.`}
           </Typography>
         </Paper>
       </Container>
