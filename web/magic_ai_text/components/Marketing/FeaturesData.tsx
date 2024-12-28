@@ -1,5 +1,4 @@
 import {
-    Extension,
     Search,
     AutoAwesome,
     Edit,

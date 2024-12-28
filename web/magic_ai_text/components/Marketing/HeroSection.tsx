@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, Theme, Typography, useTheme } from "@mui/material"
+import { Button, Typography, useTheme } from "@mui/material"
 import { Container, Stack } from "@mui/material"
 import { Box } from "@mui/material"
 import Image from "next/image"
@@ -53,7 +53,7 @@ export const HeroSection = () => {
                 lineHeight:'1.6'
               }}
             >
-              Select text, get AI insights, and enhance your work instantly with our smart browser extension.
+              {`Select text, get AI insights, and enhance your work instantly with our smart browser extension.`}
             </Typography>
             <Stack direction="row" spacing={2}>
               <Button
