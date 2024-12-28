@@ -28,6 +28,8 @@ export const PlanCard = ({ id, plan, name, currentPlan=false }: planCardProps) =
                 position: 'relative',
                 border: currentPlan ? '2px solid' : 'none',
                 borderColor: currentPlan ? 'primary.main' : 'transparent',
+                flexShrink: 0,
+                scrollSnapAlign: 'center',
                 '&:hover': {
                     boxShadow: 10,
                     transform: 'scale(1.03)',

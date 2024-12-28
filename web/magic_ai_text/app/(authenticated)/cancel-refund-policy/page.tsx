@@ -6,6 +6,11 @@ import {
   Paper,
   Divider,
 } from '@mui/material';
+import { refundMetaData } from '@/constants/MetaData/refundPolicy';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = refundMetaData;
+
 
 const RefundPolicy = () => {
   const sections = [

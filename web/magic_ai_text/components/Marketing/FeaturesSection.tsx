@@ -18,8 +18,7 @@ export const FeaturesSection = () => {
       <Stack
         direction={{ xs: 'column', sm: 'row' }}
         flexWrap="wrap"
-        spacing={4}
-        sx={{ mx: -2 }}
+        sx={{ mx: -2, gap: '20px' }}
       >
         {features.map((feature, index) => (
           <Box

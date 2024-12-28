@@ -81,7 +81,7 @@ const Footer = () => {
                       }
                     }}
                   >
-                    {item.label}
+                    <Typography variant='link'>{item.label}</Typography>
                   </Link>
                 ))}
               </Stack>

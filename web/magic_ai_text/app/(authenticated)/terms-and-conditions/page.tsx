@@ -6,6 +6,11 @@ import {
   Paper,
   Divider,
 } from '@mui/material';
+import { termsMetaData } from '@/constants/MetaData/termsPolicy';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = termsMetaData;
+
 
 const TermsAndConditions = () => {
   const sections = [
