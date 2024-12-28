@@ -26,7 +26,7 @@ export const CtaSection = () => {
           <Typography variant="h2">
             Ready to Transform Your Browsing Experience?
           </Typography>
-          <Typography variant="h3" sx={{ fontWeight: 'normal' }}>
+          <Typography variant="h3" sx={{ fontWeight: 'normal', lineHeight:'1.6' }}>
             Join thousands of users who are already using AIMagicText to enhance their productivity.
           </Typography>
           <Button
@@ -36,7 +36,10 @@ export const CtaSection = () => {
             onClick={onInstallExtension}
             sx={{
               py: 2,
-              px: 6,
+              px: {
+                xs: 2,
+                sm: 6
+              },
               backgroundColor: 'white',
               color: 'primary.main',
               '&:hover': {

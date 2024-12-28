@@ -19,28 +19,38 @@ export const HowItWorksSection = () => {
           <Stack
             direction={{ xs: 'column', md: 'row' }}
             spacing={4}
-            alignItems="center"
+            alignItems={{
+              md: "center"
+            }}
           >
-            <Box flex={1}>
+            <Box flex={1.5} sx={{
+              display: 'flex',
+              justifyContent:'center',
+              alignItems: 'center'
+            }}>
                 <Box sx={{
-                    width:'fit-content',
+                    maxWidth: '300px',
                     boxShadow: 6,
                     borderRadius: 2,
                     overflow: 'hidden',
-                    transform: 'skewY(-5deg)'
+                    transform: 'skewY(-5deg)',
+                    position:'relative',
+                    flexBasis: '400px',
+                    height: '400px'
                 }}>
                 <Image
                     src={OptionsImage}
                     alt="How it works"
+                    fill
                     style={{
-                    width: '400px',
-                    height: 'auto',
+                    maxWidth:'100%',
+                    objectFit:'contain',
                     borderRadius: 4,
                     }}
                 />
               </Box>
             </Box>
-            <Stack spacing={4} flex={1} sx={{
+            <Stack spacing={4} flex={2} sx={{
                 color:'text.secondary',
               }}>
               <Box>

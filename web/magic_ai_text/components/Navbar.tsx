@@ -8,12 +8,17 @@ import {
   Container,
   useTheme,
   Stack,
+  IconButton,
 } from '@mui/material';
 
 import PlansIcon from '@mui/icons-material/ViewModule'
+import MenuIcon from '@mui/icons-material/Menu';
+import HomeIcon from '@mui/icons-material/Home'
 
 import { BrandLogo } from './BrandLogo';
 import { usePathname, useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { AppDrawer } from './Drawer';
 
 
 
@@ -21,8 +26,15 @@ const Navbar = () => {
   const theme = useTheme();
   const router = useRouter();
   const pathName = usePathname();
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
 
   const currentLoaction = pathName;
+
+  // Handles mobile menu
+  const handleDrawerToggle = () => {
+    setDrawerOpen((val) => !val);
+  };
 
   const trigger = useScrollTrigger({
     disableHysteresis: true,
@@ -30,6 +42,7 @@ const Navbar = () => {
   });
 
   const navItems = [
+    { label: 'Home', icon: <HomeIcon />, path: '/' },
     { label: 'Plans', icon: <PlansIcon />, path: '/plans' },
   ];
 
@@ -100,10 +113,24 @@ const Navbar = () => {
               })}
             </Stack>
 
+             {/* Mobile Menu Button */}
+             <IconButton
+              aria-label="open drawer"
+              edge="start"
+              onClick={handleDrawerToggle}
+              sx={{ display: { md: 'none' } }}
+            >
+              <MenuIcon />
+            </IconButton>
+
           </Toolbar>
         </Container>
       </AppBar>
-      {/* Toolbar spacer */}
+      
+      <AppDrawer 
+        open={drawerOpen}
+        handleClose={handleDrawerToggle}
+      />
       <Toolbar />
     </>
   );
