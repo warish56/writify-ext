@@ -29,14 +29,23 @@ export const HowItWorksSection = () => {
               alignItems: 'center'
             }}>
                 <Box sx={{
-                    maxWidth: '300px',
+                    maxWidth: '400px',
                     boxShadow: 6,
                     borderRadius: 2,
                     overflow: 'hidden',
                     transform: 'skewY(-5deg)',
                     position:'relative',
-                    flexBasis: '400px',
-                    height: '400px'
+                    flexBasis: {
+                     xs:  '250px',
+                     sm: '300px',
+                     md: '350px'
+                    },
+                    flexGrow: 0,
+                    height: { 
+                      xs: '300px',
+                      sm: '400px',
+                      md: '450px'
+                    }
                 }}>
                 <Image
                     src={OptionsImage}
