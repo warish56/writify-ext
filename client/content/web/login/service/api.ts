@@ -1,3 +1,4 @@
+import { ServerError } from "@/types/api";
 import { ApiResponse } from "../types/api";
 
 
@@ -11,8 +12,10 @@ export const fetchData = async <T>(url: string, init: RequestInit) => {
                 'Content-Type': 'application/json'
             }
         });
-        return response.json() as Promise<ApiResponse<T>>;
-    } catch (error) {
-        throw new Error('Something went wrong ...');
+        const json = await response.json() as Awaited<ApiResponse<T>>;
+        return [json.data as T, json.error as ServerError || null] as [T, ServerError | null]
+    } catch (error: unknown) {
+        console.log(error)
+        return ([null, (error as Error)?.message || error]) as [null, ServerError | null]
     }
 }

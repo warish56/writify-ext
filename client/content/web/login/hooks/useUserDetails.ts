@@ -14,7 +14,7 @@ export const useUserDetails = () => {
 
     const fetchUserDetailsFromServer = async () => {
         setLoading(true);
-        const result = await sendMessageToWorker<WorkerResponse<[User, ServerError]>>(BG_FETCH_USER_DETAILS, {email:userData?.email});
+        const result = await sendMessageToWorker<WorkerResponse<[User|null, ServerError]>>(BG_FETCH_USER_DETAILS, {email:userData?.email});
         const {success, data} = result;
         if(success){
             const [actualData] = data
@@ -25,7 +25,7 @@ export const useUserDetails = () => {
 
     const getUserDetailsFromStore = async () => {
         setLoading(true);
-        const result = await sendMessageToWorker<WorkerResponse<User>>(BG_GET_USER_DETAILS);
+        const result = await sendMessageToWorker<WorkerResponse<User|null>>(BG_GET_USER_DETAILS);
         const {success, data} = result;
         if(success){
             setUserData(data);
@@ -42,6 +42,7 @@ export const useUserDetails = () => {
     return {
         userData,
         isLoading,
+        isAccountSuspended: userData?.account.status === 'SUSPENDED',
         getUserDetailsFromStore,
         fetchUserDetailsFromServer
     }

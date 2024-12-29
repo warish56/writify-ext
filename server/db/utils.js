@@ -12,6 +12,15 @@ const getExistingCollection = async (db, databases, colelctionName) => {
     return list.collections[0];
 }
 
+const getCollectionDocuments = async (db, databases, collection) => {
+    const list = await databases.listDocuments(
+        db.$id,
+        collection.$id
+    );
+    return list.documents;
+}
+
 module.exports = {
-    getExistingCollection
+    getExistingCollection,
+    getCollectionDocuments
 }

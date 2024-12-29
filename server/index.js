@@ -34,7 +34,8 @@ const {
 
 const {
   prepareOrdersCollection
-} = require('./db/orders')
+} = require('./db/orders');
+const { runMigrations } = require('./migrations');
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -69,6 +70,7 @@ const initializeDbAndCollections = async () => {
       await prepareAccountsCollection();
       await prepareOtpCollection();
       await prepareOrdersCollection();
+      await runMigrations();
 
   }catch(err){
     console.log(err);

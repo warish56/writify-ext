@@ -10,6 +10,13 @@ const  collectionData = {
     collection: undefined
 };
 
+const Attributes = {
+    id: 'id',
+    credits: 'credits',
+    price: 'price'
+}
+
+
 /**
  * Schema
  *  id        credits  price
@@ -31,28 +38,31 @@ const preparePlanCollection = async () => {
         );
     }
 
-    if(collectionData.collection.attributes.length === 3){
+    const currentAttributes = [ Attributes.id, Attributes.credits, Attributes.price ];
+    const isEveryAttributeCreated = currentAttributes.every(attributeKey => collectionData.collection.attributes.find(attribute => attribute.key === attributeKey ));
+
+    if(isEveryAttributeCreated){
         return;
     }
 
     await databases.createIntegerAttribute(
         dbValues.db.$id,
         collectionData.collection.$id,
-        'id',
+        Attributes.id,
         true, 
     );
 
     await databases.createIntegerAttribute(
         dbValues.db.$id,
         collectionData.collection.$id,
-        'credits',
+        Attributes.credits,
         true,
     );
 
     await databases.createIntegerAttribute(
         dbValues.db.$id,
         collectionData.collection.$id,
-        'price',
+        Attributes.price,
         true,
     );
 }
@@ -100,7 +110,7 @@ const getAllPlans = async () => {
 const getPlanDetails = async (planId) => {
     const databases = new sdk.Databases(dbValues.client);
     const results = await databases.listDocuments(dbValues.db.$id, collectionData.collection.$id,[
-        Query.equal("id", planId)
+        Query.equal(Attributes.id, planId)
     ]);
     return results.documents[0];
 }

@@ -9,12 +9,13 @@ import { PaymentWaitingModal } from '../../components/PaymentWaitingModal';
 import { Plans } from '../../constants/Plans';
 import { daysDifference } from '../../utils';
 import { PlanExpiredBanner } from './PlanExpiredBanner';
-import { PlanTypes } from 'web/login/types/plans';
+import { PlanTypes } from '../../types/plans';
+import { AccountSuspendedBanner } from '../../components/AccountSuspended';
 
 
 
 export const PlansPage = () => {
-    const {userData, isLoading} = useUserDetails();
+    const {userData, isLoading, isAccountSuspended} = useUserDetails();
     const [pollingModalVisible, setPollingModalVisible] = useState(false);
     const {isLoading: isMakingAPurchase , makePurchase, selectedPlan, error, data} = usePurchasePlan();
     const {showSnackbar} = useSnackbar();
@@ -33,7 +34,7 @@ export const PlansPage = () => {
                 type: 'error'
             })
         }else{
-            const link = data?.data.payment_link;
+            const link = data?.payment_link;
             if(link){
                 window.open(link, '_self')
             }
@@ -44,6 +45,28 @@ export const PlansPage = () => {
     if(data && !pollingModalVisible){
         setPollingModalVisible(true);
     }
+
+
+    if(isAccountSuspended){
+        return  (
+            <Box
+            sx={{
+                minHeight: '50vh',
+                backgroundColor: 'background.default',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                py: 4,
+                gap: '15px'
+            }}
+            >
+                <AccountSuspendedBanner/>
+            </Box>
+        )
+    }
+
+
 
     return (
         <Box

@@ -1,17 +1,25 @@
 
-import { Messages, Routes } from './constants.js';
-import {getAvailableCredits, updateAvailableCredits, getTotalCredits, getCreditsData, fetchAndStoreCreditsData} from './credits.js'
-import { fetchUserOrders } from './orders.js';
-import {fetchAndStoreUserData, getUserDetails} from './user.js'
-import { fetchData, openLoginPage } from './utils.js';
+import { fetchAiResponse } from './ai.js';
+import {
+    getAvailableCredits,
+    updateAvailableCredits, 
+    getTotalCredits, 
+    getCreditsData, 
+    fetchAndStoreCreditsData
+} from './credits.js'
 
-const fetchAiResponse = async (text, prompt, sendResponse) => {
-    const result = await fetchData(Routes.AI, {
-        method: 'POST',
-        body: JSON.stringify({text, prompt}),
-    })
-    sendResponse(result);
-}
+import {
+    clearUserDetails, 
+    fetchAndStoreUserData, 
+    getUserDetails
+} from './user.js'
+
+import { fetchUserOrders } from './orders.js';
+
+import { openLoginPage } from './utils.js';
+import { Messages } from './constants.js';
+
+
 
 
 const handleCreditsMessages = async (message, sendResponse) => {
@@ -19,22 +27,22 @@ const handleCreditsMessages = async (message, sendResponse) => {
     try{
         if(message.type === Messages.BG_GET_AVAILABLE_CREDITS) {
             const credits = await getAvailableCredits();
-            sendResponse({success: true, credits});
+            sendResponse({success: true, data:{credits} });
         }
 
         if(message.type === Messages.BG_UPDATE_AVAILABLE_CREDITS) {
             const credits = await updateAvailableCredits(message.credits);
-            sendResponse({success: true, credits})
+            sendResponse({ success: true, data:{credits} })
         }
 
         if(message.type === Messages.BG_GET_TOTAL_CREDITS) {
             const credits = await getTotalCredits();
-            sendResponse({success: true, credits})
+            sendResponse({success: true, data:{credits} })
         }
 
         if(message.type === Messages.BG_GET_CREDITS_DATA) {
             const data = await getCreditsData();
-            sendResponse({success: true, ...data})
+            sendResponse({success: true, data})
         }
 
         if(message.type === Messages.BG_FETCH_CREDITS_DATA) {
@@ -45,6 +53,10 @@ const handleCreditsMessages = async (message, sendResponse) => {
         if(message.type === Messages.BG_FETCH_USER_DETAILS) {
             const data = await fetchAndStoreUserData(message.email);
             sendResponse({success: true, data})
+        }
+        if(message.type === Messages.BG_CLEAR_USER_DETAILS) {
+            await clearUserDetails();
+            sendResponse({success: true})
         }
 
         if(message.type === Messages.BG_GET_USER_DETAILS) {
@@ -71,17 +83,25 @@ const handleOrdersMessages = async (message, sendResponse) => {
     }
 }
 
+
+const handleAiMessages = async (message, sendResponse) => {
+    try{
+        if(message.type = Messages.BG_GET_AI_RESPONSE){
+            const data  = await fetchAiResponse(message.text, message.prompt);;
+            sendResponse({success: true, data})
+            return true;
+        }
+    }catch(err){
+        sendResponse({success: false, error:err});
+    }
+}
+
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     const appId = chrome.runtime.id;
 
     // only messages from  our extension can be accepted
     if( message.appId !== appId){
         return;
-    }
-
-    if(message.type === Messages.BG_GET_AI_RESPONSE) {
-        fetchAiResponse(message.text, message.prompt, sendResponse);
-        return true;
     }
 
     if(message.type === Messages.BG_OPEN_LOGIN_PAGE){
@@ -91,12 +111,22 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
 
     if([
+        Messages.BG_GET_AI_RESPONSE
+        ].includes(message.type)){
+            handleAiMessages(message, sendResponse);
+            return true;
+    }
+    
+
+
+    if([
         Messages.BG_GET_AVAILABLE_CREDITS,
         Messages.BG_UPDATE_AVAILABLE_CREDITS,
         Messages.BG_GET_TOTAL_CREDITS,
         Messages.BG_GET_CREDITS_DATA,
         Messages.BG_FETCH_CREDITS_DATA,
         Messages.BG_FETCH_USER_DETAILS,
+        Messages.BG_CLEAR_USER_DETAILS,
         Messages.BG_GET_USER_DETAILS
         ].includes(message.type)){
             handleCreditsMessages(message, sendResponse);

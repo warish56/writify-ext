@@ -23,11 +23,11 @@ export const OtpPage = () => {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const response = await verifyOtp(email || '', otp)
-        const [result, error] = response
+        const [__, error] = response
 
-        if(error || result?.error){
+        if(error){
             showSnackbar({
-                message: result?.error?.message || error?.message || '',
+                message: error?.message || '',
                 autoHide: 3000,
                 type: 'error'
             })

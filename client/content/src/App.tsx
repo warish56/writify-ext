@@ -1,5 +1,5 @@
 import { useSelection } from '@/hooks/useSelection';
-import { IconButton, Popover, Popper, Snackbar,Box } from '@mui/material';
+import { IconButton, Popover, Popper, Snackbar,Box, Tooltip } from '@mui/material';
 import { PromptMenu } from './components/PromptsMenu';
 import { usePromptManager } from './hooks/usePromptManager';
 import { PromptResult } from './components/PromptsMenu/PromptResult';
@@ -12,9 +12,11 @@ import UpgradePrompt from './components/PromptsMenu/UpgradePrompt';
 
 import { sendMessageToWorker } from './utils';
 import { BG_OPEN_LOGIN_PAGE } from './constants';
+import { useUserDetails } from './hooks/useUserDetails';
 
 
 function App() {
+  const {isAccountSuspended} = useUserDetails();
   const {fetchAndInitializeCreditsDataFromServer, isCreditsAvailable} = useCredits();
   const [isPromptOpen, setPromptOpen]= useState(false);
   const {prompt, handlePromptChange, clearPrompt} = usePromptManager();
@@ -26,7 +28,12 @@ function App() {
 
   // whenever app loads first load the credits data from the server
   useEffect(() => {
-    fetchAndInitializeCreditsDataFromServer();
+    const fetchAllData = async () => {
+      fetchAndInitializeCreditsDataFromServer();
+    }
+
+    fetchAllData();
+    
   }, [])
 
 
@@ -48,6 +55,10 @@ function App() {
 
   const closePrompt = () => {
     setPromptOpen(false)
+  }
+
+  const openLoginPage = () => {
+    sendMessageToWorker(BG_OPEN_LOGIN_PAGE)
   }
 
 
@@ -92,7 +103,6 @@ function App() {
 
   const isTextSelected = !!currentSelectionData.selectedText;
 
-
   if(isTextSelected && !isPromptOpen){
     return (
       <Popper
@@ -104,7 +114,7 @@ function App() {
       })}
       >
         <Box sx={(theme) => ({
-          backgroundColor: theme.palette.primary.dark,
+          backgroundColor: isAccountSuspended ? theme.palette.grey[600] : theme.palette.primary.dark,
           borderRadius: '50%',
           width: '30px',
           height: '30px',
@@ -112,14 +122,16 @@ function App() {
           justifyContent: 'center',
           alignItems: 'center'
         })}>
-          <IconButton sx={{
-            border: `2px white solid`,
-            transform: 'scale(0.7)'
-          }} size="small" onClick={openPrompt}>
-            <AutoAwesomeIcon  sx={(theme) => ({
-              color: theme.palette.background.default
-            })}/>
-          </IconButton>
+          <Tooltip title={isAccountSuspended ? 'Account Suspended' : ''}>
+            <IconButton sx={{
+              border: `2px white solid`,
+              transform: 'scale(0.7)'
+            }} size="small" onClick={isAccountSuspended ? openLoginPage : openPrompt}>
+              <AutoAwesomeIcon  sx={(theme) => ({
+                color: theme.palette.background.default
+              })}/>
+            </IconButton>
+          </Tooltip>
         </Box>
       </Popper>
     )
@@ -156,7 +168,7 @@ function App() {
                   />
 
                 :
-                  <UpgradePrompt  onUpgradeClick={()=> sendMessageToWorker(BG_OPEN_LOGIN_PAGE)}/>
+                  <UpgradePrompt  onUpgradeClick={openLoginPage}/>
               }
             </PromptMenu>
           </Popover>

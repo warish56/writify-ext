@@ -2,6 +2,7 @@ const sdk = require("node-appwrite");
 const {dbValues} = require('./init')
 const { getExistingCollection } = require("./utils");
 const { Plans } = require("../constants/plans");
+const { ACCOUNT_STATUS } = require("../constants/accounts");
 
 const {Query} =sdk
 
@@ -10,10 +11,17 @@ const  collectionData = {
     collection: undefined
 };
 
+const Attributes = {
+    userId: 'user_id',
+    paymentDate: 'payment_date',
+    planId: 'plan_id',
+    status: 'status'
+}
+
 /**
  * Schema
- *  user_id  payment_date   plan_id
- *  string   datetime       number
+ *  user_id  payment_date   plan_id  status
+ *  string   datetime       number   ACTIVE | SUSPENDED | DELETED
  */
 
 const prepareAccountsCollection = async () => {
@@ -33,15 +41,17 @@ const prepareAccountsCollection = async () => {
 
 
     const collection = collectionData.collection;
+    const currentAttributes = [ Attributes.userId, Attributes.paymentDate, Attributes.planId ];
+    const isEveryAttributeCreated = currentAttributes.every(attributeKey => collection.attributes.find(attribute => attribute.key === attributeKey ));
 
-    if(collection.attributes.length === 3){
+    if(isEveryAttributeCreated){
         return;
     }
 
     await databases.createStringAttribute(
         dbValues.db.$id,
         collection.$id,
-        'user_id',
+        Attributes.userId,
         255,
         true
     );
@@ -49,14 +59,14 @@ const prepareAccountsCollection = async () => {
     await databases.createDatetimeAttribute(
         dbValues.db.$id,
         collection.$id,
-        'payment_date',
+        Attributes.paymentDate,
         false, 
     );
 
     await databases.createIntegerAttribute(
         dbValues.db.$id,
         collection.$id,
-        'plan_id',
+        Attributes.planId,
         true, 
     );
 
@@ -65,7 +75,7 @@ const prepareAccountsCollection = async () => {
 const getAccountWithUserId = async (userId) => {
     const databases = new sdk.Databases(dbValues.client);
     const result = await databases.listDocuments(dbValues.db.$id, collectionData.collection.$id, [
-        Query.equal("user_id", userId)
+        Query.equal(Attributes.userId, userId)
     ]);
     return result.documents[0];
 }
@@ -92,9 +102,10 @@ const createAccount = async (userId) => {
         collectionData.collection.$id,
         sdk.ID.unique(),
         {
-            user_id: userId,
-            payment_date: new Date().toISOString(),
-            plan_id: Plans.FREE.id
+            [Attributes.userId]: userId,
+            [Attributes.paymentDate]: new Date().toISOString(),
+            [Attributes.planId]: Plans.FREE.id,
+            [Attributes.status]: ACCOUNT_STATUS.active
         }
     );
     return document;
@@ -113,7 +124,7 @@ const updateAccountPayment = async (userId) => {
         collectionData.collection.$id,
         account.$id,
         { 
-            payment_date: new Date().toISOString(),
+            [Attributes.paymentDate]: new Date().toISOString(),
         }
     )
     return updatedDocument;
@@ -132,8 +143,8 @@ const updateAccountPlan = async (userId, planId) => {
         collectionData.collection.$id,
         account.$id,
         { 
-            payment_date: new Date().toISOString(),
-            plan_id: planId
+            [Attributes.paymentDate]: new Date().toISOString(),
+            [Attributes.planId]: planId
         }
     )
     return updatedDocument;

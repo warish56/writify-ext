@@ -19,7 +19,7 @@ interface OrderCardProps {
 
 const PaymentTypeDisplay: React.FC<{ type: string }> = ({ type }) => {
     const getIcon = () => {
-      switch (type.toLowerCase()) {
+      switch (type?.toLowerCase()) {
         case 'credit card':
           return <CreditCard sx={{ fontSize: 20 }} />;
         default:
