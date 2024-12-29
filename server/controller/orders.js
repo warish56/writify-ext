@@ -29,7 +29,7 @@ const createNewOrder = async(userId, planId) => {
         currency: Currencies.inr,
         description: `You are Purchasing ${planName} plan of AIMagicText`,
         userEmail: userDocument.email,
-        callbackUrl: `${process.env.BASE_URL}:${process.env.PORT}/orders/verify-payment?orderId=${order.$id}&planId=${planDocument.id}&userId=${userId}`,
+        callbackUrl: `${process.env.APP_URL}/orders/verify-payment?orderId=${order.$id}&planId=${planDocument.id}&userId=${userId}`,
     })
 
     return {

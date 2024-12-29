@@ -22,7 +22,7 @@ router.get('/verify-payment', async (req, res) => {
             userId,
             razorPayPaymentId: razorpay_payment_id
         })
-       res.redirect(`chrome-extension://${process.env.EXTENSION_ID}${process.env.PLANS_PAGE_PATH}?payment=${status}`);
+       res.redirect(`${process.env.EXTENSION_ORIGIN}${process.env.PLANS_PAGE_PATH}?payment=${status}`);
        
     }catch (error) {
         console.error('Error:', error);
