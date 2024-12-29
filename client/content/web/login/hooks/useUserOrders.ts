@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
 import { ServerError } from "../types/api";
-import { BG_FETCH_USER_ORDERS } from "../constants/worker";
 import { useUserDetails } from "./useUserDetails";
-import { WorkerResponse } from "../types/worker";
 import { Order } from "../types/plans";
-import { sendMessageToWorker } from "../utils";
+import { fetchData } from "../service/api";
 
 
 type response = {
@@ -19,19 +17,23 @@ export const useUserOrders = () => {
     const {userData} = useUserDetails()
 
     const getUserOrders = async () => {
-        let currResponse:state = [null, null]
-        setIsLoading(true);
-        const response = await sendMessageToWorker<WorkerResponse<[response, ServerError]>>(BG_FETCH_USER_ORDERS, {userId: userData?.id});
-        const {success, data} = response;
-        if(success){
-            currResponse = [data[0], data[1]]
-        }else{
-            currResponse = [null, data[1]]
+        try {
+            setIsLoading(true);
+            const userId = userData?.id
+            const response = await fetchData<response>('/orders/list', {
+                method: 'POST',
+                body: JSON.stringify({ 
+                    userId, 
+                 })
+            });
+            setResponse(response); 
+            setIsLoading(false);
+            return response;
+        } catch (error) {
+            console.error(error);
+            setIsLoading(false);
+            return [null, error as Error];
         }
-        setIsLoading(false);
-        setResponse(currResponse);
-        return currResponse;
-        
     }
 
     useEffect(() => {

@@ -1,40 +1,40 @@
 import { useState } from "react";
 import { fetchData } from "../service/api";
-import { ApiResponse, ServerError } from "../types/api";
+import { ServerError } from "@/types/api";
 
 type successResponse = {
     message: string;
 }
 
-type state = [ApiResponse<successResponse>|null, ServerError | Error | null | undefined];
+type state = [successResponse|null, ServerError | Error | undefined |null];
 
 
 export const useOtp = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [response, setResponse] = useState<state>([null, null]);
 
-    const verifyOtp = async (email: string, otp: string) => {
-        let currResponse:state = [null, null]
+    const verifyOtp = async (email: string, otp: string):Promise<state> => {
         try {           
             setIsLoading(true);
             const response = await fetchData<successResponse>('/auth/verify-otp', {
                 method: 'POST',
                 body: JSON.stringify({ email, otp })
             });
-            currResponse =[response, response?.error]; 
+            setResponse(response); 
             setIsLoading(false);
+            return response;
         } catch (error) {
             console.error(error);
             setIsLoading(false);
-            currResponse =[null, error as Error]; 
+            return [null, error as Error]
         }
-        setResponse(currResponse);
-        return currResponse;
+
     }
 
     return {
         isLoading,
-        response,
+        data: response[0] ?? null,
+        error: response[1] ?? null,
         verifyOtp
     }
 

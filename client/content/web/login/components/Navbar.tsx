@@ -63,7 +63,9 @@ const Navbar = () => {
             }}
           >
 
-            <BrandLogo onClick={() => handleNavigation('/')}/>
+            <BrandLogo onClick={() => {
+              window.open('https://www.aimagictext.in/', '_blank')
+            }}/>
          
 
             {/* Desktop Navigation */}

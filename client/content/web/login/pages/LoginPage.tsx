@@ -14,11 +14,11 @@ export const LoginPage = () => {
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
         loginUser(email).then((response) => {
-            const [result, error] = response
+            const [_, error] = response
           
-            if(error || result?.error){
+            if(error ){
                 showSnackbar({
-                    message: result?.error?.message || error?.message || '',
+                    message: error?.message || '',
                     autoHide: 3000,
                     type: 'error'
                 })

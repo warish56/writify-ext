@@ -3,11 +3,13 @@ import { BG_GET_AI_RESPONSE } from '@/constants';
 import { PromptResponse } from '@/types/prompt';
 import { useCredits } from './useCredits';
 import { sendMessageToWorker } from '@/utils';
+import { WorkerResponse } from '@/types/worker';
+import { ServerError } from '@/types/api';
 
-type AiResponseState = (PromptResponse | null)[] | (Error | null)[]
+type AiResponseState = [PromptResponse | null, | ServerError | null]
 
 const fetchResponses = async (text: string, prompt:string) => {
-    const response = await sendMessageToWorker(BG_GET_AI_RESPONSE, {text, prompt});
+    const response = await sendMessageToWorker<WorkerResponse<[PromptResponse|null, ServerError|null]>>(BG_GET_AI_RESPONSE, {text, prompt});
     return response;
 }
 
@@ -24,9 +26,10 @@ export const useGetPromptResponse = (prompt:string, text:string) => {
 
     const fetchData = async () => {
         setLoading(true);
-        const data = await fetchResponses(text, prompt);
-        const [_, error] = data
-        setResponse(data);
+        const {success, error, data} = await fetchResponses(text, prompt);
+        if(success){
+            setResponse(data);
+        }
         setLoading(false);
         if(!error){
             useAvailableCredits();  

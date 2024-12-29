@@ -12,14 +12,18 @@ export const getUserDetails = async () => {
     return data[USER_DATA];
 }
 
+export const clearUserDetails = async () => {
+    await chrome.storage.sync.remove([USER_DATA]);
+    return;
+}
+
+
 
 export const fetchAndStoreUserData = async (email) => {
     const [data, error] = await fetchUserData(email);
-    if(data){
-        await chrome.storage.sync.set({ 
-            [USER_DATA]: data
-        })
-    }
+    await chrome.storage.sync.set({ 
+        [USER_DATA]: data
+    })
     return [data, error];
 
 }

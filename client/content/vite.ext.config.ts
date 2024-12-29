@@ -40,6 +40,8 @@ export default defineConfig({
     },
     outDir: 'dist/ext',
     emptyOutDir: true,
+    sourcemap: true,
+    
   },
   resolve: {
     alias: {

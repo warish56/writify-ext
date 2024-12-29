@@ -40,9 +40,7 @@ export const fetchAndStoreCreditsData = async () => {
     let userDetails = await getUserDetails();
     if(userDetails?.email){
         const [data, error] = await fetchAndStoreUserData(userDetails?.email);
-        if(data){
-            userDetails = {...data};
-        }
+        userDetails = data ? {...data} : data;
     }
 
     const dbCreditsData = await getCreditsData();

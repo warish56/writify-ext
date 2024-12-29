@@ -5,10 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build-ext": "export NODE_ENV=production && bash ./replaceEnv.sh && tsc && vite build --config vite.ext.config.ts --mode production",
-    "watch-ext": "bash ./replaceEnv.sh && vite build --watch --config vite.ext.config.ts",
-    "build-web": "export NODE_ENV=production && bash ./replaceEnv.sh && tsc && vite build --config vite.web.config.ts --mode production",
-    "watch-web": "bash ./replaceEnv.sh && vite build --watch --config vite.web.config.ts",
+    "build-ext": "cross-env NODE_ENV=production && bash ./replaceEnv.sh && tsc && vite build --config vite.ext.config.ts --mode production",
+    "watch-ext": "bash ./replaceEnv.sh && vite build --mode development --watch --config vite.ext.config.ts",
+    "build-web": "cross-env NODE_ENV=production && bash ./replaceEnv.sh && tsc && vite build --config vite.web.config.ts --mode production",
+    "watch-web": "bash ./replaceEnv.sh && vite build --mode development --watch --config vite.web.config.ts",
     "preview-ext": "vite preview"
   },
   "dependencies": {
@@ -27,6 +27,7 @@
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@vitejs/plugin-react": "^4.0.3",
+    "cross-env": "^7.0.3",
     "typescript": "^5.0.2",
     "vite": "^4.4.5",
     "vite-plugin-svgr": "^4.3.0"

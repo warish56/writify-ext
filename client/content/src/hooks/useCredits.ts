@@ -1,5 +1,7 @@
 import { creditsAtom } from "@/atoms/credits"
 import { CreditBgActions } from "@/constants/credits";
+import { CreditData } from "@/types/credits";
+import { WorkerResponse } from "@/types/worker";
 import { sendMessageToWorker } from "@/utils";
 import { useAtom } from "jotai"
 
@@ -8,8 +10,9 @@ export const useCredits = () => {
     const [creditData, updateCreditData] = useAtom(creditsAtom);
 
     const initializeCreditsData = async () => {
-        const {success, totalCredits, usedCredits} = await sendMessageToWorker(CreditBgActions.BG_GET_CREDITS_DATA);
+        const {success, data} = await sendMessageToWorker<WorkerResponse<CreditData>>(CreditBgActions.BG_GET_CREDITS_DATA);
         if(success){
+            const {totalCredits, usedCredits} = data
             updateCreditData(prev=> ({
                 ...prev,
                 totalCredits,
@@ -19,7 +22,7 @@ export const useCredits = () => {
     }
 
     const fetchAndInitializeCreditsDataFromServer = async () => {
-       const {success} = await sendMessageToWorker(CreditBgActions.BG_FETCH_CREDITS_DATA);
+       const {success} = await sendMessageToWorker<WorkerResponse<null>>(CreditBgActions.BG_FETCH_CREDITS_DATA);
        if(success){
         initializeCreditsData();
        }
@@ -40,7 +43,7 @@ export const useCredits = () => {
         })
 
         const {newUsed, prevUsed}  = await promise;
-        const {success} = await sendMessageToWorker(CreditBgActions.BG_UPDATE_AVAILABLE_CREDITS, {credits: newUsed});
+        const {success} = await sendMessageToWorker<WorkerResponse<{credits:number}>>(CreditBgActions.BG_UPDATE_AVAILABLE_CREDITS, {credits: newUsed});
         if(!success){
             updateCreditData(prevVal => {
                 return {
