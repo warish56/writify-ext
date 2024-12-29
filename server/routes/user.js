@@ -26,6 +26,7 @@ router.get('/details', async (req, res) => {
                 id: userDocument.$id,
                 email: userDocument.email,
                 account: {
+                    status: accountDocument.status,
                     payment_date: accountDocument.payment_date,
                     plan_details: {
                         plan_id: accountDocument.plan_id,

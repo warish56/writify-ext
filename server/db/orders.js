@@ -9,6 +9,20 @@ const COLLECTION_NAME = 'Orders';
 const  collectionData = {
     collection: undefined
 };
+
+
+const Attributes = {
+    userId: 'user_id',
+    forPlanId: 'for_plan_id',
+    razorpayPaymentId: 'razorpay_payment_id',
+    razorpayPaymentType: 'razorpay_payment_type',
+    razorpayContact: 'razorpay_contact',
+    razorpayErrorCode: 'razorpay_error_code',
+    razorpayErrorReason: 'razorpay_error_reason',
+    paymentStatus: 'payment_status'
+}
+
+
 /**
  * Schema
  *  id        user_id  for_plan_id  razorpay_payment_id  razorpay_payment_type    razorpay_contact  razorpay_error_code razorpay_error_reason   payment_status
@@ -31,6 +45,23 @@ const prepareOrdersCollection = async () => {
         );
     }
 
+    const currentAttributes = [ 
+        Attributes.userId, 
+        Attributes.forPlanId, 
+        Attributes.razorpayPaymentId, 
+        Attributes.razorpayPaymentType, 
+        Attributes.razorpayContact, 
+        Attributes.razorpayErrorCode, 
+        Attributes.razorpayErrorReason, 
+        Attributes.paymentStatus, 
+    ];
+    const isEveryAttributeCreated = currentAttributes.every(attributeKey => collectionData.collection.attributes.find(attribute => attribute.key === attributeKey ));
+
+    if(isEveryAttributeCreated){
+        return;
+    }
+
+
     if(collectionData.collection.attributes.length == 8){
         return;
     }
@@ -38,7 +69,7 @@ const prepareOrdersCollection = async () => {
     await databases.createStringAttribute(
         dbValues.db.$id,
         collectionData.collection.$id,
-        'user_id',
+        Attributes.userId,
         255,
         true
     );
@@ -46,14 +77,14 @@ const prepareOrdersCollection = async () => {
     await databases.createIntegerAttribute(
         dbValues.db.$id,
         collectionData.collection.$id,
-        'for_plan_id',
+        Attributes.forPlanId,
         true, 
     );
 
     await databases.createStringAttribute(
         dbValues.db.$id,
         collectionData.collection.$id,
-        'razorpay_payment_id',
+        Attributes.razorpayPaymentId,
         255,
         false
     );
@@ -61,7 +92,7 @@ const prepareOrdersCollection = async () => {
     await databases.createStringAttribute(
         dbValues.db.$id,
         collectionData.collection.$id,
-        'razorpay_payment_type',
+        Attributes.razorpayPaymentType,
         255,
         false
     );
@@ -69,7 +100,7 @@ const prepareOrdersCollection = async () => {
     await databases.createStringAttribute(
         dbValues.db.$id,
         collectionData.collection.$id,
-        'razorpay_contact',
+        Attributes.razorpayContact,
         255,
         false
     );
@@ -77,7 +108,7 @@ const prepareOrdersCollection = async () => {
     await databases.createStringAttribute(
         dbValues.db.$id,
         collectionData.collection.$id,
-        'razorpay_error_code',
+        Attributes.razorpayErrorCode,
         255,
         false
     );
@@ -85,7 +116,7 @@ const prepareOrdersCollection = async () => {
     await databases.createStringAttribute(
         dbValues.db.$id,
         collectionData.collection.$id,
-        'razorpay_error_reason',
+        Attributes.razorpayErrorReason,
         255,
         false
     );
@@ -93,7 +124,7 @@ const prepareOrdersCollection = async () => {
     await databases.createEnumAttribute(
         dbValues.db.$id,
         collectionData.collection.$id,
-        'payment_status',
+        Attributes.paymentStatus,
         [PAYMENT_STATUS.pending, PAYMENT_STATUS.completed, PAYMENT_STATUS.failed],
         true
     );
@@ -109,7 +140,7 @@ const getOrderWithId = async (orderId) => {
 const getOrdersList = async (userId) => {
     const databases = new sdk.Databases(dbValues.client);
     const result = await databases.listDocuments(dbValues.db.$id, collectionData.collection.$id, [
-        Query.equal("user_id", userId)
+        Query.equal(Attributes.userId, userId)
     ]);
     return result;
 }
@@ -122,9 +153,9 @@ const createOrder = async (userId, planId) => {
         collectionData.collection.$id,
         sdk.ID.unique(),
         {
-            user_id: userId,
-            payment_status: PAYMENT_STATUS.pending,
-            for_plan_id: planId
+            [Attributes.userId]: userId,
+            [Attributes.paymentStatus]: PAYMENT_STATUS.pending,
+            [Attributes.forPlanId]: planId
         }
     );
     return document;
@@ -145,12 +176,12 @@ const updateOrderData = async ({
         collectionData.collection.$id,
         orderId,
         {
-            payment_status: status,
-            razorpay_payment_id: razorPayPaymentId,
-            razorpay_payment_type: razorPayPaymentType,
-            razorpay_contact: razorPayContact,
-            razorpay_error_code: razorPayErrorCode,
-            razorpay_error_reason: razorPayErrorReason
+            [Attributes.paymentStatus]: status,
+            [Attributes.razorpayPaymentId]: razorPayPaymentId,
+            [Attributes.razorpayPaymentType]: razorPayPaymentType,
+            [Attributes.razorpayContact]: razorPayContact,
+            [Attributes.razorpayErrorCode]: razorPayErrorCode,
+            [Attributes.razorpayErrorReason]: razorPayErrorReason
         }
     );
     return document;

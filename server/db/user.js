@@ -8,6 +8,12 @@ const COLLECTION_NAME = 'User';
 const  collectionData = {
     collection: undefined
 };
+
+const Attributes = {
+    email: 'email',
+}
+
+
 /**
  * Schema
  *  id        email 
@@ -30,14 +36,17 @@ const prepareUserCollection = async () => {
         );
     }
 
-    if(collectionData.collection.attributes.length == 1){
+    const currentAttributes = [ Attributes.email ];
+    const isEveryAttributeCreated = currentAttributes.every(attributeKey => collectionData.collection.attributes.find(attribute => attribute.key === attributeKey ));
+
+    if(isEveryAttributeCreated){
         return;
     }
     
     await databases.createStringAttribute(
         dbValues.db.$id,
         collectionData.collection.$id,
-        'email',
+        Attributes.email,
         255,
         true
     );
@@ -47,7 +56,7 @@ const prepareUserCollection = async () => {
 const getUserWithEmail = async (email) => {
     const databases = new sdk.Databases(dbValues.client);
     const result = await databases.listDocuments(dbValues.db.$id, collectionData.collection.$id, [
-        Query.equal("email", email)
+        Query.equal(Attributes.email, email)
     ]);
     return result.documents[0];
 }
@@ -72,7 +81,7 @@ const createUser = async (email) => {
         collectionData.collection.$id,
         sdk.ID.unique(),
         {
-            email: email,
+            [Attributes.email]: email,
         }
     );
     return document;

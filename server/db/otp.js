@@ -9,6 +9,13 @@ const COLLECTION_NAME = 'Otp';
 const  collectionData = {
     collection: undefined
 };
+
+const Attributes = {
+    email: 'email',
+    otp: 'otp',
+}
+
+
 /**
  * Schema
  *  email     otp  
@@ -32,15 +39,17 @@ const prepareOtpCollection = async () => {
     }
 
  
-    if(collectionData.collection.attributes.length === 2 ){
+    const currentAttributes = [ Attributes.email, Attributes.otp ];
+    const isEveryAttributeCreated = currentAttributes.every(attributeKey => collectionData.collection.attributes.find(attribute => attribute.key === attributeKey ));
+
+    if(isEveryAttributeCreated){
         return;
     }
-
 
     await databases.createStringAttribute(
         dbValues.db.$id,
         collectionData.collection.$id,
-        'email',
+        Attributes.email,
         255,
         true
     );
@@ -48,7 +57,7 @@ const prepareOtpCollection = async () => {
     await databases.createIntegerAttribute(
         dbValues.db.$id,
         collectionData.collection.$id,
-        'otp',
+        Attributes.otp,
         true, 
     );
 
@@ -57,7 +66,7 @@ const prepareOtpCollection = async () => {
 const getOtpWithEmail = async (email) => {
     const databases = new sdk.Databases(dbValues.client);
     const result = await databases.listDocuments(dbValues.db.$id, collectionData.collection.$id, [
-        Query.equal("email", email)
+        Query.equal(Attributes.email, email)
     ]);
     return result.documents[0];
 }
@@ -73,7 +82,7 @@ const updateOtp = async (email, otp) => {
         collectionData.collection.$id,
         document.$id,
         { 
-            otp
+            [Attributes.otp]:otp
         }
     )
     return updatedDocument;
@@ -94,8 +103,8 @@ const createOrUpdateOtp = async (email, otp) => {
         collectionData.collection.$id,
         sdk.ID.unique(),
         {
-            email,
-            otp,
+            [Attributes.email]:email,
+            [Attributes.otp]:otp,
         }
     );
     return document;
