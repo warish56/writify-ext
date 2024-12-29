@@ -5,9 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build-ext": "cross-env NODE_ENV=production && bash ./replaceEnv.sh && tsc && vite build --config vite.ext.config.ts --mode production",
+    "build-ext": "export NODE_ENV=production && bash ./replaceEnv.sh && tsc && vite build --config vite.ext.config.ts --mode production",
     "watch-ext": "bash ./replaceEnv.sh && vite build --mode development --watch --config vite.ext.config.ts",
-    "build-web": "cross-env NODE_ENV=production && bash ./replaceEnv.sh && tsc && vite build --config vite.web.config.ts --mode production",
+    "build-web": "export NODE_ENV=production && bash ./replaceEnv.sh && tsc && vite build --config vite.web.config.ts --mode production",
     "watch-web": "bash ./replaceEnv.sh && vite build --mode development --watch --config vite.web.config.ts",
     "preview-ext": "vite preview"
   },
