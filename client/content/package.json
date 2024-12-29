@@ -5,10 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build-ext": "tsc && vite build --config vite.ext.config.ts",
-    "watch-ext": "vite build --watch --config vite.ext.config.ts",
-    "build-web": "tsc && vite build --config vite.web.config.ts",
-    "watch-web": "vite build --watch --config vite.web.config.ts",
+    "build-ext": "export NODE_ENV=production && bash ./replaceEnv.sh && tsc && vite build --config vite.ext.config.ts --mode production",
+    "watch-ext": "bash ./replaceEnv.sh && vite build --watch --config vite.ext.config.ts",
+    "build-web": "export NODE_ENV=production && bash ./replaceEnv.sh && tsc && vite build --config vite.web.config.ts --mode production",
+    "watch-web": "bash ./replaceEnv.sh && vite build --watch --config vite.web.config.ts",
     "preview-ext": "vite preview"
   },
   "dependencies": {
@@ -23,6 +23,7 @@
     "react-router-dom": "6.28.1"
   },
   "devDependencies": {
+    "@types/chrome": "^0.0.287",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "@vitejs/plugin-react": "^4.0.3",

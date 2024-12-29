@@ -1,5 +1,4 @@
-import React from 'react';
-import { Box, InputBase, styled } from '@mui/material';
+import { Box, InputBase, InputBaseProps, styled } from '@mui/material';
 import { InputHTMLAttributes } from 'react';
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
@@ -38,9 +37,11 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 type FloatingInputProps = InputHTMLAttributes<HTMLInputElement> & {
     label: string;
+    color: InputBaseProps['color'],
+    size: InputBaseProps['size'],
 };
 
-export const FloatingInput = ({ label, id, ...props }: FloatingInputProps) => {
+export const FloatingInput = ({ label, id ,...props }: FloatingInputProps) => {
     return (
         <Box sx={{ position: 'relative' }}>
             <StyledInputBase

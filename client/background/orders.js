@@ -1,23 +1,9 @@
-import { API_URL, Routes } from "./constants.js";
+import { Routes } from "./constants.js";
+import { fetchData } from "./utils.js";
 
 export const fetchUserOrders = (userId) => {
-    return fetch(`${API_URL}${Routes.ordersList}`,{
+    return fetchData(Routes.ordersList, {
         method: 'POST',
-        body: JSON.stringify({userId}),
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    })
-    .then(res => {
-        if(res.ok) {
-            return res.json();
-        } else {
-            throw new Error('Failed to fetch user orders');
-        }
-    })
-    .then(response => ([response.data, response.error || null]))
-    .catch(error => {
-        console.log(error)
-       return ([null, error?.message || error]) 
+        body: JSON.stringify({userId}) 
     })
 }

@@ -1,27 +1,16 @@
 
-import { API_URL, Messages, Routes } from './constants.js';
+import { Messages, Routes } from './constants.js';
 import {getAvailableCredits, updateAvailableCredits, getTotalCredits, getCreditsData, fetchAndStoreCreditsData} from './credits.js'
 import { fetchUserOrders } from './orders.js';
 import {fetchAndStoreUserData, getUserDetails} from './user.js'
-import { openLoginPage } from './utils.js';
+import { fetchData, openLoginPage } from './utils.js';
 
 const fetchAiResponse = async (text, prompt, sendResponse) => {
-    fetch(`${API_URL}${Routes.AI}`, {
+    const result = await fetchData(Routes.AI, {
         method: 'POST',
         body: JSON.stringify({text, prompt}),
-        headers: {
-            'Content-Type': 'application/json'
-        }
     })
-    .then(res => {
-        if(res.ok) {
-            return res.json();
-        } else {
-            throw new Error('Failed to fetch AI response');
-        }
-    })
-    .then(response => sendResponse([response.data, null]))
-    .catch(error => sendResponse([null, error]));
+    sendResponse(result);
 }
 
 
