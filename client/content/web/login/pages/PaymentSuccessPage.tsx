@@ -3,15 +3,18 @@ import { Box, Typography, CircularProgress } from '@mui/material';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { useNavigate } from 'react-router-dom';
 import { useUserDetails } from '../hooks/useUserDetails';
+import { useCredits } from '../hooks/useCredits';
 
 export const PaymentSuccessPage = () => {
   const [redirectTimer, setRedirectTimer] = useState(5);
   const {fetchUserDetailsFromServer} = useUserDetails();
+  const {resetCreditsUsed} = useCredits();
   const navigate = useNavigate();
 
 
   useEffect(() => {
     fetchUserDetailsFromServer();
+    resetCreditsUsed();
   }, [])
 
   useEffect(() => {

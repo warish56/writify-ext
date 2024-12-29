@@ -47,7 +47,7 @@ export const fetchAndStoreCreditsData = async () => {
 
     const dbCreditsData = await getCreditsData();
     let hasOneDayPassed = true;
-    const hasOneMonthPassed = true;
+    let hasOneMonthPassed = true;
 
     // if one day has passed , then reful the available credits
     if(dbCreditsData.initTimestamp){
@@ -67,7 +67,7 @@ export const fetchAndStoreCreditsData = async () => {
            [TOTAL_CREDITS]: hasOneMonthPassed ? DEFAULT_CREDITS_PER_DAY :  (userDetails?.account?.plan_details?.credits ?? DEFAULT_CREDITS_PER_DAY),
 
         // if one day has passed then reset the credits used
-        ...(hasOneDayPassed ? {
+        ...((hasOneDayPassed) ? {
             [CREDITS_USED] : 0,
             [CREDITS_INIT_TIMESTAMP] : Date.now()
         } : {}),

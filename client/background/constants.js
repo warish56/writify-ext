@@ -14,8 +14,6 @@ export const Messages = {
 
 export const DEFAULT_CREDITS_PER_DAY = 25;
 
-export const API_URL = 'http://localhost:8000';
-
 export const Routes = {
     AI: '/ai',
     credits: '/credits',

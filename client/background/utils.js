@@ -1,4 +1,4 @@
-
+import { API_URL } from "./env.js";
 
 export const isNextDay = (timestamp1, timestamp2) => {
     const d1 = new Date(timestamp1);
@@ -22,4 +22,27 @@ export const openLoginPage = () => {
     chrome.tabs.create({
         url: chrome.runtime.getURL("content/dist/web/web/login/index.html")
     });
+}
+
+
+export const fetchData = (url, options={}) => {
+    return fetch(`${API_URL}${url}`,{
+        ...options,
+        headers: {
+            ...(options.headers ?? {}),
+            ...( options?.body ? {'Content-Type': 'application/json'} : {})
+        }
+    })
+    .then(res => {
+        if(res.ok) {
+            return res.json();
+        } else {
+            throw new Error(`Failed to fetch ${url}`);
+        }
+    })
+    .then(response => ([response.data, response.error || null]))
+    .catch(error => {
+        console.log(error)
+       return ([null, error?.message || error]) 
+    })
 }
