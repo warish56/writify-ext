@@ -1,5 +1,6 @@
 import { List, ListItemButton, ListItemText, Tooltip} from "@mui/material"
 import { Prompts } from "@/constants/prompts"
+import { Prompt } from "@/types/AiResponse"
 
 
 
@@ -11,7 +12,7 @@ type promptActions = prompts[PromptCategory]['list']
 
 type PromptActionProps ={
     list: promptActions,
-    onClick: (prompt:string, actionType:string)=>void
+    onClick: (prompt:Prompt, actionType:string)=>void
 }
 
 export const PromptActions = ({list, onClick}:PromptActionProps) => {

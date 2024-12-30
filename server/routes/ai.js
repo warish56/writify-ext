@@ -5,10 +5,12 @@ const router = express.Router();
 
 router.post('/', async (req, res) => {
     try {
-        const {text, prompt} = req.body;
-        const aiResponse = await getAiResponse(text, prompt);
+        const {prompts} = req.body;
+        const aiResponse = await getAiResponse(prompts);
         res.json({
-            data: JSON.parse(aiResponse)
+            data: {
+                result: aiResponse
+            }
         });
     } catch (error) {
         console.error('Error:', error);

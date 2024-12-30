@@ -5,3 +5,8 @@ export type SummaryResponse = {
 }
 
 export type AiResponse = SummaryResponse
+export type PromptRole = 'system' | 'user';
+export type Prompt = {
+    role: PromptRole,
+    content: string
+}

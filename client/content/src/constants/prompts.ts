@@ -1,10 +1,25 @@
+import { Prompt } from "@/types/AiResponse";
 
-export const jsonFormatPromt = `Output the result only as plain JSON, without any additional text, explanations, or formatting. Ensure the JSON is valid and properly escaped so it can be parsed using JSON.parse in Node.js. If it contains new line then please aad a new line in it.`
-export const codeStructure = `Use this structure to output result, nothing more than this means no more extra keys: '{"result":"text goes here."}' `
+export const promptPrefix = `If it contains new line then please aad a new line in it.`
 
+export const PROMPT_ROLES = {
+    SYSTEM: 'system' as const,
+    USER: 'user' as const
+}
 
+type PromptItem = {
+    title: string;
+    description: string;
+    prompt: Prompt
+}
 
-export const Prompts = {
+type PromptCategory = {
+    heading: string;
+    description: string;
+    list: PromptItem[]
+}
+
+export const Prompts:Record<string, PromptCategory> = {
     analysis: {
         heading: 'Text Analysis',
         description: 'Prompts to perform textual analysis on the selected text',
@@ -12,27 +27,42 @@ export const Prompts = {
             {
                 title: 'Summarize Text',
                 description: 'Generate a concise summary of the selected text.',
-                prompt: `Generate a concise summary of the selected text. ${jsonFormatPromt} ${codeStructure}`
+                prompt: {
+                   role: PROMPT_ROLES.SYSTEM,
+                   content: `Generate a concise summary of the selected text. ${promptPrefix}`
+                }
             },
             {
                 title: 'Explain Text',
                 description: 'Provide a detailed explanation or breakdown of the text.',
-                prompt: `Provide a detailed explanation or breakdown of the text. ${jsonFormatPromt} ${codeStructure}`
+                prompt: {
+                    role: PROMPT_ROLES.SYSTEM,
+                    content: `Provide a detailed explanation or breakdown of the text. ${promptPrefix}`
+                }
             },
             {
                 title: 'Paraphrase',
                 description: 'Reword the text while preserving its meaning.',
-                prompt: `Reword the text while preserving its meaning. ${jsonFormatPromt} ${codeStructure}`
+                prompt: {
+                    role: PROMPT_ROLES.SYSTEM,
+                    content: `Reword the text while preserving its meaning. ${promptPrefix}`
+                }
             },
             {
                 title: 'Define',
                 description: 'Provide definitions for words or terms in the text.',
-                prompt: `Provide definitions for words or terms in the text. ${jsonFormatPromt} ${codeStructure}`
+                prompt: {
+                    role: PROMPT_ROLES.SYSTEM,
+                    content: `Provide definitions for words or terms in the text. ${promptPrefix}`
+                }
             },
             {
                 title: 'Sentiment Analysis',
                 description: 'Determine the tone or sentiment of the text (e.g., positive, negative, neutral).',
-                prompt: `Determine the tone or sentiment of the text (e.g., positive, negative, neutral). ${jsonFormatPromt} ${codeStructure}`
+                prompt: {
+                    role: PROMPT_ROLES.SYSTEM,
+                    content:`Determine the tone or sentiment of the text (e.g., positive, negative, neutral). ${promptPrefix}`
+                }
             },
 
         ]
@@ -45,42 +75,66 @@ export const Prompts = {
             {
                 title: 'Expand Text',
                 description: 'Add more detail to the text.',
-                prompt: `Add more detail to the text. ${jsonFormatPromt} ${codeStructure}`
+                prompt: {
+                    role: PROMPT_ROLES.SYSTEM,
+                    content:`Add more detail to the text. ${promptPrefix}`
+                }
             },
             {
                 title: 'Generate Questions',
                 description: 'Create questions based on the selected text.',
-                prompt: `Create questions based on the selected text. ${jsonFormatPromt} ${codeStructure}`
+                prompt: {
+                    role: PROMPT_ROLES.SYSTEM,
+                    content:`Create questions based on the selected text. ${promptPrefix}`
+                }
             },
             {
                 title: 'Answer Questions',
                  description: 'Provide answers related to the selected text.',
-                prompt: `Provide answers related to the selected text. ${jsonFormatPromt} ${codeStructure}`
+                prompt: {
+                    role: PROMPT_ROLES.SYSTEM,
+                    content:`Provide answers related to the selected text. ${promptPrefix}`
+                }
             },
             {
                 title: 'Shorten Text',
                  description: 'Make the text concise for tweets, summaries, etc.',
-                prompt: `Make the text concise for tweets, summaries, etc. ${jsonFormatPromt} ${codeStructure}`
+                prompt: {
+                    role: PROMPT_ROLES.SYSTEM,
+                    content:`Make the text concise for tweets, summaries, etc. ${promptPrefix}`
+                }
             },
             {
                 title: 'Correct Grammar',
                  description: 'Check and correct grammar in the text.',
-                prompt: `Check and correct grammar in the text. ${jsonFormatPromt} ${codeStructure}`
+                prompt: {
+                    role: PROMPT_ROLES.SYSTEM,
+                    content:`Check and correct grammar in the text. ${promptPrefix}`
+                }
             },
             {
                 title: 'Create Story',
-                 description: 'Use the text as a prompt to craft a story.',
-                prompt: `Use the text as a prompt to craft a story. ${jsonFormatPromt} ${codeStructure}`
+                description: 'Use the text as a prompt to craft a story.',
+                prompt: {
+                    role: PROMPT_ROLES.SYSTEM,
+                    content:`Use the text as a prompt to craft a story. ${promptPrefix}`
+                }
             },
             {
                 title: 'Generate a Poem',
-                 description: 'Turn the text into a poem.',
-                prompt: `Turn the text into a poem. ${jsonFormatPromt} ${codeStructure}`
+                description: 'Turn the text into a poem.',
+                prompt: {
+                    role: PROMPT_ROLES.SYSTEM,
+                    content:`Turn the text into a poem. ${promptPrefix}`
+                }
             },
             {
                 title: 'Extract Data',
-                 description: 'Identify names, dates, places, or numbers in the text',
-                prompt: `Identify names, dates, places, or numbers in the text. ${jsonFormatPromt} ${codeStructure}`
+                description: 'Identify names, dates, places, or numbers in the text',
+                prompt: {
+                    role: PROMPT_ROLES.SYSTEM,
+                    content:`Identify names, dates, places, or numbers in the text. ${promptPrefix}`
+                }
             },
 
         ]

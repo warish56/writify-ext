@@ -88,7 +88,7 @@ const handleOrdersMessages = async (message, sendResponse) => {
 const handleAiMessages = async (message, sendResponse) => {
     try{
         if(message.type = Messages.BG_GET_AI_RESPONSE){
-            const data  = await fetchAiResponse(message.text, message.prompt);;
+            const data  = await fetchAiResponse(message.prompts);;
             sendResponse({success: true, data})
             return true;
         }

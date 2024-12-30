@@ -9,6 +9,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { PromptInput } from "./PromptInput";
 import { sendTrackingEvent } from "@/utils";
 import { Events } from "@/constants/events";
+import { Prompt } from "@/types/AiResponse";
 
 type prompts = typeof Prompts
 type PromptCategory = keyof prompts
@@ -18,7 +19,7 @@ type PromptCategory = keyof prompts
 const categories = Object.keys(Prompts) as PromptCategory[];
 
 type PromptMenuProps = {
-    onAction: (prompt:string) => void;
+    onAction: (prompt:Prompt) => void;
     children: React.ReactNode;
     onClose: () => void;
 }
@@ -38,7 +39,7 @@ export const PromptMenu = ({onAction, children, onClose}:PromptMenuProps) => {
         setCurrCategory(category)
     }
 
-    const handleSelectAction = (prompt:string, action:string) => {
+    const handleSelectAction = (prompt:Prompt, action:string) => {
         setSelectedAction(action);
         onAction(prompt);
         sendTrackingEvent(Events.AI_PROMPT_GENERATED, {prompt})
