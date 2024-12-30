@@ -146,3 +146,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 chrome.action.onClicked.addListener((tab) => {
    openLoginPage();
 });
+
+// listening for new updates available
+chrome.runtime.onUpdateAvailable.addListener(() => {
+    chrome.runtime.reload()
+})

@@ -14,6 +14,7 @@ const instance = new Razorpay({
     userEmail,
     callbackUrl,
 }) => {
+    const expireIn = 16; // in min, maximum 16 min of validity
     const options = {
         amount: price,
         currency,
@@ -29,6 +30,7 @@ const instance = new Razorpay({
         },
         callback_url: callbackUrl,
         callback_method: "get",
+        expire_by: Math.floor((Date.now() + (expireIn*60*1000))/1000) // converting in UNIX timestamp, unix is in seconds
       };
 
 
