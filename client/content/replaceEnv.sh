@@ -35,6 +35,7 @@ echo "Combined contents of source files into '$ENV_FILE'."
 
 # Replace <API_URL> with the new API URL in the file
 sed -i '' "s|<API_URL>|$NEW_API_URL|g" "$ENV_FILE"
+sed -i '' "s|<NODE_ENV>|$NODE_ENV|g" "$ENV_FILE"
 
 
 # Notify user of successful update

@@ -10,9 +10,10 @@ import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import { useCredits } from './hooks/useCredits';
 import UpgradePrompt from './components/PromptsMenu/UpgradePrompt';
 
-import { sendMessageToWorker } from './utils';
+import { sendMessageToWorker, sendTrackingEvent } from './utils';
 import { BG_OPEN_LOGIN_PAGE } from './constants';
 import { useUserDetails } from './hooks/useUserDetails';
+import { Events } from './constants/events';
 
 
 function App() {
@@ -50,15 +51,20 @@ function App() {
   }
 
   const openPrompt = () => {
-    setPromptOpen(true)
+    setPromptOpen(true);
+    sendTrackingEvent(Events.PROMPT_OPEN);
   }
 
   const closePrompt = () => {
-    setPromptOpen(false)
+    setPromptOpen(false);
+    sendTrackingEvent(Events.PROMPT_CLOSED);
+
   }
 
   const openLoginPage = () => {
-    sendMessageToWorker(BG_OPEN_LOGIN_PAGE)
+    sendMessageToWorker(BG_OPEN_LOGIN_PAGE);
+    sendTrackingEvent(Events.LOGIN_PAGE_OPENED);
+
   }
 
 

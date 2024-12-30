@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { Box, CircularProgress, Typography } from '@mui/material';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import { useNavigate } from 'react-router-dom';
+import { sendTrackingEvent } from '../utils';
+import { WEB_EVENTS } from '../constants/Events';
 
 export const PaymentFailedPage = () => {
   const [redirectTimer, setRedirectTimer] = useState(5);
@@ -21,6 +23,7 @@ export const PaymentFailedPage = () => {
     });
     }, 1000);
 
+    sendTrackingEvent(WEB_EVENTS.PLAN_PURCHASED_FAILED);
     return () => clearInterval(interval);
   }, []);
 

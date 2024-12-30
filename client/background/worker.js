@@ -11,13 +11,14 @@ import {
 import {
     clearUserDetails, 
     fetchAndStoreUserData, 
-    getUserDetails
+    getUserDetails,
+    saveRandomUserId
 } from './user.js'
 
 import { fetchUserOrders } from './orders.js';
 
-import { openLoginPage } from './utils.js';
-import { Messages } from './constants.js';
+import { openLoginPage, trackEvent } from './utils.js';
+import { Events, Messages } from './constants.js';
 
 
 
@@ -109,6 +110,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         return;
     }
 
+    if(message.type === Messages.BG_TRACK_EVENT){
+        trackEvent(message.event, message.data);
+        sendResponse({success: true});
+        return;
+    }
 
     if([
         Messages.BG_GET_AI_RESPONSE
@@ -117,7 +123,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             return true;
     }
     
-
 
     if([
         Messages.BG_GET_AVAILABLE_CREDITS,
@@ -150,4 +155,15 @@ chrome.action.onClicked.addListener((tab) => {
 // listening for new updates available
 chrome.runtime.onUpdateAvailable.addListener(() => {
     chrome.runtime.reload()
+})
+
+
+/**
+ * Listen for extension installed
+ */
+chrome.runtime.onInstalled.addListener((details) => {
+    if (details.reason === chrome.runtime.OnInstalledReason.INSTALL) {
+        trackEvent(Events.EXTENSION_INSTALLED);
+        saveRandomUserId();
+    }
 })

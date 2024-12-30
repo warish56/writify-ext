@@ -1,3 +1,4 @@
+import { BG_TRACK_EVENT } from "@/constants";
 
 type dbounceFunc = () => void
 
@@ -24,4 +25,8 @@ export const sendMessageToWorker = <T>(message:string, data:Record<string, unkno
         type: string
     }
     return chrome.runtime.sendMessage<params,T>({appId, type: message, ...data});
+}
+
+export const sendTrackingEvent = (event:string, data={}) => {
+    sendMessageToWorker(BG_TRACK_EVENT, {event, data})
 }

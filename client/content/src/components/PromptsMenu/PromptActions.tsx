@@ -23,9 +23,8 @@ export const PromptActions = ({list, onClick}:PromptActionProps) => {
             {
                 list.map(({title, prompt, description}) => {
                     return (
-                        <Tooltip title={description} placement="right">
+                        <Tooltip  key={title} title={description} placement="right">
                             <ListItemButton 
-                            key={title}
                             onClick={() => onClick(prompt, title)}
                             >
                             {/* <ListItemIcon>

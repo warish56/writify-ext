@@ -2,6 +2,8 @@ import { useRef, useState } from 'react';
 import { InputBase, Paper, Box } from '@mui/material';
 import { codeStructure } from '@/constants/prompts';
 import { jsonFormatPromt } from '@/constants/prompts';
+import { sendTrackingEvent } from '@/utils';
+import { Events } from '@/constants/events';
 
 type PromptInputProps = {
     onSubmit: (prompt: string) => void;
@@ -25,7 +27,7 @@ export const PromptInput = ({ onSubmit, children, defaultValue = '' }: PromptInp
                 block: 'center'
             })
         }, 100)
-
+        sendTrackingEvent(Events.CUSTOM_PROMPT_GENERATED,{prompt:value});
     };
 
     const handleKeyDown = (e: React.KeyboardEvent) => {

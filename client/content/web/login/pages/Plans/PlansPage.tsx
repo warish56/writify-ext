@@ -7,10 +7,11 @@ import { useEffect, useState } from 'react';
 import { useSnackbar } from '../../hooks/useSnackbar';
 import { PaymentWaitingModal } from '../../components/PaymentWaitingModal';
 import { Plans } from '../../constants/Plans';
-import { daysDifference } from '../../utils';
+import { daysDifference, sendTrackingEvent } from '../../utils';
 import { PlanExpiredBanner } from './PlanExpiredBanner';
 import { PlanTypes } from '../../types/plans';
 import { AccountSuspendedBanner } from '../../components/AccountSuspended';
+import { WEB_EVENTS } from '../../constants/Events';
 
 
 
@@ -40,6 +41,12 @@ export const PlansPage = () => {
             }
         }
     }, [error, data])
+
+    useEffect(() => {
+        if(isAccountSuspended){
+            sendTrackingEvent(WEB_EVENTS.ACCOUNT_SUSPENDED);
+        }
+    }, [])
 
 
     if(data && !pollingModalVisible){
@@ -117,7 +124,10 @@ export const PlansPage = () => {
                         name={name}
                         loading={isMakingAPurchase && selectedPlan === plan.id}
                         disabled={isMakingAPurchase}
-                        onClick={() => makePurchase(userData.id, plan.id)}
+                        onClick={() => {
+                            makePurchase(userData.id, plan.id);
+                            sendTrackingEvent(WEB_EVENTS.BUY_PLAN_CLICKED, {planId: plan.id, planName: name});
+                        }}
                         key={plan.id}
                         currentPlan={plan.id === userData.account.plan_details.plan_id}
                         currentPlanExpired={hasCurrentPlanExpired}

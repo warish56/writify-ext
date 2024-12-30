@@ -7,6 +7,8 @@ import { MenuWrapper } from "./MenuWrapper";
 
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { PromptInput } from "./PromptInput";
+import { sendTrackingEvent } from "@/utils";
+import { Events } from "@/constants/events";
 
 type prompts = typeof Prompts
 type PromptCategory = keyof prompts
@@ -39,6 +41,7 @@ export const PromptMenu = ({onAction, children, onClose}:PromptMenuProps) => {
     const handleSelectAction = (prompt:string, action:string) => {
         setSelectedAction(action);
         onAction(prompt);
+        sendTrackingEvent(Events.AI_PROMPT_GENERATED, {prompt})
     }
 
     const handleCategoryBack = () => {
@@ -88,8 +91,8 @@ export const PromptMenu = ({onAction, children, onClose}:PromptMenuProps) => {
                 {
                     categories.map((category) => {
                         return (
-                            <Tooltip title={Prompts[category].description}  placement="right">
-                                <ListItemButton key={category} onClick={() => handleClick(category)}>
+                            <Tooltip key={category} title={Prompts[category].description}  placement="right">
+                                <ListItemButton onClick={() => handleClick(category)}>
                                 {/* <ListItemIcon>
                                 <InboxIcon />
                                 </ListItemIcon> */}

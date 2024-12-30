@@ -10,7 +10,8 @@ export const Messages = {
     BG_GET_USER_DETAILS: 'BG_GET_USER_DETAILS',
     BG_CLEAR_USER_DETAILS: 'BG_CLEAR_USER_DETAILS',
     BG_OPEN_LOGIN_PAGE : 'BG_OPEN_LOGIN_PAGE',
-    BG_FETCH_USER_ORDERS : 'BG_FETCH_USER_ORDERS'
+    BG_FETCH_USER_ORDERS : 'BG_FETCH_USER_ORDERS',
+    BG_TRACK_EVENT: 'BG_TRACK_EVENT'
 }
 
 export const DEFAULT_CREDITS_PER_DAY = 25;
@@ -21,3 +22,8 @@ export const Routes = {
     userDetails: '/user/details',
     ordersList: '/orders/list'
 }
+
+export const Events = {
+    EXTENSION_INSTALLED: "extension_installed",
+    EXTENSION_UNINSTALLED: "extension_uninstalled",
+};
