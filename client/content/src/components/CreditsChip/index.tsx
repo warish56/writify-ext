@@ -20,12 +20,26 @@ export const CreditsChip = () => {
 
     return (
         <Tooltip title={`Only ${availableCredits} credits left for today`} placement="top">
-        <Stack component="button" direction="row" sx={{
+        <Stack 
+        component="button" 
+        direction="row" 
+        onClick={openLoginPage}
+        sx={{
             gap: '5px',
+            cursor: 'pointer',
             alignItems: 'center',
             border: `1px #f3b70c solid`,
             borderRadius: '20px',
-            backgroundColor: 'transparent'
+            backgroundColor: 'transparent',
+            '&:hover':{
+                backgroundColor: "#f3b70c",
+                '& svg':{
+                    color: 'white'
+                },
+                '& span': {
+                    color: 'white'
+                }
+            }
         }}>
             <StarIcon sx={{
                 color: "#f3b70c"

@@ -22,7 +22,7 @@ const fetchResponses = async (text: string, prompt:Prompt) => {
 }
 
 
-export const useGetPromptResponse = (prompt:Prompt, text:string) => {
+export const useGetPromptResponse = (prompt:Prompt|null, text:string) => {
     const {useAvailableCredits, isCreditsAvailable} = useCredits();
     const [response, setResponse] = useState<AiResponseState>([null, null]);
     const [loading, setLoading] = useState(false);
@@ -34,7 +34,7 @@ export const useGetPromptResponse = (prompt:Prompt, text:string) => {
 
     const fetchData = async () => {
         setLoading(true);
-        const {success, error, data} = await fetchResponses(text, prompt);
+        const {success, error, data} = await fetchResponses(text, prompt as Prompt);
         if(success){
             setResponse(data);
         }

@@ -17,15 +17,22 @@ import { Events } from './constants/events';
 
 
 function App() {
+  const promptContRef = useRef<HTMLDivElement | null>(null);
   const {isAccountSuspended} = useUserDetails();
   const {fetchAndInitializeCreditsDataFromServer, isCreditsAvailable} = useCredits();
   const [isPromptOpen, setPromptOpen]= useState(false);
   const {prompt, handlePromptChange, clearPrompt} = usePromptManager();
-  const currentSelectionData = useSelection();
+  const currentSelectionData = useSelection({
+    shouldSelectText: (selection:Selection) => {
+      if(!promptContRef.current){
+        return true;
+      }
+      return !promptContRef.current.contains(selection.anchorNode) && !promptContRef.current.contains(selection.focusNode)
+    }
+  });
   const prevSelectionDataRef = useRef(currentSelectionData);
   const {data, error, loading, clearData:clearServerData, refetchData} = useGetPromptResponse(prompt, prevSelectionDataRef.current.selectedText); 
   const {open:snackbarOpen, message:snackbarMessage} = useSnackbar();
-
 
   // whenever app loads first load the credits data from the server
   useEffect(() => {
@@ -148,6 +155,7 @@ function App() {
  return (
       <>
           <Popover
+          ref={promptContRef}
           open={isPromptOpen}
           anchorOrigin={{
             vertical: 'bottom',
