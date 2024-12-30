@@ -22,7 +22,11 @@ const initialSelectionData: SelectedNode = {
     text: ''
 }
 
-export const useSelection = () => {
+type props ={
+    shouldSelectText: (selection:Selection) => boolean
+}
+
+export const useSelection = ({shouldSelectText}:props) => {
     const [selectionData, setSelectionData] = useState(initialSelectionData);
 
     const clearSelectionData = () => {
@@ -43,6 +47,9 @@ export const useSelection = () => {
             const selection = window.getSelection()
             const selectedText = selection?.toString()?.trim() || ''
             const isTextNode = selection?.anchorNode?.nodeName === "#text";
+            if(selection && !shouldSelectText(selection)){
+                return;
+            }
             if(selectedText &&  isTextNode && selection.anchorOffset !== selection.focusOffset) {
                 const range = selection.getRangeAt(0);
                 const nodeCoordinates = range.getBoundingClientRect(); 
@@ -62,10 +69,9 @@ export const useSelection = () => {
             }
         }
 
-        const debouncedHandleSelectionChange = debounce(handleSelectionChange, 500) 
+        const debouncedHandleSelectionChange = debounce(handleSelectionChange, 100) 
         document.addEventListener('selectionchange', debouncedHandleSelectionChange) 
         return () => {
-            console.log('removing event listener')
             document.removeEventListener('selectionchange', debouncedHandleSelectionChange)
         }
     }, [])

@@ -1,12 +1,13 @@
 import { useRef, useState } from 'react';
 import { InputBase, Paper, Box } from '@mui/material';
-import { codeStructure } from '@/constants/prompts';
-import { jsonFormatPromt } from '@/constants/prompts';
+import { promptPrefix } from '@/constants/prompts';
 import { sendTrackingEvent } from '@/utils';
 import { Events } from '@/constants/events';
+import { Prompt } from '@/types/AiResponse';
+import { generatePrompt } from '@/utils/prompt';
 
 type PromptInputProps = {
-    onSubmit: (prompt: string) => void;
+    onSubmit: (prompt: Prompt) => void;
     defaultValue?: string;
     children?: React.ReactNode;
 }
@@ -17,9 +18,10 @@ export const PromptInput = ({ onSubmit, children, defaultValue = '' }: PromptInp
     const inputRef = useRef<HTMLInputElement|null>(null);
     const contentRef = useRef<HTMLDivElement|null>(null);
 
+
     const handleSubmit = () => {
         if (!value.trim()) return;
-        onSubmit(`${value}. ${jsonFormatPromt} ${codeStructure}`);
+        onSubmit(generatePrompt('system',`${value}. ${promptPrefix}`));
         inputRef.current?.blur();
         setTimeout(() => {
             contentRef.current?.scrollIntoView({

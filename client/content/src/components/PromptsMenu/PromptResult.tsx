@@ -1,4 +1,4 @@
-import { Box, Typography, Stack, IconButton, Tooltip } from "@mui/material"
+import { Typography, Stack, IconButton, Tooltip } from "@mui/material"
 import { PromptLoader } from "./Loader";
 
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
@@ -60,18 +60,50 @@ export const PromptResult = ({loading, onApply, onRefresh, text, error}:props) =
             )}
             
             {!loading && !error &&
-                <Box 
+                <Stack 
                     sx={{
                         p: 1.25,
                         bgcolor: 'action.hover',
                         borderRadius: 1,
+                        gap: '10px',
                         opacity: loading ? 0.5 : 1
                     }}
                 >
-                    <Typography variant="body1" sx={{
-                        whiteSpace: 'pre-line'
-                    }}>{text}</Typography>
-                </Box>
+
+                            <Typography 
+                                variant="body1" 
+                                sx={{
+                                    whiteSpace: 'pre-line',
+                                    lineHeight: '1.9'
+                                }}
+                                >
+                                    {text}
+                            </Typography>
+
+
+                    {/* {
+                        processedResults.map(({text, isCode}) => {
+                            if(isCode){
+                                return (
+                                    <code>{text}</code>
+                                )
+                            }
+                            return (
+                                <Typography 
+                                variant="body1" 
+                                sx={{
+                                    whiteSpace: 'pre-line',
+                                    lineHeight: '1.9'
+                                }}
+                                >
+                                    {text}
+                                </Typography>
+                            )
+                        })
+                    } */}
+
+                    
+                </Stack>
             }
         </Stack>
     )
