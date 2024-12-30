@@ -14,7 +14,7 @@ import { AuthRoute } from "./Auth"
 import { RootRoute } from "./Root"
 import { PaymentFailedPage } from "../pages/PaymentFailedPage"
 import OrdersList from "../pages/Orders/list"
-
+import { ErrorBoundary } from "../components/ErrorBoundary"
 
 
 export const MainRoute = () => {
@@ -35,20 +35,30 @@ export const MainRoute = () => {
 
     return (
         <Stack>
-            <Routes>
-                    <Route path="auth" element={<AuthRoute />} >
-                        <Route path="login" element={<LoginPage />} />
-                        <Route path="otp" element={<OtpPage />} />
-                    </Route>
+            <ErrorBoundary id="top_route">
+                <Routes>
+                        <Route path="auth" element={<AuthRoute />} >
+                            <Route path="login" element={<LoginPage />} />
+                            <Route path="otp" element={<OtpPage />} />
+                        </Route>
 
-                    <Route path="/" element={<RootRoute />} >
-                        <Route path="plans" element={<PlansPage />} />
-                        <Route path="orders" element={<OrdersList />} />
-                        <Route path="payment_success" element={<PaymentSuccessPage />} />
-                        <Route path="payment_failed" element={<PaymentFailedPage />} />
-                    </Route>
-                    
-            </Routes>
+                        <Route path="/" element={<RootRoute />} >
+                            <Route path="plans" element={
+                                <ErrorBoundary key='plan_page' id="plan_page">
+                                    <PlansPage />
+                                </ErrorBoundary>
+                            } />
+                            <Route path="orders" element={
+                                <ErrorBoundary key='order_page' id="order_page">
+                                    <OrdersList />
+                                </ErrorBoundary>
+                            } />
+                            <Route path="payment_success" element={<PaymentSuccessPage />} />
+                            <Route path="payment_failed" element={<PaymentFailedPage />} />
+                        </Route>
+                        
+                </Routes>
+            </ErrorBoundary>
             <Snackbar
                 open={snackbarOpen}
                 message={snackbarMessage}
