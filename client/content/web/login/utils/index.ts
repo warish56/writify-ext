@@ -19,3 +19,10 @@ export const daysDifference = (givenDate:Date) => {
 export const sendTrackingEvent = (event:string, data={}) => {
     sendMessageToWorker(BG_TRACK_EVENT, {event, data})
 }
+
+export const removeParams = () => {
+    const url = new URL(location.href);
+    url.searchParams.delete('payment');
+    window.history.pushState({}, '',url.toString());
+}
+

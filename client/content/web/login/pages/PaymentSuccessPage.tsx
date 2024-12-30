@@ -4,7 +4,7 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { useNavigate } from 'react-router-dom';
 import { useUserDetails } from '../hooks/useUserDetails';
 import { useCredits } from '../hooks/useCredits';
-import { sendTrackingEvent } from '../utils';
+import { removeParams, sendTrackingEvent } from '../utils';
 import { WEB_EVENTS } from '../constants/Events';
 
 export const PaymentSuccessPage = () => {
@@ -21,6 +21,7 @@ export const PaymentSuccessPage = () => {
   }, [])
 
   useEffect(() => {
+    removeParams();
     const interval = setInterval(() => {
       setRedirectTimer((prev) => {
         const newValue = Math.max(prev - 1, 0);
