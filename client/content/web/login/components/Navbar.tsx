@@ -14,6 +14,8 @@ import PlansIcon from '@mui/icons-material/ViewModule'
 
 import { BrandLogo } from './BrandLogo';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { sendTrackingEvent } from '../utils';
+import { WEB_EVENTS } from '../constants/Events';
 
 
 
@@ -36,7 +38,8 @@ const Navbar = () => {
   ];
 
   const handleNavigation = (path: string) => {
-        navigate(path)
+        navigate(path);
+        sendTrackingEvent(WEB_EVENTS.OPENED_APP_PAGE, {page:path});
   };
 
   return (
@@ -64,7 +67,8 @@ const Navbar = () => {
           >
 
             <BrandLogo onClick={() => {
-              window.open('https://www.aimagictext.in/', '_blank')
+              sendTrackingEvent(WEB_EVENTS.OPENED_MRKETING_PAGE);
+              window.open('https://www.aimagictext.in/', '_blank');
             }}/>
          
 

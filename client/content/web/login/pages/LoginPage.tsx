@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { FormHeading } from '../components/FormHeading';
 import { useSnackbar } from '../hooks/useSnackbar';
 import { useLogin } from '../hooks/useLogin';
+import { sendTrackingEvent } from '../utils';
+import { WEB_EVENTS } from '../constants/Events';
 
 export const LoginPage = () => {
     const [email, setEmail] = useState('');
@@ -29,6 +31,7 @@ export const LoginPage = () => {
                     autoHide: 3000,
                     type: 'info'
                 })
+                sendTrackingEvent(WEB_EVENTS.OPT_SENT, {email})
             }
         })
     };

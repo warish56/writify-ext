@@ -1,4 +1,13 @@
-import { API_URL } from "./env.js";
+import { API_URL, MIXPANEL_PROJECT_ID, MIXPANEL_TOKEN, NODE_ENV } from "./env.js";
+import { getRandomUserId, getUserDetails } from "./user.js";
+
+export const generateRandomUserId = () => {
+    let id='';
+    for(let i=0; i<2; i++){
+        id += Math.random().toString(36).substring(2, 15);
+    }
+    return id;
+};
 
 export const isNextDay = (timestamp1, timestamp2) => {
     const d1 = new Date(timestamp1);
@@ -44,5 +53,44 @@ export const fetchData = (url, options={}) => {
     .catch(error => {
         console.log(error)
        return ([null, error?.message || error]) 
+    })
+}
+
+export const trackEvent = async (event, extraData={}) => {
+    if(NODE_ENV !== 'production'){
+        return;
+    }
+    const userDetails = await getUserDetails();
+    const randomUserId = await getRandomUserId();
+    fetch(`https://api.mixpanel.com/import?strict=1&project_id=${MIXPANEL_PROJECT_ID}`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            accept: 'application/json',
+            authorization: `Basic ${MIXPANEL_TOKEN}`
+        },
+        body: JSON.stringify([{
+            event: event,
+            properties: {
+                extension_id: chrome.runtime.id,
+                time: Date.now(),
+                distinct_id: userDetails?.id ??  randomUserId,
+                ...(userDetails ?  {
+                    user_id: userDetails.id,
+                    email: userDetails.email,
+                }: {}),
+                ...(extraData ?? {}),
+                "$insert_id": `${Date.now()}`
+            }
+        }])
+    }).then(async res => {
+        if(res.ok){
+            console.log("Event tracked successfully");
+        }else{
+            const resJson = await res.json();
+            throw resJson;
+        }
+    }).catch(err => {
+        console.error("Error tracking event:", err);
     })
 }

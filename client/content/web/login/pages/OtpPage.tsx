@@ -5,10 +5,11 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { FormHeading } from '../components/FormHeading'
 import { useOtp } from '../hooks/useOtp';
 import { useSnackbar } from '../hooks/useSnackbar';
-import { sendMessageToWorker } from '../utils';
+import { sendMessageToWorker, sendTrackingEvent } from '../utils';
 import { BG_FETCH_USER_DETAILS } from '../constants/worker';
 import { WorkerResponse } from '../types/worker';
 import { ServerError } from '../types/api';
+import { WEB_EVENTS } from '../constants/Events';
 
 export const OtpPage = () => {
     const [otp, setOtp] = useState('');
@@ -47,6 +48,7 @@ export const OtpPage = () => {
             navigate('/plans',{
                 replace: true
             });
+            sendTrackingEvent(WEB_EVENTS.LOGGED_IN)
         }
         
     }

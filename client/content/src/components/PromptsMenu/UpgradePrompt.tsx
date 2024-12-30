@@ -1,7 +1,15 @@
 import { Box, Button, Typography } from '@mui/material';
 import UpgradeImage from '@/assets/upgrade.png';
+import { useEffect } from 'react';
+import { sendTrackingEvent } from '@/utils';
+import { Events } from '@/constants/events';
 
 export const UpgradePrompt = ({ onUpgradeClick }: { onUpgradeClick: () => void }) => {
+
+    useEffect(() => {
+        sendTrackingEvent(Events.CREDITS_EXPIRED)
+    }, [])
+
     return (
         <Box
             sx={{

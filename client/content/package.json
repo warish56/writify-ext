@@ -6,9 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build-ext": "export NODE_ENV=production && bash ./replaceEnv.sh && tsc && vite build --config vite.ext.config.ts --mode production",
-    "watch-ext": "bash ./replaceEnv.sh && vite build --mode development --watch --config vite.ext.config.ts",
+    "watch-ext": "export NODE_ENV=development && bash ./replaceEnv.sh && vite build --mode development --watch --config vite.ext.config.ts",
     "build-web": "export NODE_ENV=production && bash ./replaceEnv.sh && tsc && vite build --config vite.web.config.ts --mode production",
-    "watch-web": "bash ./replaceEnv.sh && vite build --mode development --watch --config vite.web.config.ts",
+    "watch-web": "export NODE_ENV=development && bash ./replaceEnv.sh && vite build --mode development --watch --config vite.web.config.ts",
     "preview-ext": "vite preview"
   },
   "dependencies": {

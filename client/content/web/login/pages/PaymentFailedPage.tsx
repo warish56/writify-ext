@@ -2,12 +2,15 @@ import { useEffect, useState } from 'react';
 import { Box, CircularProgress, Typography } from '@mui/material';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import { useNavigate } from 'react-router-dom';
+import { removeParams, sendTrackingEvent } from '../utils';
+import { WEB_EVENTS } from '../constants/Events';
 
 export const PaymentFailedPage = () => {
   const [redirectTimer, setRedirectTimer] = useState(5);
   const navigate = useNavigate()
 
   useEffect(() => {
+    removeParams();
     const interval = setInterval(() => {
       setRedirectTimer((prev) => {
         const newValue = Math.max(prev - 1, 0);
@@ -21,6 +24,7 @@ export const PaymentFailedPage = () => {
     });
     }, 1000);
 
+    sendTrackingEvent(WEB_EVENTS.PLAN_PURCHASED_FAILED);
     return () => clearInterval(interval);
   }, []);
 

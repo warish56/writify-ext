@@ -3,6 +3,7 @@ import { useUserDetails } from "../hooks/useUserDetails"
 import { useEffect } from "react";
 import { Box } from "@mui/material";
 import Navbar from "../components/Navbar";
+import { ErrorBoundary } from "../components/ErrorBoundary";
 
 
 
@@ -28,7 +29,9 @@ export const RootRoute = () => {
         return (
             <Box>
                 <Navbar/>
-                <Outlet/>
+                <ErrorBoundary key='root_outlet' id="root_outlet">
+                    <Outlet/>
+                </ErrorBoundary>
             </Box>
         )
     }
