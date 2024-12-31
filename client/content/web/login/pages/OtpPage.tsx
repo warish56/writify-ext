@@ -10,7 +10,7 @@ import { BG_FETCH_USER_DETAILS } from '../constants/worker';
 import { WorkerResponse } from '../types/worker';
 import { ServerError } from '../types/api';
 import { WEB_EVENTS } from '../constants/Events';
-import { useUserDetails } from '@/hooks/useUserDetails';
+import { useUserDetails } from '../hooks/useUserDetails';
 
 export const OtpPage = () => {
     const [otp, setOtp] = useState('');
@@ -48,10 +48,13 @@ export const OtpPage = () => {
                 })
         }else{
             await getUserDetailsFromStore();
-            navigate('/plans',{
-                replace: true
-            });
-            sendTrackingEvent(WEB_EVENTS.LOGGED_IN)
+            setTimeout(() => {
+                navigate('/plans',{
+                    replace: true
+                });
+                sendTrackingEvent(WEB_EVENTS.LOGGED_IN)
+            }, 1000)
+          
         }
         
     }

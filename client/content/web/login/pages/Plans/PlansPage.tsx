@@ -125,7 +125,7 @@ export const PlansPage = () => {
                         loading={isMakingAPurchase && selectedPlan === plan.id}
                         disabled={isMakingAPurchase}
                         onClick={() => {
-                            makePurchase(userData.id, plan.id);
+                            makePurchase(userData.id || '', plan.id);
                             sendTrackingEvent(WEB_EVENTS.BUY_PLAN_CLICKED, {planId: plan.id, planName: name});
                         }}
                         key={plan.id}
