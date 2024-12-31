@@ -148,6 +148,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 });
 
 
+// opening the login page when the action btn is clicked
 chrome.action.onClicked.addListener((tab) => {
    openLoginPage();
 });
@@ -164,6 +165,7 @@ chrome.runtime.onUpdateAvailable.addListener(() => {
 chrome.runtime.onInstalled.addListener((details) => {
     if (details.reason === chrome.runtime.OnInstalledReason.INSTALL) {
         trackEvent(Events.EXTENSION_INSTALLED);
+        // we are creating this random userID only for MIX_PANEL to send events related to a specific id
         saveRandomUserId();
     }
 })
