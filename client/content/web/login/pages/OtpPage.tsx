@@ -10,6 +10,7 @@ import { BG_FETCH_USER_DETAILS } from '../constants/worker';
 import { WorkerResponse } from '../types/worker';
 import { ServerError } from '../types/api';
 import { WEB_EVENTS } from '../constants/Events';
+import { useUserDetails } from '@/hooks/useUserDetails';
 
 export const OtpPage = () => {
     const [otp, setOtp] = useState('');
@@ -18,6 +19,7 @@ export const OtpPage = () => {
     const {verifyOtp, isLoading} = useOtp();  
     const {showSnackbar} = useSnackbar();
     const navigate = useNavigate();
+    const {getUserDetailsFromStore} = useUserDetails();
 
 
 
@@ -45,6 +47,7 @@ export const OtpPage = () => {
                     type: 'error'
                 })
         }else{
+            await getUserDetailsFromStore();
             navigate('/plans',{
                 replace: true
             });

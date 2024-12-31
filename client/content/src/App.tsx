@@ -1,5 +1,5 @@
 import { useSelection } from '@/hooks/useSelection';
-import { IconButton, Popover, Popper, Snackbar,Box, Tooltip } from '@mui/material';
+import { IconButton, Popover, Popper, Snackbar,Box, Tooltip, CircularProgress } from '@mui/material';
 import { PromptMenu } from './components/PromptsMenu';
 import { usePromptManager } from './hooks/usePromptManager';
 import { PromptResult } from './components/PromptsMenu/PromptResult';
@@ -18,7 +18,7 @@ import { Events } from './constants/events';
 
 function App() {
   const promptContRef = useRef<HTMLDivElement | null>(null);
-  const {isAccountSuspended} = useUserDetails();
+  const {isAccountSuspended, fetchUserDetails, isLoading:isUserDetailsLoading} = useUserDetails();
   const {fetchAndInitializeCreditsDataFromServer, isCreditsAvailable} = useCredits();
   const [isPromptOpen, setPromptOpen]= useState(false);
   const {prompt, handlePromptChange, clearPrompt} = usePromptManager();
@@ -37,11 +37,10 @@ function App() {
   // whenever app loads first load the credits data from the server
   useEffect(() => {
     const fetchAllData = async () => {
-      fetchAndInitializeCreditsDataFromServer();
+      await fetchUserDetails();
+      await fetchAndInitializeCreditsDataFromServer();
     }
-
     fetchAllData();
-    
   }, [])
 
 
@@ -139,10 +138,20 @@ function App() {
             <IconButton sx={{
               border: `2px white solid`,
               transform: 'scale(0.7)'
-            }} size="small" onClick={isAccountSuspended ? openLoginPage : openPrompt}>
-              <AutoAwesomeIcon  sx={(theme) => ({
-                color: theme.palette.background.default
-              })}/>
+            }} 
+            size="small" 
+            onClick={!isUserDetailsLoading ? (isAccountSuspended ? openLoginPage : openPrompt): undefined}
+            >
+              {isUserDetailsLoading ?
+                <CircularProgress sx={{
+                  color: 'background.default'
+                }} size={'20px'}/>
+              :
+                <AutoAwesomeIcon  sx={(theme) => ({
+                  color: theme.palette.background.default
+                  })}
+                />
+              }
             </IconButton>
           </Tooltip>
         </Box>

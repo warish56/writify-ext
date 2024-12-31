@@ -1,7 +1,6 @@
 const express = require('express');
-const { getUserWithEmail } = require('../db/user');
-const { getAccountWithUserId } = require('../db/accounts');
-const { getPlanDetails } = require('../db/plan');
+const { getLoggedInUserDetails, getNonLoggedInUserDetails } = require('../controller/user');
+const { getRequestIpAddress } = require('../utils/ip');
 
 const router = express.Router();
 
@@ -9,32 +8,15 @@ const router = express.Router();
 router.get('/details', async (req, res) => {
     try {
         const { email } = req.query; 
-        const userDocument = await getUserWithEmail(email);
-        if(!userDocument){
-            throw {message: 'Invalid user', status:'404'}
+        const ipAddress = getRequestIpAddress(req);
+        console.log("==user details==",{email, ipAddress})
+        let data = {};
+        if(email){
+            data = await getLoggedInUserDetails(email,ipAddress);
+        }else{
+            data = await getNonLoggedInUserDetails(ipAddress);
         }
-
-        const accountDocument = await getAccountWithUserId(String(userDocument.$id));
-        if(!accountDocument){
-            throw {message: 'Invalid account', status:'404'}
-        }
-
-        const planDetails = await getPlanDetails(accountDocument.plan_id)
-
-        res.json({
-            data: {
-                id: userDocument.$id,
-                email: userDocument.email,
-                account: {
-                    status: accountDocument.status,
-                    payment_date: accountDocument.payment_date,
-                    plan_details: {
-                        plan_id: accountDocument.plan_id,
-                        credits: planDetails.credits
-                    }
-                }
-            }
-        });
+        res.json({ data });
     } catch (error) {
         console.error('Error:', error);
         res.status(error.status ?? 500).json({ 

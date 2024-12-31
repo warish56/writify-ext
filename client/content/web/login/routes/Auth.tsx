@@ -7,7 +7,7 @@ import { ErrorBoundary } from "../components/ErrorBoundary";
 export const AuthRoute = () => {    
     const {userData} = useUserDetails();
 
-    if(!userData){
+    if(!userData?.email){
         return (
             <ErrorBoundary key="auth_outlet" id="auth_outlet">
                 <Outlet/>

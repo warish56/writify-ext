@@ -35,6 +35,12 @@ const {
 const {
   prepareOrdersCollection
 } = require('./db/orders');
+
+const {
+  prepareIpCollection
+} = require('./db/ip');
+
+
 const { runMigrations } = require('./migrations');
 
 const app = express();
@@ -48,8 +54,11 @@ app.use(cors({
   credentials: true
 }));
 
+//When your app is behind a proxy, req.ip might show the proxy's IP address. To retrieve the original client IP adding this middleware
+app.set('trust proxy', true);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
 
 app.use('/ai', aiRoutes);
 app.use('/credits', creditsRoutes);
@@ -70,6 +79,7 @@ const initializeDbAndCollections = async () => {
       await prepareAccountsCollection();
       await prepareOtpCollection();
       await prepareOrdersCollection();
+      await prepareIpCollection();
       await runMigrations();
 
   }catch(err){

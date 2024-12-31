@@ -55,7 +55,7 @@ export const PromptResult = ({loading, onApply, onRefresh, text, error}:props) =
 
             {!loading && error && (
                 <Typography color="error" variant="body2">
-                    Error fetching AI suggestion
+                    {error?.message || (error as unknown as string) || 'Error fetching AI suggestion'}
                 </Typography>
             )}
             
