@@ -18,7 +18,7 @@ import { Events } from './constants/events';
 
 function App() {
   const promptContRef = useRef<HTMLDivElement | null>(null);
-  const {isAccountSuspended} = useUserDetails();
+  const {isAccountSuspended, fetchUserDetails} = useUserDetails();
   const {fetchAndInitializeCreditsDataFromServer, isCreditsAvailable} = useCredits();
   const [isPromptOpen, setPromptOpen]= useState(false);
   const {prompt, handlePromptChange, clearPrompt} = usePromptManager();
@@ -37,11 +37,10 @@ function App() {
   // whenever app loads first load the credits data from the server
   useEffect(() => {
     const fetchAllData = async () => {
-      fetchAndInitializeCreditsDataFromServer();
+      await fetchUserDetails();
+      await fetchAndInitializeCreditsDataFromServer();
     }
-
     fetchAllData();
-    
   }, [])
 
 

@@ -92,7 +92,7 @@ export const OrderCard: React.FC<OrderCardProps> = ({ order }) => {
               Payment Details
             </Typography>
             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-              <Typography>${order.purchased_plan.price}</Typography>
+              <Typography>₹{order.purchased_plan.price}</Typography>
               <PaymentTypeDisplay type={order.payment_type} />
             </Box>
           </Box>

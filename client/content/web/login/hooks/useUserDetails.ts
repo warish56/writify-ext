@@ -14,7 +14,7 @@ export const useUserDetails = () => {
 
     const fetchUserDetailsFromServer = async () => {
         setLoading(true);
-        const result = await sendMessageToWorker<WorkerResponse<[User|null, ServerError]>>(BG_FETCH_USER_DETAILS, {email:userData?.email});
+        const result = await sendMessageToWorker<WorkerResponse<[User|null, ServerError]>>(BG_FETCH_USER_DETAILS);
         const {success, data} = result;
         if(success){
             const [actualData] = data

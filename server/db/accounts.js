@@ -15,13 +15,15 @@ const Attributes = {
     userId: 'user_id',
     paymentDate: 'payment_date',
     planId: 'plan_id',
-    status: 'status'
+    status: 'status',
+    creditsUsed: 'credits_used',
+    creditsUsedAt: 'credits_used_at'
 }
 
 /**
  * Schema
- *  user_id  payment_date   plan_id  status
- *  string   datetime       number   ACTIVE | SUSPENDED | DELETED
+ *  user_id  payment_date   plan_id  credits_used  credits_used_at   status
+ *  string   datetime       number   number        Datetime          ACTIVE | SUSPENDED | DELETED
  */
 
 const prepareAccountsCollection = async () => {
@@ -41,7 +43,7 @@ const prepareAccountsCollection = async () => {
 
 
     const collection = collectionData.collection;
-    const currentAttributes = [ Attributes.userId, Attributes.paymentDate, Attributes.planId ];
+    const currentAttributes = [ Attributes.userId, Attributes.paymentDate, Attributes.planId, Attributes.creditsUsed, Attributes.creditsUsedAt ];
     const isEveryAttributeCreated = currentAttributes.every(attributeKey => collection.attributes.find(attribute => attribute.key === attributeKey ));
 
     if(isEveryAttributeCreated){
@@ -68,6 +70,21 @@ const prepareAccountsCollection = async () => {
         collection.$id,
         Attributes.planId,
         true, 
+    );
+
+    await databases.createIntegerAttribute(
+        dbValues.db.$id,
+        collection.$id,
+        Attributes.creditsUsed,
+        true, 
+    );
+
+    await databases.createDatetimeAttribute(
+        dbValues.db.$id,
+        collection.$id,
+        Attributes.creditsUsedAt,
+        false,
+        new Date().toISOString()
     );
 
 }
@@ -105,7 +122,8 @@ const createAccount = async (userId) => {
             [Attributes.userId]: userId,
             [Attributes.paymentDate]: new Date().toISOString(),
             [Attributes.planId]: Plans.FREE.id,
-            [Attributes.status]: ACCOUNT_STATUS.active
+            [Attributes.status]: ACCOUNT_STATUS.active,
+            [Attributes.creditsUsed]: 0,
         }
     );
     return document;
@@ -144,7 +162,23 @@ const updateAccountPlan = async (userId, planId) => {
         account.$id,
         { 
             [Attributes.paymentDate]: new Date().toISOString(),
-            [Attributes.planId]: planId
+            [Attributes.planId]: planId,
+            [Attributes.creditsUsed]: 0, // resetting to 0 since new plan has been purchased
+            [Attributes.creditsUsedAt]: new Date().toISOString(),
+        }
+    )
+    return updatedDocument;
+}
+
+const updateAccountCredits = async (accountId, newCredits) => {
+    const databases = new sdk.Databases(dbValues.client);
+    const updatedDocument = await databases.updateDocument(
+        dbValues.db.$id,
+        collectionData.collection.$id,
+        accountId,
+        { 
+            [Attributes.creditsUsedAt]: new Date().toISOString(),
+            [Attributes.creditsUsed]: newCredits
         }
     )
     return updatedDocument;
@@ -159,6 +193,7 @@ module.exports = {
     updateAccountPlan,
     updateAccountPayment,
     getAllAccounts,
-    getAccountWithUserId
+    getAccountWithUserId,
+    updateAccountCredits
 }
 

@@ -25,7 +25,7 @@ export const RootRoute = () => {
     }, [])
 
 
-    if(userData){
+    if(userData?.email){
         return (
             <Box>
                 <Navbar/>

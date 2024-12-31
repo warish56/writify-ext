@@ -43,11 +43,7 @@ export const fetchData = (url, options={}) => {
         }
     })
     .then(res => {
-        if(res.ok) {
-            return res.json();
-        } else {
-            throw new Error(`Failed to fetch ${url}`);
-        }
+        return res.json(); 
     })
     .then(response => ([response.data, response.error || null]))
     .catch(error => {

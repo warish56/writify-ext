@@ -14,7 +14,9 @@ export const CreditsChip = () => {
 
     if(!isCreditsAvailable){
         return (
-            <Chip size="small" variant="filled" color="primary" onClick={openLoginPage} label="Upgrade" />
+            <Tooltip title="Credits Expired for the day, Please upgrade">
+                <Chip size="small" variant="filled" color="primary" onClick={openLoginPage} label="Upgrade" />
+            </Tooltip>
         )
     }
 

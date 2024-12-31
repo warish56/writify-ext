@@ -1,11 +1,19 @@
 const express = require('express');
-const { getAiResponse } = require('../controller/ai');
+const { getAiResponse, checkAndUpdateNonLoggedInUserUsage, checkAndUpdateLoggedInUserUsage } = require('../controller/ai');
+const { getRequestIpAddress } = require('../utils/ip');
 
 const router = express.Router();
 
 router.post('/', async (req, res) => {
     try {
-        const {prompts} = req.body;
+        const ipAddress = getRequestIpAddress(req);
+        const {prompts, email} = req.body;
+        console.log("==ai details==",{email, ipAddress})
+        if(!email){
+            await checkAndUpdateNonLoggedInUserUsage(ipAddress)
+        }else{
+            await checkAndUpdateLoggedInUserUsage(email);   
+        }
         const aiResponse = await getAiResponse(prompts);
         res.json({
             data: {
@@ -14,7 +22,12 @@ router.post('/', async (req, res) => {
         });
     } catch (error) {
         console.error('Error:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        res.status(error.status ?? 500).json({ 
+            error: {
+                message: error.message || 'Somthing went wrong in ai response',
+                action: error?.action || ''
+            }
+        });
     }
 });
 
