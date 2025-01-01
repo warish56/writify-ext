@@ -89,7 +89,7 @@ const palette = {
   }
 };
 
-export const AppTheme = createTheme({
+export const WebAppTheme = createTheme({
   palette,
   zIndex: {
     popper: 100000,
@@ -100,27 +100,27 @@ export const AppTheme = createTheme({
   typography: {
     fontFamily: '"Roboto", system-ui, -apple-system, sans-serif',
     h1: {
-      fontSize: '19.5px', //'1.5rem',
+      fontSize: '1.5rem',
       fontWeight: 600,
     },
     h2: {
-      fontSize: '16.25px', //'1.25rem',
+      fontSize: '1.25rem',
       fontWeight: 600,
     },
     h3: {
-      fontSize: '14.625px', //'1.125rem',
+      fontSize: '1.125rem',
       fontWeight: 500,
     },
     body1: {
-      fontSize: '13px', //'1rem',
+      fontSize: '1rem',
       lineHeight: 1.8,
     },
     body2: {
-        fontSize: '11.7px', //'0.9rem',
+        fontSize: '0.9rem',
         lineHeight: 1.7,
     },
     caption: {
-      fontSize: '11.375px', //'0.875rem',
+      fontSize: '0.875rem',
       lineHeight: 1.7,
     },
   },
