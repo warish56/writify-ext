@@ -125,6 +125,48 @@ export const AppTheme = createTheme({
     },
   },
   components: {
+    MuiIconButton: {
+      styleOverrides: {
+        root: {
+          minWidth:0,
+          '&:hover':{
+            border: 'none',
+            color: 'inherit'
+          }
+        }
+      }
+    },
+    MuiButton:{
+      styleOverrides:{
+        root:{
+          variants:[
+            {
+              props: { variant: 'contained' },
+              style: {
+                '&:hover':{
+                  color: `var(--variant-containedColor)`,
+                  backgroundColor: `var(--variant-containedBg)`,
+                }
+              },
+            },
+
+            {
+              props: { variant: 'outlined' },
+              style: {
+                '&:hover':{
+                  border: '1px solid currentColor'
+                },
+              },
+            },
+
+          ],
+          '&:hover':{
+                  border: 'none'
+          },
+          minWidth:0,
+        }
+      }
+    },
     MuiTooltip:{
         styleOverrides:{
             tooltip:({theme}) => ({
