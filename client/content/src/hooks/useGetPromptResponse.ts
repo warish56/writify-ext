@@ -39,7 +39,7 @@ export const useGetPromptResponse = (prompt:Prompt|null, text:string) => {
             setResponse(data);
         }
         setLoading(false);
-        if(!error && !data[1]){
+        if(!error && !data?.[1]){
             useAvailableCredits();  
         }     
     }

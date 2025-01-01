@@ -28,10 +28,11 @@ const verifyOtp = async (email, otp) => {
 const createUserInDbIfNotExists = async (email) => {
     const userWithEmail = await getUserWithEmail(email);
     if(userWithEmail){
-        return;
+        return userWithEmail;
     }
     const userDocument = await createUser(email);
-    await createAccount(String(userDocument.$id));
+    const document = await createAccount(String(userDocument.$id));
+    return document;
 }
 
 module.exports = {

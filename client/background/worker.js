@@ -17,8 +17,9 @@ import {
 
 import { fetchUserOrders } from './orders.js';
 
-import { openLoginPage, trackEvent } from './utils.js';
-import { Events, Messages } from './constants.js';
+import { openLoginPage, sendMessageToContentScript, trackEvent } from './utils.js';
+import { BroadcastMessages, Events, Messages } from './constants.js';
+import { clearToken, getToken, setToken } from './token.js';
 
 
 
@@ -66,6 +67,7 @@ const handleCreditsMessages = async (message, sendResponse) => {
         }
 
     }catch(err){
+        console.error("Error in handling User Message",err)
         sendResponse({success: false, error:err});
     }
 
@@ -74,12 +76,13 @@ const handleCreditsMessages = async (message, sendResponse) => {
 
 const handleOrdersMessages = async (message, sendResponse) => {
     try{
-        if(message.type = Messages.BG_FETCH_USER_ORDERS){
+        if(message.type === Messages.BG_FETCH_USER_ORDERS){
             const data  = await fetchUserOrders(message.userId);
             sendResponse({success: true, data})
             return true;
         }
     }catch(err){
+        console.error("Error in handling Order Message",err)
         sendResponse({success: false, error:err});
     }
 }
@@ -87,27 +90,81 @@ const handleOrdersMessages = async (message, sendResponse) => {
 
 const handleAiMessages = async (message, sendResponse) => {
     try{
-        if(message.type = Messages.BG_GET_AI_RESPONSE){
-            const data  = await fetchAiResponse(message.prompts);;
+        if(message.type === Messages.BG_GET_AI_RESPONSE){
+            const data  = await fetchAiResponse(message.prompts);
             sendResponse({success: true, data})
             return true;
         }
     }catch(err){
+        console.error("Error in handling Ai Message",err)
         sendResponse({success: false, error:err});
     }
 }
 
+
+const handleTokenMessages = async (message, sendResponse) => {
+    try{
+        if(message.type === Messages.BG_GET_TOKEN){
+            const token  = await getToken();;
+            sendResponse({success: true, data:{token}})
+            return true;
+        }
+
+        if(message.type === Messages.BG_SET_TOKEN){
+            await setToken(message.token);
+            sendResponse({success: true})
+            return true;
+        }
+
+
+        if(message.type === Messages.BG_LOGOUT_USER) {
+            // clearing the existing token
+            await clearToken();
+            // refetching new user details
+            await fetchAndStoreUserData();
+            // informing every tab that user is looged out, get the new user details from local store
+            await sendMessageToContentScript(BroadcastMessages.USER_LOGGED_OUT)
+            sendResponse({success: true})
+        }
+
+    }catch(err){
+        console.error("Error in handling Token Message",err)
+        sendResponse({success: false, error:err});
+    }
+}
+
+
+const handleBroadcastMessage = async (message, sendResponse) => {
+    try{
+        await sendMessageToContentScript(message.action);
+        sendResponse({success: true})
+        return true;
+    }catch(err){
+        console.error("Error in handling Broadcast Message",err)
+        sendResponse({success: false, error:err});
+    }
+}
+
+
+
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     const appId = chrome.runtime.id;
+    const myLocation = 'service_worker';
+
 
     // only messages from  our extension can be accepted
-    if( message.appId !== appId){
+    if( message?.appId !== appId || message?.targetLocation !== myLocation){
         return;
     }
 
     if(message.type === Messages.BG_OPEN_LOGIN_PAGE){
         openLoginPage();
         return;
+    }
+
+    if(message.type === Messages.BG_BROADCAST){
+        handleBroadcastMessage(message, sendResponse);
+        return true;
     }
 
     if(message.type === Messages.BG_TRACK_EVENT){
@@ -120,6 +177,15 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         Messages.BG_GET_AI_RESPONSE
         ].includes(message.type)){
             handleAiMessages(message, sendResponse);
+            return true;
+    }
+
+    if([
+        Messages.BG_GET_TOKEN,
+        Messages.BG_SET_TOKEN,
+        Messages.BG_LOGOUT_USER
+        ].includes(message.type)){
+            handleTokenMessages(message, sendResponse);
             return true;
     }
     

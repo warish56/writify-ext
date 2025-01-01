@@ -2,8 +2,9 @@ import { BG_TRACK_EVENT } from "../constants/worker";
 
 export const sendMessageToWorker = <T>(message:string, data:Record<string, unknown> = {}) => {
     const appId = chrome.runtime.id;
+    const targetLocation = 'service_worker';
     return new Promise<T>((res) => {
-        chrome.runtime.sendMessage({appId, type: message, ...data},(response:T) => {
+        chrome.runtime.sendMessage({appId, type: message, targetLocation, ...data},(response:T) => {
             res(response)
         });
     })

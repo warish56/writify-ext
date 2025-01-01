@@ -1,4 +1,4 @@
-import { Route, Routes} from "react-router-dom"
+import { Route, Routes, useNavigate} from "react-router-dom"
 import { CircularProgress, Snackbar, Stack } from "@mui/material"
 
 import { useSnackbar } from "../hooks/useSnackbar"
@@ -15,11 +15,37 @@ import { RootRoute } from "./Root"
 import { PaymentFailedPage } from "../pages/PaymentFailedPage"
 import OrdersList from "../pages/Orders/list"
 import { ErrorBoundary } from "../components/ErrorBoundary"
+import { useEffect } from "react"
+import { listenToExternalMessages } from "../service/ExternalMessagelistener"
+import { BroadcastMessages } from "../constants/worker"
 
 
 export const MainRoute = () => {
   const {open:snackbarOpen, message:snackbarMessage} = useSnackbar();
-  const {isLoading} = useUserDetails();
+  const {isLoading, getUserDetailsFromStore} = useUserDetails();
+  const navigate = useNavigate();
+
+
+  // listening for external messages
+  useEffect(() => {
+    const onMessage = async (message:string) =>{
+        switch(message){
+            case BroadcastMessages.USER_LOGGED_OUT:{
+                await getUserDetailsFromStore();
+                setTimeout(() => {
+                    navigate('/auth/login');
+                }, 1000)
+                return;
+            }
+            default: return;
+        }
+    }
+    const removeListener = listenToExternalMessages(onMessage);
+
+    return () => {
+        removeListener();
+    }
+  }, [])
 
   if(isLoading){
     return (

@@ -6,11 +6,12 @@ import { FormHeading } from '../components/FormHeading'
 import { useOtp } from '../hooks/useOtp';
 import { useSnackbar } from '../hooks/useSnackbar';
 import { sendMessageToWorker, sendTrackingEvent } from '../utils';
-import { BG_FETCH_USER_DETAILS } from '../constants/worker';
+import { BG_FETCH_USER_DETAILS, BroadcastMessages } from '../constants/worker';
 import { WorkerResponse } from '../types/worker';
 import { ServerError } from '../types/api';
 import { WEB_EVENTS } from '../constants/Events';
 import { useUserDetails } from '../hooks/useUserDetails';
+import { broadcastMessage } from '../service/worker';
 
 export const OtpPage = () => {
     const [otp, setOtp] = useState('');
@@ -48,6 +49,7 @@ export const OtpPage = () => {
                 })
         }else{
             await getUserDetailsFromStore();
+            await broadcastMessage(BroadcastMessages.REFRESH_USER_DETAILS);
             setTimeout(() => {
                 navigate('/plans',{
                     replace: true

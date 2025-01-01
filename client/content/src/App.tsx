@@ -11,14 +11,15 @@ import { useCredits } from './hooks/useCredits';
 import UpgradePrompt from './components/PromptsMenu/UpgradePrompt';
 
 import { sendMessageToWorker, sendTrackingEvent } from './utils';
-import { BG_OPEN_LOGIN_PAGE } from './constants';
+import { BG_OPEN_LOGIN_PAGE, BroadcastMessages } from './constants';
 import { useUserDetails } from './hooks/useUserDetails';
 import { Events } from './constants/events';
+import { listenToExternalMessages } from './services/ExternalMessagelistener';
 
 
 function App() {
   const promptContRef = useRef<HTMLDivElement | null>(null);
-  const {isAccountSuspended, fetchUserDetails, isLoading:isUserDetailsLoading} = useUserDetails();
+  const {isAccountSuspended, fetchUserDetails, getUserDetailsFromStore, isLoading:isUserDetailsLoading} = useUserDetails();
   const {fetchAndInitializeCreditsDataFromServer, isCreditsAvailable} = useCredits();
   const [isPromptOpen, setPromptOpen]= useState(false);
   const {prompt, handlePromptChange, clearPrompt} = usePromptManager();
@@ -33,6 +34,32 @@ function App() {
   const prevSelectionDataRef = useRef(currentSelectionData);
   const {data, error, loading, clearData:clearServerData, refetchData} = useGetPromptResponse(prompt, prevSelectionDataRef.current.selectedText); 
   const {open:snackbarOpen, message:snackbarMessage} = useSnackbar();
+
+  const refetchDataFromStore = async () => {
+    await getUserDetailsFromStore();
+    await fetchAndInitializeCreditsDataFromServer();
+  }
+
+
+  // effect to listen to messages coming from the Service worker
+  useEffect(() => {
+    const onMessage = (message:string) => {
+        switch(message){
+          case BroadcastMessages.REFRESH_USER_DETAILS:
+          case BroadcastMessages.USER_LOGGED_OUT:
+          {
+            refetchDataFromStore();
+            return;
+          }
+          default: return;
+        }
+    }
+
+    const removeListener = listenToExternalMessages(onMessage);
+    return () => {
+      removeListener();
+    }
+  }, [])
 
   // whenever app loads first load the credits data from the server
   useEffect(() => {

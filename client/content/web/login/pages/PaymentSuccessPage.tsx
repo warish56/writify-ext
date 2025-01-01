@@ -3,21 +3,25 @@ import { Box, Typography, CircularProgress } from '@mui/material';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { useNavigate } from 'react-router-dom';
 import { useUserDetails } from '../hooks/useUserDetails';
-import { useCredits } from '../hooks/useCredits';
 import { removeParams, sendTrackingEvent } from '../utils';
 import { WEB_EVENTS } from '../constants/Events';
+import { broadcastMessage } from '../service/worker';
+import { BroadcastMessages } from '../constants/worker';
 
 export const PaymentSuccessPage = () => {
   const [redirectTimer, setRedirectTimer] = useState(5);
   const {fetchUserDetailsFromServer} = useUserDetails();
-  const {resetCreditsUsed} = useCredits();
   const navigate = useNavigate();
 
 
   useEffect(() => {
-    fetchUserDetailsFromServer();
-    resetCreditsUsed();
-    sendTrackingEvent(WEB_EVENTS.PLAN_PURCHASED_SUCCESS);
+    const processApi = async () => {
+      await fetchUserDetailsFromServer();
+      await broadcastMessage(BroadcastMessages.REFRESH_USER_DETAILS);
+      sendTrackingEvent(WEB_EVENTS.PLAN_PURCHASED_SUCCESS);
+    }
+    processApi();
+
   }, [])
 
   useEffect(() => {

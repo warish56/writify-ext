@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { fetchData } from "../service/api";
 import { ServerError } from "@/types/api";
+import { setTokenInStorage } from "../service/token";
 
 type successResponse = {
     message: string;
+    jwtToken:string;
 }
 
 type state = [successResponse|null, ServerError | Error | undefined |null];
@@ -22,6 +24,11 @@ export const useOtp = () => {
             });
             setResponse(response); 
             setIsLoading(false);
+            // updating the token in local storage
+            const [data] = response;
+            if(data?.jwtToken){
+                await setTokenInStorage(data.jwtToken)
+            }
             return response;
         } catch (error) {
             console.error(error);

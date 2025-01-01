@@ -20,11 +20,13 @@ export const copyToClipBoard = (text:string) => {
 
 export const sendMessageToWorker = <T>(message:string, data:Record<string, unknown> = {}) => {
     const appId = chrome.runtime.id;
+    const targetLocation = 'service_worker';
     type params = {
         appId: string;
-        type: string
+        type: string;
+        targetLocation:string;
     }
-    return chrome.runtime.sendMessage<params,T>({appId, type: message, ...data});
+    return chrome.runtime.sendMessage<params,T>({appId, type: message, targetLocation, ...data});
 }
 
 export const sendTrackingEvent = (event:string, data={}) => {

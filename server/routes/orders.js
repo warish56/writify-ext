@@ -1,5 +1,6 @@
 const express = require('express');
 const { createNewOrder, getOrderDetails, verifyPayment, getUserOrdersList } = require('../controller/orders');
+const { authMiddleware } = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
@@ -35,7 +36,7 @@ router.get('/verify-payment', async (req, res) => {
 })
 
 
-router.post('/create-order', async (req, res) => {
+router.post('/create-order', authMiddleware, async (req, res) => {
     try {
         const { userId, planId } = req.body; 
         const orderDetails =  await createNewOrder(userId, planId);
@@ -55,7 +56,7 @@ router.post('/create-order', async (req, res) => {
 });
 
 
-router.post('/update-order', async (req, res) => {
+router.post('/update-order', authMiddleware, async (req, res) => {
     try {
         const { orderId } = req.body;
     } catch (error) {
@@ -68,7 +69,7 @@ router.post('/update-order', async (req, res) => {
     }
 });
 
-router.post('/order-status', async (req, res) => {
+router.post('/order-status', authMiddleware, async (req, res) => {
     try {
         const { orderId } = req.body;
         const orderDocument = await getOrderDetails(orderId);
@@ -91,7 +92,7 @@ router.post('/order-status', async (req, res) => {
     }
 });
 
-router.post('/list', async (req, res) => {
+router.post('/list', authMiddleware ,async (req, res) => {
     try {
         const { userId } = req.body;
         const result = await getUserOrdersList(userId);
