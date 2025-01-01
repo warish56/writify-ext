@@ -1,4 +1,4 @@
-import { Chip, Stack, Tooltip, Typography } from "@mui/material"
+import { Button, Chip, Tooltip, Typography } from "@mui/material"
 
 import StarIcon from '@mui/icons-material/Star';
 import { useCredits } from "@/hooks/useCredits";
@@ -22,9 +22,7 @@ export const CreditsChip = () => {
 
     return (
         <Tooltip title={`Only ${availableCredits} credits left for today`} placement="top">
-        <Stack 
-        component="button" 
-        direction="row" 
+        <Button 
         onClick={openLoginPage}
         sx={{
             gap: '5px',
@@ -32,8 +30,11 @@ export const CreditsChip = () => {
             alignItems: 'center',
             border: `1px #f3b70c solid`,
             borderRadius: '20px',
+            display:'flex',
+            padding: '3px 8px',
             backgroundColor: 'transparent',
             '&:hover':{
+                outline: 'none',
                 backgroundColor: "#f3b70c",
                 '& svg':{
                     color: 'white'
@@ -46,8 +47,8 @@ export const CreditsChip = () => {
             <StarIcon sx={{
                 color: "#f3b70c"
             }}/>
-            <Typography variant="caption">{availableCredits}</Typography>
-        </Stack>
+            <Typography variant="caption" color="background.dark">{availableCredits}</Typography>
+        </Button>
         </Tooltip>
     )
 }

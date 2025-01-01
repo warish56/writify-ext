@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { ThemeProvider } from '@mui/material'
+import { CssBaseline, GlobalStyles, ThemeProvider } from '@mui/material'
 import { AppTheme } from './services/theme'
 
 import '@fontsource/roboto/300.css';
@@ -19,6 +19,12 @@ document.body.appendChild(root)
 ReactDOM.createRoot(root).render(
   <React.StrictMode>
     <ThemeProvider theme={AppTheme}>
+      <CssBaseline/>
+      <GlobalStyles styles={{
+        html:{
+          fontSize: '13px'
+        }
+      }}/>
       <App />
     </ThemeProvider>
   </React.StrictMode>,
