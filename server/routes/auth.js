@@ -1,6 +1,7 @@
 
 const express = require('express');
 const { loginUser , verifyOtp, createUserInDbIfNotExists } = require('../controller/auth');
+const { generateJwtToken } = require('../utils/jwt');
 const router = express.Router();
 
 router.post('/login', async (req, res) => {
@@ -27,9 +28,11 @@ router.post('/verify-otp', async (req, res) => {
     try {
         const {email, otp} = req.body;
         await verifyOtp(email, otp);
-        await createUserInDbIfNotExists(email);
+        const userDetails = await createUserInDbIfNotExists(email);
+        const jwtToken = generateJwtToken(userDetails.$id, userDetails.email);
         res.json({
             data: {
+                jwtToken,
                 message: 'User authenticated'
             },
         });

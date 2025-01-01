@@ -1,18 +1,18 @@
 const express = require('express');
 const { getAiResponse, checkAndUpdateNonLoggedInUserUsage, checkAndUpdateLoggedInUserUsage } = require('../controller/ai');
 const { getRequestIpAddress } = require('../utils/ip');
+const { silenceAuthMiddleware } = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
-router.post('/', async (req, res) => {
+router.post('/', silenceAuthMiddleware , async (req, res) => {
     try {
         const ipAddress = getRequestIpAddress(req);
         const {prompts, email} = req.body;
-        console.log("==ai details==",{email, ipAddress})
-        if(!email){
-            await checkAndUpdateNonLoggedInUserUsage(ipAddress)
-        }else{
+        if(email && req.user){
             await checkAndUpdateLoggedInUserUsage(email);   
+        }else{
+            await checkAndUpdateNonLoggedInUserUsage(ipAddress)
         }
         const aiResponse = await getAiResponse(prompts);
         res.json({

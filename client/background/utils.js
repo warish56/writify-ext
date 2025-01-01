@@ -1,4 +1,5 @@
 import { API_URL, MIXPANEL_PROJECT_ID, MIXPANEL_TOKEN, NODE_ENV } from "./env.js";
+import { getToken } from "./token.js";
 import { getRandomUserId, getUserDetails } from "./user.js";
 
 export const generateRandomUserId = () => {
@@ -34,12 +35,14 @@ export const openLoginPage = () => {
 }
 
 
-export const fetchData = (url, options={}) => {
+export const fetchData = async (url, options={}) => {
+    const token = await getToken();
     return fetch(`${API_URL}${url}`,{
         ...options,
         headers: {
             ...(options.headers ?? {}),
-            ...( options?.body ? {'Content-Type': 'application/json'} : {})
+            ...( options?.body ? {'Content-Type': 'application/json'} : {}),
+            ...(token? {'Authorization': `Bearer ${token}`}: {})
         }
     })
     .then(res => {
@@ -89,4 +92,14 @@ export const trackEvent = async (event, extraData={}) => {
     }).catch(err => {
         console.error("Error tracking event:", err);
     })
+}
+
+export const sendMessageToContentScript = async(message) => {
+    const appId = chrome.runtime.id;
+    const tabs = await chrome.tabs.query({});
+    for(const tab of tabs){
+        try{
+            await chrome.tabs.sendMessage(tab.id, {message, appId,  targetLocation: 'all'});
+        }catch(err){}
+    }
 }

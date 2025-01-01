@@ -49,8 +49,6 @@ export const fetchAndStoreCreditsData = async () => {
     }
     
 
-    console.log("==CREDITS FETCHED FROM SERVER ===",{ dbCreditsData, userDetails, hasOneDayPassed, })
-
     await chrome.storage.sync.set({ 
            [TOTAL_CREDITS]: hasOneMonthPassed ? DEFAULT_CREDITS_PER_DAY :  (userDetails?.account?.plan_details?.credits ?? DEFAULT_CREDITS_PER_DAY),
            [CREDITS_USED] : userDetails?.credits.credits_used ?? 0,
