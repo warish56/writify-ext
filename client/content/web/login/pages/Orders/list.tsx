@@ -22,7 +22,7 @@ const OrdersList = () => {
 
     const list = [completedOrders, faileddOrders, pendingOrders];
 
-    const orders = list[currentTab]
+    const orders = list[currentTab].reverse();
 
   
     return (
