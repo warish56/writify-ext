@@ -1,9 +1,10 @@
 const { getUserWithEmail } = require("../db/user");
+const { getTokenFromCookie } = require("../services/token");
 const { verifyJwtToken } = require("../utils/jwt");
 
 const silenceAuthMiddleware = async (req, res, next) => {
     try{
-        const token = req.headers['authorization']?.split(' ')[1]; 
+        const token = getTokenFromCookie(req); //req.headers['authorization']?.split(' ')[1]; 
         const userData = verifyJwtToken(token, false);
         let userDocument = null;
         if(userData){
@@ -24,7 +25,7 @@ const silenceAuthMiddleware = async (req, res, next) => {
 
 const authMiddleware = async (req, res, next) => {
     try{
-        const token = req.headers['authorization']?.split(' ')[1]; 
+        const token =  getTokenFromCookie(req); //req.headers['authorization']?.split(' ')[1];
         const userData = verifyJwtToken(token);
         const userDocument = await getUserWithEmail(userData.email);
         if(!userDocument){

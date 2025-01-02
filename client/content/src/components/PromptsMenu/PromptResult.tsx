@@ -26,7 +26,11 @@ export const PromptResult = ({loading, onApply, onRefresh, text, error}:props) =
                 alignItems="center" 
                 sx={{ mb: 0.5 }}
             >
-                <Typography variant="h3">Suggestion</Typography>
+                <Typography variant="h3" sx={(theme) => ({
+                    '&&':{
+                        color: theme.palette.text.default
+                    }
+                })}>Suggestion</Typography>
 
                 <Stack direction="row" sx={{
                     gap: '10px'

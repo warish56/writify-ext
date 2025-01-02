@@ -1,4 +1,9 @@
 
+
+/**
+ * File is Deprecated - No use of as now
+ */
+
 const TOKEN_DATA = 'token_data';
 
 export const setToken = async (token) => {

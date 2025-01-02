@@ -36,13 +36,11 @@ export const openLoginPage = () => {
 
 
 export const fetchData = async (url, options={}) => {
-    const token = await getToken();
     return fetch(`${API_URL}${url}`,{
         ...options,
         headers: {
             ...(options.headers ?? {}),
             ...( options?.body ? {'Content-Type': 'application/json'} : {}),
-            ...(token? {'Authorization': `Bearer ${token}`}: {})
         }
     })
     .then(res => {

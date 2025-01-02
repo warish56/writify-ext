@@ -2,17 +2,19 @@ const express = require('express');
 const { getAiResponse, checkAndUpdateNonLoggedInUserUsage, checkAndUpdateLoggedInUserUsage } = require('../controller/ai');
 const { getRequestIpAddress } = require('../utils/ip');
 const { silenceAuthMiddleware } = require('../middleware/authMiddleware');
+const { getFreeUserIdFromCookie } = require('../services/freeAccount');
 
 const router = express.Router();
 
 router.post('/', silenceAuthMiddleware , async (req, res) => {
     try {
         const ipAddress = getRequestIpAddress(req);
+        const randomUserId = getFreeUserIdFromCookie(req);
         const {prompts, email} = req.body;
         if(email && req.user){
             await checkAndUpdateLoggedInUserUsage(email);   
         }else{
-            await checkAndUpdateNonLoggedInUserUsage(ipAddress)
+            await checkAndUpdateNonLoggedInUserUsage(ipAddress, randomUserId)
         }
         const aiResponse = await getAiResponse(prompts);
         res.json({

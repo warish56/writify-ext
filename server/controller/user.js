@@ -2,9 +2,11 @@
 const { getUserWithEmail } = require('../db/user');
 const { getAccountWithUserId } = require('../db/accounts');
 const { getPlanDetails } = require('../db/plan');
-const { getIpData, createIpData } = require('../db/ip');
+const { getIpData, createIpData, getRandomUserData } = require('../db/ip');
 const { ACCOUNT_STATUS } = require('../constants/accounts');
 const { Plans } = require('../constants/plans');
+const { generateRandomUserId } = require('../utils/otp');
+const { setFreeUserIdInCookie } = require('../services/freeAccount');
 
 
 
@@ -37,11 +39,54 @@ const createUserData = ({
 }
 
 
-const getNonLoggedInUserDetails = async (ipAddress) => {
-    let ipData = await getIpData(ipAddress);
-    if(!ipData){
-        ipData = await createIpData(ipAddress, 0);
+/**
+ * 
+ * if have saved user id , then give data according to that
+ * if no id is saved then check the ip-address, 
+ *   if saved or not then use that data
+ *   if not then create a newIp data with both randomId and ipAddress
+ * 
+ */
+
+const getNonLoggedInUserDetails = async (res, ipAddress, exisitingRandomUserId) => {
+
+    let randomUserId = exisitingRandomUserId;
+
+
+    /**
+     * For a complete new request who does not have any assigned random userId assigned in cookies
+     * 1. check based upon ipaddress if exists or not, 
+     *    if exists then assign that random id in that cookie
+     *    else create a new random id which is not present in the db and then assign that random id in cookie
+     */
+    if(!randomUserId){
+        const ipData = await getIpData(ipAddress);
+        if(ipData){
+            randomUserId = ipData.random_id 
+        }else{
+            // keep looping until the new id  is not present in the db
+            while(true){
+                randomUserId = generateRandomUserId();
+                const randomUserDoc = await getRandomUserData(randomUserId);
+                if(!randomUserDoc){
+                    break;
+                }
+            }
+
+        }
+        setFreeUserIdInCookie(res, randomUserId);
     }
+
+
+    /**
+     * For  request with exxisting random user id
+     */
+
+    let randomUserData = await getRandomUserData(randomUserId);
+    if(!randomUserData){
+        randomUserData = await createIpData(ipAddress, randomUserId, 0);
+    }
+
     return createUserData({
         userId: '',
         email: '',
@@ -50,8 +95,8 @@ const getNonLoggedInUserDetails = async (ipAddress) => {
         paymentDate: null,
         planId: Plans.FREE.id,
         credits: Plans.FREE.credits,
-        creditsUsed: ipData.used_credits,
-        creditsLastUsedAt: ipData.last_used_at
+        creditsUsed: randomUserData.used_credits,
+        creditsLastUsedAt: randomUserData.last_used_at
     })
 }
 

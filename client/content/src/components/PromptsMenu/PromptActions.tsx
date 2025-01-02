@@ -39,9 +39,10 @@ export const PromptActions = ({list, onClick}:PromptActionProps) => {
                                     </Avatar>
                                 </ListItemIcon>
                             }
-                            <ListItemText sx={{
-                                textTransform: 'capitalize'
-                            }} primary={title} />
+                            <ListItemText sx={(theme) => ({
+                                textTransform: 'capitalize',
+                                color: theme.palette.text.default
+                            })} primary={title} />
                         </ListItemButton>
                       </Tooltip>
                     )

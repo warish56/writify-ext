@@ -12,6 +12,7 @@ const  collectionData = {
 
 const Attributes = {
     remoteAddress: 'remote_address',
+    randomId: 'random_id',
     usedCredits: 'used_credits',
     lastUsedAt: 'last_used_at'
 }
@@ -24,8 +25,8 @@ const Attributes = {
 
 /**
  * Schema
- *  remote_address       usedCredits  last_used_at
- *  string               Number        Datetime
+ *  remote_address  random_id      usedCredits  last_used_at
+ *  string          string        Number        Datetime
  */
 
 const prepareIpCollection = async () => {
@@ -45,7 +46,7 @@ const prepareIpCollection = async () => {
     }
 
  
-    const currentAttributes = [ Attributes.remoteAddress, Attributes.usedCredits, Attributes.lastUsedAt ];
+    const currentAttributes = [ Attributes.remoteAddress, Attributes.usedCredits, Attributes.lastUsedAt, Attributes.randomId ];
     const isEveryAttributeCreated = currentAttributes.every(attributeKey => collectionData.collection.attributes.find(attribute => attribute.key === attributeKey ));
 
     if(isEveryAttributeCreated){
@@ -59,6 +60,15 @@ const prepareIpCollection = async () => {
         255,
         true
     );
+
+    await databases.createStringAttribute(
+        dbValues.db.$id,
+        collectionData.collection.$id,
+        Attributes.randomId,
+        255,
+        true
+    );
+
 
     await databases.createIntegerAttribute(
         dbValues.db.$id,
@@ -88,15 +98,24 @@ const getIpData = async (ipAddress) => {
     return result.documents[0];
 }
 
+const getRandomUserData = async (randomUserId) => {
+    const databases = new sdk.Databases(dbValues.client);
+    const result = await databases.listDocuments(dbValues.db.$id, collectionData.collection.$id, [
+        Query.equal(Attributes.randomId, randomUserId)
+    ]);
+    return result.documents[0];
+}
 
-const createIpData = async (ipAddress, usedCredits) => {
+
+const createIpData = async (ipAddress, randomId, usedCredits) => {
     const databases = new sdk.Databases(dbValues.client);
     const updatedDocument = await databases.createDocument(
         dbValues.db.$id,
         collectionData.collection.$id,
         sdk.ID.unique(),
         { 
-            [Attributes.remoteAddress]:ipAddress,
+            [Attributes.remoteAddress]: ipAddress,
+            [Attributes.randomId]: randomId,
             [Attributes.usedCredits]: usedCredits
         }
     )
@@ -107,7 +126,7 @@ const createIpData = async (ipAddress, usedCredits) => {
 
 
 
-const updateIpCredits = async (documentId, newCredits) => {
+const updateIpCredits = async (documentId, newCredits, currentIpAddress) => {
     const databases = new sdk.Databases(dbValues.client);
     const updatedDocument = await databases.updateDocument(
         dbValues.db.$id,
@@ -115,18 +134,19 @@ const updateIpCredits = async (documentId, newCredits) => {
         documentId,
         { 
             [Attributes.usedCredits]:newCredits,
-            [Attributes.lastUsedAt]: new Date().toISOString()
+            [Attributes.lastUsedAt]: new Date().toISOString(),
+            [Attributes.remoteAddress]: currentIpAddress,
         }
     )
     return updatedDocument;
 }
 
-
 module.exports = {
     collectionData,
     prepareIpCollection,
     getIpData,
+    getRandomUserData,
     createIpData,
-    updateIpCredits
+    updateIpCredits,
 }
 
