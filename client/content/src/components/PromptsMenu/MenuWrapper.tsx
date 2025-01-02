@@ -44,10 +44,11 @@ export const MenuWrapper = ({children, title, onBack, onClose, showBackButton=tr
                             <ArrowBackIcon />
                         </IconButton>
                     }
-                    <Typography sx={{
+                    <Typography sx={(theme) => ({
                         marginLeft:'8px',
-                        textTransform: 'capitalize'
-                    }} variant={'h3'}>{title}</Typography>
+                        textTransform: 'capitalize',
+                        color: theme.palette.text.default
+                    })} variant={'h3'}>{title}</Typography>
                 </Stack>
                 
 

@@ -2,6 +2,7 @@
 const express = require('express');
 const { loginUser , verifyOtp, createUserInDbIfNotExists } = require('../controller/auth');
 const { generateJwtToken } = require('../utils/jwt');
+const { setTokenInCookie } = require('../services/token');
 const router = express.Router();
 
 router.post('/login', async (req, res) => {
@@ -30,6 +31,7 @@ router.post('/verify-otp', async (req, res) => {
         await verifyOtp(email, otp);
         const userDetails = await createUserInDbIfNotExists(email);
         const jwtToken = generateJwtToken(userDetails.$id, userDetails.email);
+        setTokenInCookie(res, jwtToken);
         res.json({
             data: {
                 jwtToken,

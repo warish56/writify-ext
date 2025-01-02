@@ -10,6 +10,7 @@ declare module '@mui/material/styles' {
     interface TypeText{
         dark:string;
         link: string;
+        default: string;
     }
 
     interface ZIndex{
@@ -70,6 +71,7 @@ const palette = {
     primary: '#2D2440', // dark purple-gray
     secondary: '#6B6684', // medium purple-gray
     dark: grey[50],
+    default: '#2d2440',
     link: "#2196f3",
   },
   action: {

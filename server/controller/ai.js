@@ -1,5 +1,5 @@
 const OpenAI = require("openai");
-const { getIpData, createIpData, updateIpCredits } = require("../db/ip");
+const { getRandomUserData , updateIpCredits } = require("../db/ip");
 const { Plans } = require("../constants/plans");
 const { isNextDay } = require("../utils/date");
 const { getUserWithEmail } = require("../db/user");
@@ -11,8 +11,8 @@ const openai = new OpenAI({
 
 
 
-const checkAndUpdateNonLoggedInUserUsage = async (ipAddress) => {
-    let ipData = await getIpData(ipAddress);
+const checkAndUpdateNonLoggedInUserUsage = async (ipAddress, randomUserId) => {
+    let ipData = await getRandomUserData(randomUserId);
     if(!ipData){
       throw {message: "Free user does not exists", status: 404};
     }
@@ -22,7 +22,7 @@ const checkAndUpdateNonLoggedInUserUsage = async (ipAddress) => {
     if(newCredits > Plans.FREE.credits){
        throw {message: "Credits expired for the day", status: 400, action: 'REFRESH'}
     }
-    await updateIpCredits(ipData.$id, newCredits);
+    await updateIpCredits(ipData.$id, newCredits, ipAddress);
 }
 
 const checkAndUpdateLoggedInUserUsage = async (email) => {

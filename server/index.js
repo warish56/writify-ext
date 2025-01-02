@@ -2,6 +2,8 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser')
+
 
 const aiRoutes = require('./routes/ai');
 const creditsRoutes = require('./routes/credits');
@@ -45,6 +47,9 @@ const { runMigrations } = require('./migrations');
 
 const app = express();
 const PORT = process.env.PORT || 8000;
+
+// addinf cookie parser to read and set cookies
+app.use(cookieParser())
 
 // Middleware
 app.use(cors({
