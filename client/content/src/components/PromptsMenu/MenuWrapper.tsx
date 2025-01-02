@@ -47,7 +47,9 @@ export const MenuWrapper = ({children, title, onBack, onClose, showBackButton=tr
                     <Typography sx={(theme) => ({
                         marginLeft:'8px',
                         textTransform: 'capitalize',
-                        color: theme.palette.text.default
+                        '&&':{
+                            color: theme.palette.text.default
+                        }
                     })} variant={'h3'}>{title}</Typography>
                 </Stack>
                 

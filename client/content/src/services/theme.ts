@@ -131,6 +131,7 @@ export const AppTheme = createTheme({
       styleOverrides: {
         root: {
           minWidth:0,
+          width:'auto',
           '&:hover':{
             border: 'none',
             color: 'inherit'
@@ -141,6 +142,7 @@ export const AppTheme = createTheme({
     MuiButton:{
       styleOverrides:{
         root:{
+          width:'auto',
           variants:[
             {
               props: { variant: 'contained' },

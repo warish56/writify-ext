@@ -27,7 +27,9 @@ export const PromptResult = ({loading, onApply, onRefresh, text, error}:props) =
                 sx={{ mb: 0.5 }}
             >
                 <Typography variant="h3" sx={(theme) => ({
-                    color: theme.palette.text.default
+                    '&&':{
+                        color: theme.palette.text.default
+                    }
                 })}>Suggestion</Typography>
 
                 <Stack direction="row" sx={{
