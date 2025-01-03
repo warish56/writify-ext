@@ -27,7 +27,7 @@ const createNewOrder = async(userId, planId) => {
         orderId: order.$id, 
         price: planDocument.price * 100, // as per razorpay docs we have at multiply with 100 
         currency: Currencies.inr,
-        description: `You are Purchasing ${planName} plan of AIMagicText`,
+        description: `AIMagicText ${planName} plan.`,
         userEmail: userDocument.email,
         callbackUrl: `${process.env.APP_URL}/orders/verify-payment?orderId=${order.$id}&planId=${planDocument.id}&userId=${userId}`,
     })
