@@ -10,8 +10,15 @@ type account = {
     }
 }
 
+type creditsData = {
+    credits_used: number;
+    last_used_at: Date;
+    default_per_day: number;
+}
+
 export type User = {
     id?: string;
     email?:string;
-    account:account
+    account:account;
+    credits:creditsData;
 }

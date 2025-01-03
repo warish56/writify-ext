@@ -36,7 +36,6 @@ export const getCreditsData = async () => {
 export const fetchAndStoreCreditsData = async () => {
     try{
     const userDetails = await getUserDetails();
-    const dbCreditsData = await getCreditsData();
     const hasOneDayPassed = isNextDay(userDetails.credits.last_used_at, Date.now());
     let hasOneMonthPassed = true;
 
@@ -48,9 +47,10 @@ export const fetchAndStoreCreditsData = async () => {
         hasOneMonthPassed = daysDifference(lastePaymentDate) > 28;
     }
     
+    const defaultPerDayCredits = userDetails?.credits?.default_per_day ?? DEFAULT_CREDITS_PER_DAY;
 
     await chrome.storage.sync.set({ 
-           [TOTAL_CREDITS]: hasOneMonthPassed ? DEFAULT_CREDITS_PER_DAY :  (userDetails?.account?.plan_details?.credits ?? DEFAULT_CREDITS_PER_DAY),
+           [TOTAL_CREDITS]: hasOneMonthPassed ? defaultPerDayCredits :  (userDetails?.account?.plan_details?.credits ?? defaultPerDayCredits),
            [CREDITS_USED] : userDetails?.credits.credits_used ?? 0,
         // if one day has passed then reset the credits used
         ...((hasOneDayPassed) ? {
