@@ -50,7 +50,11 @@ export const useSelection = ({shouldSelectText}:props) => {
             if(selection && !shouldSelectText(selection)){
                 return;
             }
-            if(selectedText &&  isTextNode && selection.anchorOffset !== selection.focusOffset) {
+            if(
+                selectedText &&  
+                isTextNode 
+                //&& selection.anchorOffset !== selection.focusOffset
+            ) {
                 const range = selection.getRangeAt(0);
                 const nodeCoordinates = range.getBoundingClientRect(); 
                 setSelectionData({
