@@ -34,7 +34,7 @@ export default defineConfig({
     },
     outDir: 'dist/web',
     emptyOutDir: true,
-    sourcemap: true,
+    sourcemap: process.env.NODE_ENV !== 'production',
     target: 'es2015', 
   },
   resolve: {
