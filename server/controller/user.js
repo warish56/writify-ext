@@ -4,7 +4,7 @@ const { getAccountWithUserId } = require('../db/accounts');
 const { getPlanDetails } = require('../db/plan');
 const { getIpData, createIpData, getRandomUserData } = require('../db/ip');
 const { ACCOUNT_STATUS } = require('../constants/accounts');
-const { Plans } = require('../constants/plans');
+const { Plans, FREE_CREDITS_PER_DAY } = require('../constants/plans');
 const { generateRandomUserId } = require('../utils/otp');
 const { setFreeUserIdInCookie } = require('../services/freeAccount');
 
@@ -25,7 +25,8 @@ const createUserData = ({
         email,
         credits: {
            credits_used: creditsUsed,
-           last_used_at: creditsLastUsedAt
+           last_used_at: creditsLastUsedAt,
+           default_per_day: FREE_CREDITS_PER_DAY
         },
         account: {
             status: accountStatus,

@@ -1,10 +1,12 @@
 
 
+const FREE_CREDITS_PER_DAY = 25;
+
 const Plans = {
     FREE: {
         id: 0,
         price: 0,
-        credits: 25
+        credits: FREE_CREDITS_PER_DAY
     },
 
     PRO: {
@@ -21,5 +23,6 @@ const Plans = {
 }
 
 module.exports = {
-    Plans
+    Plans,
+    FREE_CREDITS_PER_DAY
 }
