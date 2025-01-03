@@ -5,10 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build-ext": "export NODE_ENV=production && bash ./replaceEnv.sh && tsc && vite build --config vite.ext.config.ts --mode production",
-    "watch-ext": "export NODE_ENV=development && bash ./replaceEnv.sh && vite build --mode development --watch --config vite.ext.config.ts",
-    "build-web": "export NODE_ENV=production && bash ./replaceEnv.sh && tsc && vite build --config vite.web.config.ts --mode production",
-    "watch-web": "export NODE_ENV=development && bash ./replaceEnv.sh && vite build --mode development --watch --config vite.web.config.ts",
+    "build-ext": "export NODE_ENV=production && bash ./scripts/replaceEnv.sh && tsc && vite build --config vite.ext.config.ts --mode production",
+    "watch-ext": "export NODE_ENV=development && bash ./scripts/replaceEnv.sh && vite build --mode development --watch --config vite.ext.config.ts",
+    "build-web": "export NODE_ENV=production && bash ./scripts/replaceEnv.sh && tsc && vite build --config vite.web.config.ts --mode production",
+    "watch-web": "export NODE_ENV=development && bash ./scripts/replaceEnv.sh && vite build --mode development --watch --config vite.web.config.ts",
+    "create-ext": "yarn build-ext && yarn build-web && bash ./scripts/createExtension.sh",
     "preview-ext": "vite preview"
   },
   "dependencies": {

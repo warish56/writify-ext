@@ -40,7 +40,7 @@ export default defineConfig({
     },
     outDir: 'dist/ext',
     emptyOutDir: true,
-    sourcemap: true,
+    sourcemap: process.env.NODE_ENV !== 'production',
     
   },
   resolve: {
