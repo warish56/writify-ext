@@ -1,19 +1,19 @@
 import { Metadata } from "next";
 
 export const termsMetaData: Metadata = {
-    title: 'Terms and Conditions - AI Magic Text | Usage Guidelines',
-    description: 'Terms of use for AI Magic Text browser extension. Understand usage limits, credits system, and service guidelines. Free and premium plans explained.',
+    title: 'Terms and Conditions - AIMagicText | Usage Guidelines',
+    description: 'Terms of use for AIMagicText browser extension. Understand usage limits, credits system, and service guidelines. Free and premium plans explained.',
     
     openGraph: {
-      title: 'Terms of Service | AI Magic Text Browser Extension',
-      description: 'Official terms and conditions for AI Magic Text. Clear guidelines on extension usage, credits, plans, and user responsibilities.',
+      title: 'Terms of Service | AIMagicText Browser Extension',
+      description: 'Official terms and conditions for AIMagicText. Clear guidelines on extension usage, credits, plans, and user responsibilities.',
       url: 'https://aimagictext.in/terms',
-      siteName: 'AI Magic Text',
+      siteName: 'AIMagicText',
       type: 'website',
     },
   
     keywords: [
-      'AI Magic Text terms',
+      'AIMagicText terms',
       'usage guidelines',
       'service terms',
       'browser extension rules',

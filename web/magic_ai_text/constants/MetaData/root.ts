@@ -2,21 +2,21 @@ import type { Metadata } from 'next'
 
 export const RootMetaData: Metadata = {
   // Basic Metadata
-  title: 'AI Magic Text - AI Prompt Search Browser Extension',
+  title: 'AIMagicText - AI Prompt Search Browser Extension',
   description: 'Enhance your browsing with AI-powered prompt search. Select text and instantly get AI prompts. Free plan with 25 daily credits, Pro & Elite plans for power users.',
   
   // Open Graph
   openGraph: {
-    title: 'AI Magic Text - Smart AI Prompt Search Extension',
+    title: 'AIMagicText - Smart AI Prompt Search Extension',
     description: 'Transform your browsing experience with instant AI prompts. Select text and get intelligent prompt suggestions. Start free with 25 daily credits.',
     url: 'https://aimagictext.in',
-    siteName: 'AI Magic Text',
+    siteName: 'AIMagicText',
     images: [
       {
         url: '/og-image.png', // Make sure to add your OG image
         width: 1200,
         height: 630,
-        alt: 'AI Magic Text Browser Extension',
+        alt: 'AIMagicText Browser Extension',
       }
     ],
     type: 'website',
@@ -26,7 +26,7 @@ export const RootMetaData: Metadata = {
   // Twitter
   twitter: {
     card: 'summary_large_image',
-    title: 'AI Magic Text - Browser Extension for AI Prompts',
+    title: 'AIMagicText - Browser Extension for AI Prompts',
     description: 'Get instant AI prompts for any selected text. Free plan available. Built for Chrome, Firefox & Edge.',
     images: ['/twitter-image.png'], // Add your Twitter card image
     creator: '@aimagictext', // Add your Twitter handle if you have one
@@ -34,6 +34,7 @@ export const RootMetaData: Metadata = {
 
   // Additional Metadata
   keywords: [
+    'AIMagicText',
     'AI prompt generator',
     'browser extension',
     'AI writing assistant',
@@ -72,11 +73,11 @@ export const RootMetaData: Metadata = {
   category: 'technology',
   
   // App specific metadata
-  applicationName: 'AI Magic Text',
-  generator: 'AI Magic Text',
+  applicationName: 'AIMagicText',
+  generator: 'AIMagicText',
   
   authors: [
-    { name: 'AI Magic Text Team' }
+    { name: 'AIMagicText Team' }
   ],
 
 }
