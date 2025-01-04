@@ -2,13 +2,12 @@
   "manifest_version": 3,
   "name": "AIMagicText",
   "version": "1.0",
-  "description": "Enhance your productivity with our AI-powered browser extension! Instantly perform a variety of smart actions on selected text, from summarizing and translating to generating insights and more. Simplify your workflow and unlock new possibilities with just a click.",
-  
+  "description": "Enhance your productivity with our AI-powered browser extension!",
   "permissions": [
     "storage",
     "activeTab"
   ],
-
+  "key":"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyMSkIIuMAWgYM8jtm5ZrmoZf2FswVPUH2gMCbnKUoTz77gYzV2y4veARIJR241hst/df6d2qsSDXbTv7+x7MJNt/HjwAmKrrbXPvGkRE+axtkeDEvzF9oA0NlI4qGLSaFwAnUjkbjP+CO1LdU0NQf4VqUNdZbTFl8TSkHAhMgLJQ/ZEcs8zIFDQYCIpHXWDo1I1PkAUMr+rgCjvxZRSSbNc8XREvJLo5xoilzA6H0v5M5db+csRPkuO5KzVulBta0B9JoPZrDoLVFjAzXj125AV1uL8l+r78kAi8kS0ZAUYZMrFYXBH/Jcw9Ogmo19z6LE+wMc4wIGBeiUFjKfTR0wIDAQAB",
   "icons": {
     "16": "assets/ai_logo.png",
     "48": "assets/ai_logo.png",
