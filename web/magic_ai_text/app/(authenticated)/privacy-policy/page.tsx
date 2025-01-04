@@ -11,12 +11,11 @@ import { Metadata } from 'next';
 
 export const metadata: Metadata = privacyPolicyMetaData;
 
-
 const PrivacyPolicy = () => {
   const sections = [
     {
       title: "Introduction",
-      content: `Welcome to our AI Prompt Search Extension ("we," "our," or "us"). This Privacy Policy explains how we collect, use, and protect your information when you use our browser extension. By using our extension, you agree to the collection and use of information in accordance with this policy. This extension is intended for users above 8 years of age.`
+      content: `Welcome to our AI Prompt Search Extension ("we," "our," or "us"), a product of AppSphere corporation. This Privacy Policy explains how we collect, use, and protect your information when you use our browser extension. By using our extension, you agree to the collection and use of information in accordance with this policy. This extension is intended for users above 8 years of age.`
     },
     {
       title: "Information We Collect",
@@ -45,7 +44,7 @@ const PrivacyPolicy = () => {
       • Basic features are available free of charge
       • Premium features require a paid subscription
       
-      Payment information is processed securely through RazorPay. We do not store your payment details on our servers.`
+      Payment information is processed securely through RazorPay. All billing transactions will appear under the name "AppSphere" on your statements. We do not store your payment details on our servers.`
     },
     {
       title: "Data Security",
@@ -158,7 +157,6 @@ const PrivacyPolicy = () => {
                     </Typography>
                 </a>
               </Typography>
-               
             </Typography>
           </Box>
         </Paper>
