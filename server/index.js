@@ -53,7 +53,7 @@ app.use(cookieParser())
 
 // Middleware
 app.use(cors({
-  origin: [process.env.EXTENSION_ORIGIN],
+  origin: [process.env.EXTENSION_ORIGIN, process.env.WEB_URL],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true

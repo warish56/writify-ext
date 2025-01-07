@@ -6,7 +6,7 @@ const router = express.Router();
 
 
 
-router.get('/verify-payment', async (req, res) => {
+router.post('/verify-payment', async (req, res) => {
     try{
         const { 
             razorpay_payment_id, 
@@ -15,7 +15,7 @@ router.get('/verify-payment', async (req, res) => {
             orderId,
             planId,
             userId 
-        } = req.query;
+        } = req.body;
 
         const status = await verifyPayment({
             orderId,
@@ -23,13 +23,17 @@ router.get('/verify-payment', async (req, res) => {
             userId,
             razorPayPaymentId: razorpay_payment_id
         })
-       res.redirect(`${process.env.EXTENSION_ORIGIN}${process.env.PLANS_PAGE_PATH}?payment=${status}`);
-       
+        res.json({
+            data: {
+                redirectLink: `${process.env.EXTENSION_ORIGIN}${process.env.PLANS_PAGE_PATH}?payment=${status}`
+            }
+        });       
     }catch (error) {
         console.error('Error:', error);
         res.status(error.status ?? 500).json({ 
             error: {
-                message: error.message || 'Somthing went wrong in orders'
+                message: error.message || 'Somthing went wrong in orders',
+                redirectLink: `${process.env.EXTENSION_ORIGIN}${process.env.PLANS_PAGE_PATH}?payment=failed`
             }
         });
     }
