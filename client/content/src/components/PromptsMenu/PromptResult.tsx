@@ -1,11 +1,11 @@
 import { Typography, Stack, IconButton, Tooltip } from "@mui/material"
-import { PromptLoader } from "./Loader";
 
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { useClipboard } from "@/hooks/useClipboard";
 import { useEffect, useRef } from "react";
+import { StreamTextLoader } from "../StreamTextLoader";
 
 type props = {
     onApply: (text:string) => void;
@@ -13,6 +13,9 @@ type props = {
     error?: string;
     chunks: string[]
 }
+
+const END_TEXT = '[DONE]';
+
 export const PromptResult = ({ onApply, onRefresh, error, chunks}:props) => {
     const {copyToBoard} = useClipboard();
     const containerRef = useRef<HTMLDivElement | null>(null);
@@ -32,6 +35,7 @@ export const PromptResult = ({ onApply, onRefresh, error, chunks}:props) => {
     }, [chunks])
 
     const loading = chunks.length === 0;
+    const hasEnded = chunks[chunks.length -1] === END_TEXT
 
     return (
         <Stack 
@@ -75,7 +79,6 @@ export const PromptResult = ({ onApply, onRefresh, error, chunks}:props) => {
                 </Stack>
             </Stack>
 
-            {loading && !error && <PromptLoader  count={3}/>}
 
             {error && (
                 <Typography color="error" variant="body2">
@@ -103,9 +106,10 @@ export const PromptResult = ({ onApply, onRefresh, error, chunks}:props) => {
                                 >
                                     {
                                         chunks.map((chunk, idx) =>  {
-                                            return <span key={`${chunk}_${idx}`}>{chunk}</span>
+                                            return <span key={`${chunk}_${idx}`}>{chunk === END_TEXT ? '' : chunk}</span>
                                         })
                                     }
+                                    {!hasEnded && <StreamTextLoader />}
                             </Typography>  
                 </Stack>
             }

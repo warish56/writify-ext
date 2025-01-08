@@ -37,6 +37,7 @@ export const useGetPromptResponse = (prompt:Prompt|null, text:string) => {
             }else if(msg.action === 'AI_RESPONSE'){
                 setChunks(prevVal => [...prevVal, msg.content]);
             }else if(msg.action === 'DONE'){
+                setChunks(prevVal => [...prevVal, '[DONE]']);
                 useAvailableCredits(); 
                 port.disconnect();
             }
