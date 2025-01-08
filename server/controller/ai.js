@@ -47,13 +47,20 @@ const checkAndUpdateLoggedInUserUsage = async (email) => {
   await updateAccountCredits(accountDetails.$id, newCredits);
 }
 
-const getAiResponse = async (prompts) => {
-    const completion = await openai.chat.completions.create({
+const getAiResponse = async (res, prompts) => {
+    const stream = await openai.chat.completions.create({
         model: "gpt-4o-mini",
         messages: prompts,
+        stream: true,
       });
 
-    return completion.choices[0].message.content;
+      let prevVal = '';
+      for await (const chunk of stream) {
+        const val = chunk.choices[0]?.delta?.content || "";
+        res.write(val);
+        prevVal = val;
+      }
+      res.end();
 
 }
 

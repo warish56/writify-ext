@@ -1,61 +1,66 @@
 import { useState, useEffect, useDeferredValue } from 'react';
-import { BG_GET_AI_RESPONSE } from '@/constants';
-import { PromptResponse } from '@/types/prompt';
 import { useCredits } from './useCredits';
-import { sendMessageToWorker } from '@/utils';
-import { WorkerResponse } from '@/types/worker';
-import { ServerError } from '@/types/api';
 import { Prompt } from '@/types/AiResponse';
 import { generatePrompt } from '@/utils/prompt';
 
-type AiResponseState = [PromptResponse | null, | ServerError | null]
 
-const fetchResponses = async (text: string, prompt:Prompt) => {
-    const prompts = [
+
+const getRequestPrompt = (text: string, prompt:Prompt) => {
+    return [
         {...prompt},
         {
             ...generatePrompt('user', text)
         }
     ]
-    const response = await sendMessageToWorker<WorkerResponse<[PromptResponse|null, ServerError|null]>>(BG_GET_AI_RESPONSE, {prompts});
-    return response;
 }
-
 
 export const useGetPromptResponse = (prompt:Prompt|null, text:string) => {
     const {useAvailableCredits, isCreditsAvailable} = useCredits();
-    const [response, setResponse] = useState<AiResponseState>([null, null]);
-    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+    const [chunks, setChunks] = useState<string[]>([]);
     const defferedText = useDeferredValue(text);
     
+    const clearChunks = () => {
+        setChunks([]);
+    }
+
     const clearData = () => {
-        setResponse([null, null])
+        clearChunks();
     }
 
     const fetchData = async () => {
-        setLoading(true);
-        const {success, error, data} = await fetchResponses(text, prompt as Prompt);
-        if(success){
-            setResponse(data);
-        }
-        setLoading(false);
-        if(!error && !data?.[1]){
-            useAvailableCredits();  
-        }     
+        const port = chrome.runtime.connect({name: "AI_MESSAGE"});
+        port.postMessage({action: "GET", prompts: getRequestPrompt(text, prompt as Prompt)});
+        port.onMessage.addListener(function(msg) {
+            if(msg.error){
+                setError(msg.error);
+            }else if(msg.action === 'AI_RESPONSE'){
+                setChunks(prevVal => [...prevVal, msg.content]);
+            }else if(msg.action === 'DONE'){
+                setChunks(prevVal => [...prevVal, '[DONE]']);
+                useAvailableCredits(); 
+                port.disconnect();
+            }
+        });  
+    }
+
+    const refetchData = async () => {
+        clearData();
+        fetchData();
     }
     
 
     useEffect(() => {
         if(defferedText && prompt && isCreditsAvailable) {
+            clearChunks();
             fetchData();
         }
     }, [defferedText, prompt, isCreditsAvailable]);
     
     return {
-        data: response[0] as PromptResponse | null, 
-        error: response[1] as Error | null, 
-        loading,
+        error, 
+        chunks,
         clearData,
-        refetchData: fetchData
+        refetchData
     };
 }

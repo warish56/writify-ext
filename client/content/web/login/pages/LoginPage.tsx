@@ -17,10 +17,9 @@ export const LoginPage = () => {
         e.preventDefault();
         loginUser(email).then((response) => {
             const [_, error] = response
-          
             if(error ){
                 showSnackbar({
-                    message: error?.message || '',
+                    message: error?.message || 'Something went wrong...',
                     autoHide: 3000,
                     type: 'error'
                 })

@@ -34,6 +34,51 @@ export const openLoginPage = () => {
     });
 }
 
+export const streamData = async (url, port, responseKey,  options={}, ) => {
+
+    try{
+        const response = await fetch(`${API_URL}${url}`,{
+            ...options,
+            headers: {
+                ...(options.headers ?? {}),
+                ...( options?.body ? {'Content-Type': 'application/json'} : {}),
+            }
+        })
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder("utf-8");
+
+        let done = false;
+        while (!done) {
+            const { value, done: readerDone } = await reader.read();
+            done = readerDone;
+
+            if (value) {
+                const chunk = decoder.decode(value, { stream: true });
+                let chunkResponse = chunk;
+                try{
+                    chunkResponse = JSON.parse(chunk);
+                    if(chunkResponse.error){
+                        port.postMessage({error: chunkResponse.error});
+                    }
+                }catch(err){
+                    port.postMessage({action: responseKey, content: chunkResponse});
+                }
+            }
+
+            if (readerDone) {
+                port.postMessage({action: 'DONE'});
+                return;
+            }
+
+        }
+    }catch(error){
+        console.log(error)
+        port.postMessage({error: error?.message || error});
+    }
+    
+
+}
+
 
 export const fetchData = async (url, options={}) => {
     return fetch(`${API_URL}${url}`,{

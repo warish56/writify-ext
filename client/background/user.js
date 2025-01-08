@@ -36,9 +36,12 @@ export const clearUserDetails = async () => {
 export const fetchAndStoreUserData = async (email) => {
     const existingUserDetails = await getUserDetails();
     const [data, error] = await fetchUserData( email || existingUserDetails?.email || '');
-    await chrome.storage.sync.set({ 
-        [USER_DATA]: data
-    })
+    const isLocalError = error === 'Failed to fetch';
+    if(!isLocalError){
+        await chrome.storage.sync.set({ 
+            [USER_DATA]: data
+        })
+    }
     return [data, error];
 
 }

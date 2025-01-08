@@ -25,7 +25,7 @@ export const BroadcastMessages = {
 export const DEFAULT_CREDITS_PER_DAY = 25;
 
 export const Routes = {
-    AI: '/ai',
+    AI: '/ai/stream',
     credits: '/credits',
     userDetails: '/user/details',
     ordersList: '/orders/list'
@@ -35,3 +35,5 @@ export const Events = {
     EXTENSION_INSTALLED: "extension_installed",
     EXTENSION_UNINSTALLED: "extension_uninstalled",
 };
+export const AI_STREAM_RESPONSE_KEY = 'AI_RESPONSE'
+export const AI_STREAM_CONNECT_KEY = 'AI_MESSAGE'
