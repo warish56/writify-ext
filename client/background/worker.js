@@ -1,5 +1,5 @@
 
-import { fetchAiResponse } from './ai.js';
+import { streamAiResponse } from './ai.js';
 import {
     getAvailableCredits,
     updateAvailableCredits, 
@@ -18,7 +18,7 @@ import {
 import { fetchUserOrders } from './orders.js';
 
 import { openLoginPage, sendMessageToContentScript, trackEvent } from './utils.js';
-import { BroadcastMessages, Events, Messages } from './constants.js';
+import { AI_STREAM_CONNECT_KEY, BroadcastMessages, Events, Messages } from './constants.js';
 import { clearToken, getToken, setToken } from './token.js';
 
 
@@ -88,17 +88,17 @@ const handleOrdersMessages = async (message, sendResponse) => {
 }
 
 
-const handleAiMessages = async (message, sendResponse) => {
-    try{
-        if(message.type === Messages.BG_GET_AI_RESPONSE){
-            const data  = await fetchAiResponse(message.prompts);
-            sendResponse({success: true, data})
-            return true;
+const handleAiMessages = async () => {
+    chrome.runtime.onConnect.addListener(function(port) {
+        if(port.name !== AI_STREAM_CONNECT_KEY){
+            return;
         }
-    }catch(err){
-        console.error("Error in handling Ai Message",err)
-        sendResponse({success: false, error:err});
-    }
+        port.onMessage.addListener(function(message) {
+            if(message.action === 'GET'){
+                streamAiResponse(message.prompts, port)
+            }
+        });
+    });
 }
 
 
@@ -173,12 +173,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         return;
     }
 
-    if([
-        Messages.BG_GET_AI_RESPONSE
-        ].includes(message.type)){
-            handleAiMessages(message, sendResponse);
-            return true;
-    }
 
     if([
         Messages.BG_GET_TOKEN,
@@ -235,3 +229,6 @@ chrome.runtime.onInstalled.addListener((details) => {
         saveRandomUserId();
     }
 })
+
+
+handleAiMessages();

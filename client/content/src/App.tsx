@@ -32,7 +32,7 @@ function App() {
     }
   });
   const prevSelectionDataRef = useRef(currentSelectionData);
-  const {data, error, loading, clearData:clearServerData, refetchData} = useGetPromptResponse(prompt, prevSelectionDataRef.current.selectedText); 
+  const {error, clearData:clearServerData, refetchData, chunks} = useGetPromptResponse(prompt, prevSelectionDataRef.current.selectedText); 
   const {open:snackbarOpen, message:snackbarMessage} = useSnackbar();
 
   const refetchDataFromStore = async () => {
@@ -210,11 +210,10 @@ function App() {
             >
               { isCreditsAvailable ? 
                   <PromptResult 
-                  loading={loading}
                   error={error}
+                  chunks={chunks}
                   onApply={handleInsert}
                   onRefresh={refetchData}
-                  text={data?.result ?? ''}
                   />
 
                 :

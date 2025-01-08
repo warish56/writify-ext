@@ -5,18 +5,38 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import KeyboardReturnIcon from '@mui/icons-material/KeyboardReturn';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { useClipboard } from "@/hooks/useClipboard";
+import { useEffect, useRef } from "react";
 
 type props = {
-    loading: boolean;
     onApply: (text:string) => void;
     onRefresh: () => void;
-    text:string;
-    error?: Error | null;
+    error?: string;
+    chunks: string[]
 }
-export const PromptResult = ({loading, onApply, onRefresh, text, error}:props) => {
+export const PromptResult = ({ onApply, onRefresh, error, chunks}:props) => {
     const {copyToBoard} = useClipboard();
+    const containerRef = useRef<HTMLDivElement | null>(null);
+
+
+    const getCombinedText = () => {
+        return chunks.join('');
+    }
+
+    useEffect(() => {
+        if(containerRef.current){
+            containerRef.current.scrollIntoView({
+                behavior: 'smooth',
+                block: 'end'
+            })
+        }
+    }, [chunks])
+
+    const loading = chunks.length === 0;
+
     return (
-        <Stack sx={{
+        <Stack 
+        ref={containerRef}
+        sx={{
             gap: '10px',
             padding: '10px'
         }}>
@@ -41,13 +61,13 @@ export const PromptResult = ({loading, onApply, onRefresh, text, error}:props) =
                     </IconButton>
                     </Tooltip>
                     <Tooltip title="Apply text">
-                    <IconButton size="small" onClick={() => onApply(text)}>
+                    <IconButton size="small" onClick={() => onApply(getCombinedText())}>
                         <KeyboardReturnIcon />
                     </IconButton>
                     </Tooltip>
                     <Tooltip title="Copy">
                     <IconButton size="small" onClick={() => {
-                        copyToBoard(text)
+                        copyToBoard(getCombinedText())
                     }}>
                         <ContentCopyIcon />
                     </IconButton>
@@ -55,15 +75,15 @@ export const PromptResult = ({loading, onApply, onRefresh, text, error}:props) =
                 </Stack>
             </Stack>
 
-            {loading && <PromptLoader  count={3}/>}
+            {loading && !error && <PromptLoader  count={3}/>}
 
-            {!loading && error && (
+            {error && (
                 <Typography color="error" variant="body2">
-                    {error?.message || (error as unknown as string) || 'Error fetching AI suggestion'}
+                    {error || 'Error fetching AI suggestion'}
                 </Typography>
             )}
             
-            {!loading && !error &&
+            {!error &&
                 <Stack 
                     sx={{
                         p: 1.25,
@@ -81,32 +101,12 @@ export const PromptResult = ({loading, onApply, onRefresh, text, error}:props) =
                                     lineHeight: '1.9'
                                 }}
                                 >
-                                    {text}
-                            </Typography>
-
-
-                    {/* {
-                        processedResults.map(({text, isCode}) => {
-                            if(isCode){
-                                return (
-                                    <code>{text}</code>
-                                )
-                            }
-                            return (
-                                <Typography 
-                                variant="body1" 
-                                sx={{
-                                    whiteSpace: 'pre-line',
-                                    lineHeight: '1.9'
-                                }}
-                                >
-                                    {text}
-                                </Typography>
-                            )
-                        })
-                    } */}
-
-                    
+                                    {
+                                        chunks.map((chunk, idx) =>  {
+                                            return <span key={`${chunk}_${idx}`}>{chunk}</span>
+                                        })
+                                    }
+                            </Typography>  
                 </Stack>
             }
         </Stack>

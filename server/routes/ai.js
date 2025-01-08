@@ -8,28 +8,26 @@ const router = express.Router();
 
 router.post('/', silenceAuthMiddleware , async (req, res) => {
     try {
+        res.setHeader("Content-Type", "text/event-stream");
+        res.setHeader("Cache-Control", "no-cache");
+        res.setHeader("Connection", "keep-alive");
+
         const ipAddress = getRequestIpAddress(req);
         const randomUserId = getFreeUserIdFromCookie(req);
         const {prompts, email} = req.body;
+
         if(email && req.user){
             await checkAndUpdateLoggedInUserUsage(email);   
         }else{
             await checkAndUpdateNonLoggedInUserUsage(ipAddress, randomUserId)
         }
-        const aiResponse = await getAiResponse(prompts);
-        res.json({
-            data: {
-                result: aiResponse
-            }
-        });
+        await getAiResponse(res, prompts);
     } catch (error) {
         console.error('Error:', error);
-        res.status(error.status ?? 500).json({ 
-            error: {
-                message: error.message || 'Somthing went wrong in ai response',
-                action: error?.action || ''
-            }
-        });
+        res.write(JSON.stringify({
+            error: error.message || 'Somthing went wrong in ai response',
+        }));
+        res.end();
     }
 });
 

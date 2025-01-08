@@ -35,3 +35,5 @@ export const Events = {
     EXTENSION_INSTALLED: "extension_installed",
     EXTENSION_UNINSTALLED: "extension_uninstalled",
 };
+export const AI_STREAM_RESPONSE_KEY = 'AI_RESPONSE'
+export const AI_STREAM_CONNECT_KEY = 'AI_MESSAGE'
