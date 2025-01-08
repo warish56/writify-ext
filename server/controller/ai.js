@@ -47,25 +47,35 @@ const checkAndUpdateLoggedInUserUsage = async (email) => {
   await updateAccountCredits(accountDetails.$id, newCredits);
 }
 
-const getAiResponse = async (res, prompts) => {
-    const stream = await openai.chat.completions.create({
-        model: "gpt-4o-mini",
-        messages: prompts,
-        stream: true,
-      });
+const getAiResponse = async (prompts) => {
+  const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: prompts,
+    });
 
-      let prevVal = '';
-      for await (const chunk of stream) {
-        const val = chunk.choices[0]?.delta?.content || "";
-        res.write(val);
-        prevVal = val;
-      }
-      res.end();
+  return completion.choices[0].message.content;
+}
+
+const getStreamAiResponse = async (res, prompts) => {
+  const stream = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: prompts,
+      stream: true,
+    });
+
+    let prevVal = '';
+    for await (const chunk of stream) {
+      const val = chunk.choices[0]?.delta?.content || "";
+      res.write(val);
+      prevVal = val;
+    }
+    res.end();
 
 }
 
 module.exports = {
     getAiResponse,
+    getStreamAiResponse,
     checkAndUpdateNonLoggedInUserUsage,
     checkAndUpdateLoggedInUserUsage
 }
