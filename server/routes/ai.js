@@ -1,5 +1,5 @@
 const express = require('express');
-const { getAiResponse, checkAndUpdateNonLoggedInUserUsage, checkAndUpdateLoggedInUserUsage } = require('../controller/ai');
+const { getAiResponse, getStreamAiResponse, checkAndUpdateNonLoggedInUserUsage, checkAndUpdateLoggedInUserUsage } = require('../controller/ai');
 const { getRequestIpAddress } = require('../utils/ip');
 const { silenceAuthMiddleware } = require('../middleware/authMiddleware');
 const { getFreeUserIdFromCookie } = require('../services/freeAccount');
@@ -52,7 +52,7 @@ router.post('/stream', silenceAuthMiddleware , async (req, res) => {
         }else{
             await checkAndUpdateNonLoggedInUserUsage(ipAddress, randomUserId)
         }
-        await getAiResponse(res, prompts);
+        await getStreamAiResponse(res, prompts);
     } catch (error) {
         console.error('Error:', error);
         res.write(JSON.stringify({
