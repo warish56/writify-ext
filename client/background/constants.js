@@ -25,7 +25,7 @@ export const BroadcastMessages = {
 export const DEFAULT_CREDITS_PER_DAY = 25;
 
 export const Routes = {
-    AI: '/ai',
+    AI: '/ai/stream',
     credits: '/credits',
     userDetails: '/user/details',
     ordersList: '/orders/list'
